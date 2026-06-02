@@ -1,53 +1,82 @@
-import { ArrowRight, Search, UserRoundCheck } from 'lucide-react'
+import { ArrowRight, BriefcaseBusiness, Search, ShieldCheck, UserRoundCheck } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { Button } from '../../components/ui/Button'
 
 export function RoleChoice() {
   const navigate = useNavigate()
 
   return (
-    <main className="min-h-screen px-5 py-6 text-ink">
-      <section className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-5xl content-center gap-6">
-        <div className="grid gap-3">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand">Comece pela sua jornada</p>
-          <h1 className="text-4xl font-extrabold leading-tight md:text-6xl">Como voce quer usar a ELLO?</h1>
-          <p className="max-w-2xl text-base font-medium leading-7 text-muted">
-            Escolha o caminho certo agora. Voce pode explorar servicos como cliente ou montar sua presenca profissional.
-          </p>
+    <main className="min-h-screen p-4 text-ink sm:p-6">
+      <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl overflow-hidden rounded-[2.25rem] border border-white/70 bg-white/76 shadow-premium backdrop-blur-2xl lg:grid-cols-[0.86fr_1.14fr]">
+        <div className="relative isolate overflow-hidden bg-ink p-6 text-white sm:p-8 lg:p-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_16%,rgba(0,127,120,0.65),transparent_22rem),linear-gradient(145deg,#101a33,#045753_64%,#061225)]" />
+          <div className="relative z-10 flex h-full min-h-[24rem] flex-col justify-between">
+            <div className="text-3xl font-extrabold tracking-[-0.04em]">ELLO</div>
+            <div className="grid gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-[1.35rem] border border-white/15 bg-white/10 backdrop-blur">
+                <ShieldCheck size={30} />
+              </div>
+              <h1 className="text-balance text-5xl font-extrabold leading-[0.98] tracking-[-0.05em]">Escolha sua jornada.</h1>
+              <p className="max-w-md text-sm font-medium leading-6 text-white/68">
+                Cliente e profissional entram no mesmo ecossistema, mas cada um recebe uma experiencia feita para sua rotina.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-[1.25rem] bg-white/10 p-4 backdrop-blur">
+                <p className="text-2xl font-extrabold">4.9</p>
+                <p className="text-xs font-bold text-white/55">media simulada</p>
+              </div>
+              <div className="rounded-[1.25rem] bg-white/10 p-4 backdrop-blur">
+                <p className="text-2xl font-extrabold">Macae</p>
+                <p className="text-xs font-bold text-white/55">primeira praca</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <button
-            className="group grid min-h-64 gap-5 rounded-[1.75rem] border border-line bg-white p-6 text-left shadow-soft transition hover:-translate-y-1 hover:shadow-premium"
-            onClick={() => navigate('/cadastro/cliente')}
-          >
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-sky text-brand">
-              <Search size={28} />
-            </div>
-            <div>
-              <h2 className="text-2xl font-extrabold">Sou cliente</h2>
-              <p className="mt-2 text-sm font-medium leading-6 text-muted">Quero encontrar, comparar e solicitar servicos perto de mim.</p>
-            </div>
-            <span className="mt-auto inline-flex items-center gap-2 text-sm font-bold text-brand">
-              Entrar como cliente <ArrowRight size={16} className="transition group-hover:translate-x-1" />
-            </span>
-          </button>
+        <div className="grid content-center gap-5 p-5 sm:p-8 lg:p-10">
+          <div className="grid gap-2">
+            <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-brand">Comece agora</p>
+            <h2 className="text-balance text-4xl font-extrabold leading-[1.04] tracking-[-0.04em] md:text-5xl">Como voce quer usar a ELLO?</h2>
+          </div>
 
-          <button
-            className="group grid min-h-64 gap-5 rounded-[1.75rem] border border-line bg-ink p-6 text-left text-white shadow-premium transition hover:-translate-y-1"
-            onClick={() => navigate('/cadastro/profissional')}
-          >
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/12 text-gold">
-              <UserRoundCheck size={28} />
-            </div>
-            <div>
-              <h2 className="text-2xl font-extrabold">Sou profissional</h2>
-              <p className="mt-2 text-sm font-medium leading-6 text-white/70">Quero divulgar meu trabalho, receber pedidos e construir reputacao.</p>
-            </div>
-            <span className="mt-auto inline-flex items-center gap-2 text-sm font-bold text-gold">
-              Entrar como profissional <ArrowRight size={16} className="transition group-hover:translate-x-1" />
-            </span>
-          </button>
+          <div className="grid gap-4 md:grid-cols-2">
+            <button
+              className="group grid min-h-72 gap-5 rounded-[2rem] border border-line bg-white p-6 text-left shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-premium"
+              onClick={() => navigate('/cadastro/cliente')}
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-sky text-brand">
+                <Search size={28} />
+              </div>
+              <div>
+                <h3 className="text-3xl font-extrabold tracking-[-0.04em]">Sou cliente</h3>
+                <p className="mt-3 text-sm font-medium leading-6 text-muted">Encontrar, comparar e solicitar servicos perto de mim com informacoes claras.</p>
+              </div>
+              <span className="mt-auto inline-flex items-center gap-2 text-sm font-extrabold text-brand">
+                Entrar como cliente <ArrowRight size={16} className="transition group-hover:translate-x-1" />
+              </span>
+            </button>
+
+            <button
+              className="group grid min-h-72 gap-5 rounded-[2rem] bg-gradient-to-br from-brand to-ink p-6 text-left text-white shadow-premium transition duration-300 hover:-translate-y-1"
+              onClick={() => navigate('/cadastro/profissional')}
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/14 text-gold">
+                <UserRoundCheck size={28} />
+              </div>
+              <div>
+                <h3 className="text-3xl font-extrabold tracking-[-0.04em]">Sou profissional</h3>
+                <p className="mt-3 text-sm font-medium leading-6 text-white/70">Divulgar meu trabalho, receber pedidos e construir reputacao local.</p>
+              </div>
+              <span className="mt-auto inline-flex items-center gap-2 text-sm font-extrabold text-gold">
+                Entrar como profissional <ArrowRight size={16} className="transition group-hover:translate-x-1" />
+              </span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3 rounded-[1.5rem] bg-brand/8 p-4 text-sm font-bold text-muted">
+            <BriefcaseBusiness size={18} className="text-brand" />
+            A decisao pode mudar depois, mas o cadastro inicial fica mais rapido com o caminho certo.
+          </div>
         </div>
       </section>
     </main>

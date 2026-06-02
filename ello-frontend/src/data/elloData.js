@@ -42,7 +42,11 @@ export const professionals = [
     keywords: ['manicure', 'unhas', 'beleza', 'alongamento'],
     bio: 'Especialista em unhas naturais, alongamento e acabamento delicado para eventos e rotina.',
     portfolio: ['Unhas gel minimalistas', 'Francesinha premium', 'Antes e depois'],
-    availability: 'Hoje, 14h as 19h'
+    availability: 'Hoje, 14h as 19h',
+    avatar: 'AM',
+    accent: 'from-[#FFE4DF] via-white to-[#D9F4F4]',
+    chips: ['Unhas em gel', 'Evento', 'Agenda hoje'],
+    profileHealth: 92
   },
   {
     id: 'bruno-azevedo',
@@ -58,7 +62,11 @@ export const professionals = [
     keywords: ['pintor', 'pintura', 'reparo', 'pedreiro', 'obra'],
     bio: 'Pintura residencial, pequenos reparos e acabamento limpo para apartamentos e casas.',
     portfolio: ['Sala renovada', 'Textura externa', 'Reparo de parede'],
-    availability: 'Amanha, 8h as 17h'
+    availability: 'Amanha, 8h as 17h',
+    avatar: 'BA',
+    accent: 'from-[#DDF3FF] via-white to-[#FFF1D6]',
+    chips: ['Pintura fina', 'Reparos', 'Orcamento rapido'],
+    profileHealth: 88
   },
   {
     id: 'carla-santos',
@@ -74,7 +82,11 @@ export const professionals = [
     keywords: ['limpeza', 'diarista', 'casa', 'organizacao', 'domestica'],
     bio: 'Organizacao domestica, limpeza detalhada e apoio recorrente para familias.',
     portfolio: ['Cozinha organizada', 'Lavanderia', 'Limpeza pos-obra'],
-    availability: 'Esta semana'
+    availability: 'Esta semana',
+    avatar: 'CS',
+    accent: 'from-[#E8FFF7] via-white to-[#DDF3FF]',
+    chips: ['Diarista', 'Organizacao', 'Pos-obra'],
+    profileHealth: 95
   },
   {
     id: 'diego-motorista',
@@ -90,7 +102,11 @@ export const professionals = [
     keywords: ['motorista', 'transporte', 'corrida', 'aeroporto', 'executivo'],
     bio: 'Motorista particular para compromissos, aeroporto, eventos e rotas executivas.',
     portfolio: ['Carro executivo', 'Traslado aeroporto', 'Agenda recorrente'],
-    availability: 'Hoje'
+    availability: 'Hoje',
+    avatar: 'DN',
+    accent: 'from-[#E9EDF7] via-white to-[#D9F4F4]',
+    chips: ['Executivo', 'Aeroporto', 'Hoje'],
+    profileHealth: 86
   }
 ]
 
