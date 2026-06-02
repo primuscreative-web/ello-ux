@@ -39,6 +39,7 @@ export const professionals = [
     responseTime: '20 min',
     price: 'A partir de R$ 45',
     chargeType: 'por atendimento',
+    keywords: ['manicure', 'unhas', 'beleza', 'alongamento'],
     bio: 'Especialista em unhas naturais, alongamento e acabamento delicado para eventos e rotina.',
     portfolio: ['Unhas gel minimalistas', 'Francesinha premium', 'Antes e depois'],
     availability: 'Hoje, 14h as 19h'
@@ -54,6 +55,7 @@ export const professionals = [
     responseTime: '1h',
     price: 'A partir de R$ 18/m2',
     chargeType: 'por metro',
+    keywords: ['pintor', 'pintura', 'reparo', 'pedreiro', 'obra'],
     bio: 'Pintura residencial, pequenos reparos e acabamento limpo para apartamentos e casas.',
     portfolio: ['Sala renovada', 'Textura externa', 'Reparo de parede'],
     availability: 'Amanha, 8h as 17h'
@@ -69,6 +71,7 @@ export const professionals = [
     responseTime: '35 min',
     price: 'A partir de R$ 120',
     chargeType: 'por diaria',
+    keywords: ['limpeza', 'diarista', 'casa', 'organizacao', 'domestica'],
     bio: 'Organizacao domestica, limpeza detalhada e apoio recorrente para familias.',
     portfolio: ['Cozinha organizada', 'Lavanderia', 'Limpeza pos-obra'],
     availability: 'Esta semana'
@@ -84,6 +87,7 @@ export const professionals = [
     responseTime: '15 min',
     price: 'A combinar',
     chargeType: 'por corrida',
+    keywords: ['motorista', 'transporte', 'corrida', 'aeroporto', 'executivo'],
     bio: 'Motorista particular para compromissos, aeroporto, eventos e rotas executivas.',
     portfolio: ['Carro executivo', 'Traslado aeroporto', 'Agenda recorrente'],
     availability: 'Hoje'

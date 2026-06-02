@@ -62,11 +62,11 @@ export function ClientFeed() {
         </section>
       </div>
 
-      <nav className="fixed inset-x-4 bottom-4 z-20 grid grid-cols-4 rounded-[1.5rem] bg-ink p-2 text-xs font-bold text-white shadow-premium md:hidden">
-        <button className="grid justify-items-center gap-1 rounded-2xl bg-white px-2 py-2 text-ink"><Search size={18} /> Feed</button>
-        <button className="grid justify-items-center gap-1 px-2 py-2 text-white/60"><BriefcaseBusiness size={18} /> Pedidos</button>
-        <button className="grid justify-items-center gap-1 px-2 py-2 text-white/60"><MessageCircle size={18} /> Chat</button>
-        <button className="grid justify-items-center gap-1 px-2 py-2 text-white/60"><UserCircle size={18} /> Perfil</button>
+      <nav className="fixed inset-x-4 bottom-2 z-20 grid grid-cols-4 rounded-[1.25rem] bg-ink p-1 text-[11px] font-bold text-white shadow-premium md:hidden">
+        <button className="grid justify-items-center gap-0.5 rounded-2xl bg-white px-2 py-1.5 text-ink"><Search size={16} /> Feed</button>
+        <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/60"><BriefcaseBusiness size={16} /> Pedidos</button>
+        <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/60"><MessageCircle size={16} /> Chat</button>
+        <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/60"><UserCircle size={16} /> Perfil</button>
       </nav>
     </main>
   )

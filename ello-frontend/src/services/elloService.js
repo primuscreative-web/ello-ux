@@ -28,7 +28,9 @@ export async function getProfessionals({ search = '', category = 'Todos' } = {})
       !normalizedSearch ||
       professional.name.toLowerCase().includes(normalizedSearch) ||
       professional.category.toLowerCase().includes(normalizedSearch) ||
-      professional.neighborhood.toLowerCase().includes(normalizedSearch)
+      professional.neighborhood.toLowerCase().includes(normalizedSearch) ||
+      professional.bio.toLowerCase().includes(normalizedSearch) ||
+      professional.keywords.some((keyword) => keyword.includes(normalizedSearch))
 
     return matchesCategory && matchesSearch
   })
