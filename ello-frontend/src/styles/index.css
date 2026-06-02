@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-ink: #14213d;
+  --color-graphite: #263238;
+  --color-muted: #667085;
+  --color-line: #e6e8ec;
+  --color-cloud: #f7f9fc;
+  --color-card: #ffffff;
+  --color-brand: #0b7a75;
+  --color-brandDark: #075e59;
+  --color-coral: #ff6b5f;
+  --color-gold: #f2b84b;
+  --color-sky: #ddf3ff;
+  --shadow-premium: 0 18px 60px rgba(20, 33, 61, 0.12);
+  --shadow-soft: 0 10px 30px rgba(20, 33, 61, 0.08);
+  --radius-shell: 28px;
+  --radius-panel: 20px;
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color: #14213d;
+  background: #f7f9fc;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(11, 122, 117, 0.12), transparent 34rem),
+    linear-gradient(180deg, #ffffff 0%, #f7f9fc 45%, #eef4f6 100%);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(11, 122, 117, 0.35);
+  outline-offset: 3px;
+}
