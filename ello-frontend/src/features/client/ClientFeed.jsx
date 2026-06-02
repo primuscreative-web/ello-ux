@@ -18,7 +18,7 @@ export function ClientFeed() {
       <div className="mx-auto grid w-full max-w-[86rem] gap-6 xl:grid-cols-[17rem_minmax(0,1fr)_19rem]">
         <aside className="hidden rounded-[2rem] bg-ink p-5 text-white shadow-premium xl:block">
           <div className="text-2xl font-extrabold tracking-[-0.04em]">ELLO</div>
-          <p className="mt-3 text-sm font-medium leading-6 text-white/58">Descubra profissionais por perto com sinais de confianca antes do primeiro contato.</p>
+          <p className="mt-3 text-sm font-medium leading-6 text-white/58">Descubra profissionais no Brasil com sinais de confianca antes do primeiro contato.</p>
           <div className="mt-8 grid gap-2">
             {categories.map((category) => (
               <button
@@ -37,7 +37,7 @@ export function ClientFeed() {
             <div className="flex items-end justify-between gap-4">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-brand">Feed</p>
-                <h1 className="text-balance text-3xl font-extrabold leading-[1.02] tracking-[-0.04em] md:text-5xl">Profissionais perto de voce</h1>
+                <h1 className="text-balance text-3xl font-extrabold leading-[1.02] tracking-[-0.04em] md:text-5xl">Profissionais em todo o Brasil</h1>
               </div>
               <button className="hidden h-12 w-12 items-center justify-center rounded-2xl bg-ink text-white shadow-soft md:flex">
                 <SlidersHorizontal size={20} />
@@ -45,7 +45,7 @@ export function ClientFeed() {
             </div>
             <label className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-white px-4 shadow-soft">
               <Search size={20} className="text-brand" />
-              <input className="w-full bg-transparent text-sm font-bold outline-none placeholder:font-semibold placeholder:text-muted/70" placeholder="Buscar manicure, pintor, bairro..." value={search} onChange={(event) => setSearch(event.target.value)} />
+              <input className="w-full bg-transparent text-sm font-bold outline-none placeholder:font-semibold placeholder:text-muted/70" placeholder="Buscar servico, profissional, cidade ou bairro..." value={search} onChange={(event) => setSearch(event.target.value)} />
             </label>
             <div className="flex gap-2 overflow-x-auto pb-1 xl:hidden">
               {categories.map((category) => (
@@ -69,9 +69,9 @@ export function ClientFeed() {
 
         <aside className="hidden content-start gap-4 xl:grid">
           <div className="premium-surface rounded-[2rem] p-5">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">Hoje em Macae</p>
+            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">Brasil hoje</p>
             <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.035em]">Pedidos bem descritos recebem resposta mais rapida.</h2>
-            <p className="mt-3 text-sm font-medium leading-6 text-muted">Inclua fotos, bairro e prazo para receber orcamentos mais precisos.</p>
+            <p className="mt-3 text-sm font-medium leading-6 text-muted">Inclua fotos, cidade, regiao e prazo para receber orcamentos mais precisos.</p>
           </div>
           <div className="rounded-[2rem] bg-gradient-to-br from-brand to-ink p-5 text-white shadow-premium">
             <p className="text-sm font-bold text-white/65">ELLO protege</p>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getRequests } from '../../services/elloService'
@@ -23,10 +24,13 @@ export function RequestsBoard() {
   return (
     <main className="min-h-screen px-5 py-6 text-ink">
       <section className="mx-auto grid max-w-6xl gap-6">
-        <div className="rounded-[2rem] bg-white p-5 shadow-premium md:p-8">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand">Pedidos</p>
-          <h1 className="mt-2 text-3xl font-extrabold md:text-5xl">Oportunidades e servicos.</h1>
-          <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-muted">Acompanhe pedidos desde a chegada ate a conclusao.</p>
+        <div className="flex flex-col gap-4 rounded-[2rem] bg-white p-5 shadow-premium md:flex-row md:items-start md:justify-between md:p-8">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand">Pedidos</p>
+            <h1 className="mt-2 text-3xl font-extrabold md:text-5xl">Oportunidades e servicos.</h1>
+            <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-muted">Acompanhe pedidos desde a chegada ate a conclusao.</p>
+          </div>
+          <BackButton fallback="/profissional/central" />
         </div>
 
         <div className="grid gap-3">

@@ -1,17 +1,17 @@
 export const onboardingSlides = [
   {
     title: 'Encontre quem resolve',
-    text: 'Servicos perto de voce, com profissionais reais e informacoes claras antes do primeiro contato.',
+    text: 'Servicos em todo o Brasil, com profissionais reais e informacoes claras antes do primeiro contato.',
     image: 'client'
   },
   {
     title: 'Mostre seu trabalho',
-    text: 'Crie reputacao com perfil, portfolio, precos e disponibilidade em um espaco feito para autonomos.',
+    text: 'Crie reputacao nacional com perfil, portfolio, precos e disponibilidade em um espaco feito para autonomos.',
     image: 'professional'
   },
   {
     title: 'Combine com confianca',
-    text: 'Solicite orcamentos, converse, acompanhe pedidos e avalie a experiencia no mesmo fluxo.',
+    text: 'Solicite orcamentos, converse, acompanhe pedidos e avalie a experiencia no mesmo fluxo, onde voce estiver.',
     image: 'trust'
   }
 ]
@@ -32,8 +32,8 @@ export const professionals = [
     id: 'ana-martins',
     name: 'Ana Martins',
     category: 'Beleza',
-    city: 'Macae',
-    neighborhood: 'Cavaleiros',
+    city: 'Sao Paulo',
+    neighborhood: 'Pinheiros',
     rating: 4.9,
     jobs: 128,
     responseTime: '20 min',
@@ -52,8 +52,8 @@ export const professionals = [
     id: 'bruno-azevedo',
     name: 'Bruno Azevedo',
     category: 'Construcao',
-    city: 'Macae',
-    neighborhood: 'Imbetiba',
+    city: 'Belo Horizonte',
+    neighborhood: 'Savassi',
     rating: 4.8,
     jobs: 94,
     responseTime: '1h',
@@ -72,8 +72,8 @@ export const professionals = [
     id: 'carla-santos',
     name: 'Carla Santos',
     category: 'Casa',
-    city: 'Rio das Ostras',
-    neighborhood: 'Costazul',
+    city: 'Salvador',
+    neighborhood: 'Pituba',
     rating: 5,
     jobs: 76,
     responseTime: '35 min',
@@ -92,8 +92,8 @@ export const professionals = [
     id: 'diego-motorista',
     name: 'Diego Nunes',
     category: 'Mobilidade',
-    city: 'Macae',
-    neighborhood: 'Centro',
+    city: 'Curitiba',
+    neighborhood: 'Batel',
     rating: 4.7,
     jobs: 63,
     responseTime: '15 min',

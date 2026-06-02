@@ -1,5 +1,6 @@
 import { ArrowRight, BriefcaseBusiness, Search, ShieldCheck, UserRoundCheck } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { BackButton } from '../../components/ui/BackButton'
 
 export function RoleChoice() {
   const navigate = useNavigate()
@@ -10,7 +11,10 @@ export function RoleChoice() {
         <div className="relative isolate overflow-hidden bg-ink p-6 text-white sm:p-8 lg:p-10">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_16%,rgba(0,127,120,0.65),transparent_22rem),linear-gradient(145deg,#101a33,#045753_64%,#061225)]" />
           <div className="relative z-10 flex h-full min-h-[24rem] flex-col justify-between">
-            <div className="text-3xl font-extrabold tracking-[-0.04em]">ELLO</div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-3xl font-extrabold tracking-[-0.04em]">ELLO</div>
+              <BackButton fallback="/" className="border-white/10 bg-white/10 text-white hover:bg-white hover:text-ink" />
+            </div>
             <div className="grid gap-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-[1.35rem] border border-white/15 bg-white/10 backdrop-blur">
                 <ShieldCheck size={30} />
@@ -26,8 +30,8 @@ export function RoleChoice() {
                 <p className="text-xs font-bold text-white/55">media simulada</p>
               </div>
               <div className="rounded-[1.25rem] bg-white/10 p-4 backdrop-blur">
-                <p className="text-2xl font-extrabold">Macae</p>
-                <p className="text-xs font-bold text-white/55">primeira praca</p>
+                <p className="text-2xl font-extrabold">Brasil</p>
+                <p className="text-xs font-bold text-white/55">visao nacional</p>
               </div>
             </div>
           </div>
@@ -49,7 +53,7 @@ export function RoleChoice() {
               </div>
               <div>
                 <h3 className="text-3xl font-extrabold tracking-[-0.04em]">Sou cliente</h3>
-                <p className="mt-3 text-sm font-medium leading-6 text-muted">Encontrar, comparar e solicitar servicos perto de mim com informacoes claras.</p>
+                <p className="mt-3 text-sm font-medium leading-6 text-muted">Encontrar, comparar e solicitar servicos na minha cidade com informacoes claras.</p>
               </div>
               <span className="mt-auto inline-flex items-center gap-2 text-sm font-extrabold text-brand">
                 Entrar como cliente <ArrowRight size={16} className="transition group-hover:translate-x-1" />
@@ -65,7 +69,7 @@ export function RoleChoice() {
               </div>
               <div>
                 <h3 className="text-3xl font-extrabold tracking-[-0.04em]">Sou profissional</h3>
-                <p className="mt-3 text-sm font-medium leading-6 text-white/70">Divulgar meu trabalho, receber pedidos e construir reputacao local.</p>
+                <p className="mt-3 text-sm font-medium leading-6 text-white/70">Divulgar meu trabalho, receber pedidos e construir reputacao em escala nacional.</p>
               </div>
               <span className="mt-auto inline-flex items-center gap-2 text-sm font-extrabold text-gold">
                 Entrar como profissional <ArrowRight size={16} className="transition group-hover:translate-x-1" />
