@@ -92,6 +92,11 @@ export async function getProfessionalStats() {
 }
 
 export async function getRequests() {
+  if (!getSessionToken()) {
+    await wait()
+    return requests
+  }
+
   try {
     const apiQuotes = await getJson('/quotes')
 

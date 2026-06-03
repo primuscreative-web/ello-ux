@@ -1,12 +1,21 @@
 import { Clock, MapPin, ShieldCheck, Star } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 
 export function ProfessionalCard({ professional }) {
   return (
-    <article className="group overflow-hidden rounded-[1.7rem] border border-white/80 bg-white shadow-[0_18px_54px_rgba(16,26,51,0.1)] transition duration-300 hover:-translate-y-1 hover:shadow-premium">
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 18, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      whileHover={{ y: -6 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+      className="group overflow-hidden rounded-[1.7rem] border border-white/80 bg-white shadow-[0_18px_54px_rgba(7,19,25,0.1)]"
+    >
       <div className={`relative min-h-44 overflow-hidden bg-gradient-to-br ${professional.accent} p-4`}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.9),transparent_11rem),linear-gradient(135deg,rgba(16,26,51,0.04),transparent)]" />
+        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-brand/18 blur-2xl transition duration-700 group-hover:scale-125" />
         <div className="relative flex h-full min-h-36 flex-col justify-between">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white/78 p-2 pr-4 shadow-soft backdrop-blur">
@@ -52,6 +61,6 @@ export function ProfessionalCard({ professional }) {
           </Link>
         </div>
       </div>
-    </article>
+    </motion.article>
   )
 }

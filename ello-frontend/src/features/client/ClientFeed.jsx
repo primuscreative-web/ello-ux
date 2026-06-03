@@ -1,4 +1,5 @@
-import { BriefcaseBusiness, MessageCircle, Search, SlidersHorizontal, UserCircle } from 'lucide-react'
+import { Bell, BriefcaseBusiness, Home, MessageCircle, Plus, Search, UserCircle } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { categories } from '../../data/elloData'
 import { getProfessionals } from '../../services/elloService'
@@ -14,77 +15,109 @@ export function ClientFeed() {
   }, [activeCategory, search])
 
   return (
-    <main className="min-h-screen px-4 pb-24 pt-4 text-ink md:px-8 md:pb-10 md:pt-8">
-      <div className="mx-auto grid w-full max-w-[86rem] gap-6 xl:grid-cols-[17rem_minmax(0,1fr)_19rem]">
-        <aside className="hidden rounded-[2rem] bg-ink p-5 text-white shadow-premium xl:block">
-          <div className="text-2xl font-extrabold tracking-[-0.04em]">ELLO</div>
+    <main className="min-h-screen px-4 pb-28 pt-4 text-ink md:px-8 md:pb-10 md:pt-8">
+      <div className="mx-auto grid w-full max-w-[88rem] gap-6 xl:grid-cols-[17rem_minmax(0,1fr)_20rem]">
+        <motion.aside
+          animate={{ opacity: 1, x: 0 }}
+          className="ios-dark-panel hidden rounded-[2rem] p-5 text-white xl:block"
+          initial={{ opacity: 0, x: -24 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="text-3xl font-extrabold tracking-[-0.06em]">ELLO</div>
           <p className="mt-3 text-sm font-medium leading-6 text-white/58">Descubra profissionais no Brasil com sinais de confianca antes do primeiro contato.</p>
           <div className="mt-8 grid gap-2">
             {categories.map((category) => (
               <button
-                className={`rounded-2xl px-4 py-3 text-left text-sm font-extrabold transition ${activeCategory === category ? 'bg-white text-ink' : 'text-white/62 hover:bg-white/10 hover:text-white'}`}
+                className={`rounded-2xl px-4 py-3 text-left text-sm font-extrabold transition ${activeCategory === category ? 'bg-brand text-white shadow-[0_14px_34px_rgba(16,184,170,0.25)]' : 'text-white/62 hover:bg-white/10 hover:text-white'}`}
                 key={category}
                 onClick={() => setActiveCategory(category)}
+                type="button"
               >
                 {category}
               </button>
             ))}
           </div>
-        </aside>
+        </motion.aside>
 
         <section className="grid min-w-0 gap-5">
-          <div className="sticky top-0 z-10 -mx-4 grid gap-4 border-b border-white/70 bg-white/74 px-4 py-4 backdrop-blur-2xl md:static md:mx-0 md:rounded-[2rem] md:border md:p-6 md:shadow-soft">
-            <div className="flex items-end justify-between gap-4">
+          <motion.div
+            animate={{ opacity: 1, y: 0 }}
+            className="sticky top-0 z-10 -mx-4 grid gap-4 border-b border-white/10 bg-ink px-4 py-5 text-white shadow-premium md:static md:mx-0 md:rounded-[2.25rem] md:border md:p-6"
+            initial={{ opacity: 0, y: -18 }}
+            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-brand">Feed</p>
-                <h1 className="text-balance text-3xl font-extrabold leading-[1.02] tracking-[-0.04em] md:text-5xl">Profissionais em todo o Brasil</h1>
+                <p className="text-sm font-semibold text-white/62">Ola, Ana</p>
+                <h1 className="mt-1 text-balance text-3xl font-extrabold leading-[1.02] tracking-[-0.05em] md:text-5xl">O que voce precisa hoje?</h1>
               </div>
-              <button className="hidden h-12 w-12 items-center justify-center rounded-2xl bg-ink text-white shadow-soft md:flex">
-                <SlidersHorizontal size={20} />
+              <button className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/8 text-white shadow-soft" type="button">
+                <Bell size={20} />
               </button>
             </div>
-            <label className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-white px-4 shadow-soft">
+
+            <label className="flex min-h-14 items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 shadow-soft backdrop-blur">
               <Search size={20} className="text-brand" />
-              <input className="w-full bg-transparent text-sm font-bold outline-none placeholder:font-semibold placeholder:text-muted/70" placeholder="Buscar servico, profissional, cidade ou bairro..." value={search} onChange={(event) => setSearch(event.target.value)} />
+              <input
+                className="w-full bg-transparent text-sm font-bold text-white outline-none placeholder:font-semibold placeholder:text-white/45"
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Buscar servico, profissional, cidade ou bairro..."
+                value={search}
+              />
             </label>
-            <div className="flex gap-2 overflow-x-auto pb-1 xl:hidden">
+
+            <div className="flex gap-2 overflow-x-auto pb-1">
               {categories.map((category) => (
                 <button
-                  className={`shrink-0 rounded-full px-4 py-2 text-sm font-extrabold transition ${activeCategory === category ? 'bg-brand text-white shadow-[0_12px_28px_rgba(0,127,120,0.24)]' : 'bg-white text-muted shadow-[0_8px_24px_rgba(16,26,51,0.06)]'}`}
+                  className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-extrabold transition ${activeCategory === category ? 'bg-brand text-white shadow-[0_12px_28px_rgba(16,184,170,0.28)]' : 'bg-white/8 text-white/62 hover:bg-white/14 hover:text-white'}`}
                   key={category}
                   onClick={() => setActiveCategory(category)}
+                  type="button"
                 >
                   {category}
                 </button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
+          <motion.div
+            animate="show"
+            className="grid gap-4 lg:grid-cols-2"
+            initial="hidden"
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
+          >
             {items.map((professional) => (
               <ProfessionalCard key={professional.id} professional={professional} />
             ))}
-          </div>
+          </motion.div>
         </section>
 
-        <aside className="hidden content-start gap-4 xl:grid">
+        <motion.aside
+          animate={{ opacity: 1, x: 0 }}
+          className="hidden content-start gap-4 xl:grid"
+          initial={{ opacity: 0, x: 24 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+        >
           <div className="premium-surface rounded-[2rem] p-5">
             <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">Brasil hoje</p>
             <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.035em]">Pedidos bem descritos recebem resposta mais rapida.</h2>
             <p className="mt-3 text-sm font-medium leading-6 text-muted">Inclua fotos, cidade, regiao e prazo para receber orcamentos mais precisos.</p>
           </div>
-          <div className="rounded-[2rem] bg-gradient-to-br from-brand to-ink p-5 text-white shadow-premium">
+          <div className="animated-glow rounded-[2rem] bg-gradient-to-br from-brand to-ink p-5 text-white shadow-premium">
             <p className="text-sm font-bold text-white/65">ELLO protege</p>
-            <p className="mt-2 text-3xl font-extrabold tracking-[-0.04em]">Confiança em cada etapa.</p>
+            <p className="mt-2 text-3xl font-extrabold tracking-[-0.04em]">Confianca em cada etapa.</p>
           </div>
-        </aside>
+        </motion.aside>
       </div>
 
-      <nav className="fixed inset-x-4 bottom-3 z-20 grid grid-cols-4 rounded-[1.35rem] border border-white/16 bg-ink/96 p-1.5 text-[11px] font-extrabold text-white shadow-premium backdrop-blur md:hidden">
-        <button className="grid justify-items-center gap-0.5 rounded-2xl bg-white px-2 py-1.5 text-ink"><Search size={16} /> Feed</button>
-        <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/60"><BriefcaseBusiness size={16} /> Pedidos</button>
-        <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/60"><MessageCircle size={16} /> Chat</button>
-        <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/60"><UserCircle size={16} /> Perfil</button>
+      <nav className="ios-tabbar fixed inset-x-4 bottom-3 z-20 grid grid-cols-5 rounded-[1.55rem] p-1.5 text-[10px] font-extrabold text-white md:hidden">
+        <button className="grid justify-items-center gap-0.5 rounded-2xl bg-brand px-2 py-1.5 text-white" type="button"><Home size={16} /> Inicio</button>
+        <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/58" type="button"><BriefcaseBusiness size={16} /> Pedidos</button>
+        <button className="-mt-5 grid justify-items-center gap-0.5 text-white" type="button">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand to-sky text-ink shadow-[0_18px_42px_rgba(16,184,170,0.38)]"><Plus size={28} /></span>
+        </button>
+        <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/58" type="button"><MessageCircle size={16} /> Chat</button>
+        <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/58" type="button"><UserCircle size={16} /> Perfil</button>
       </nav>
     </main>
   )
