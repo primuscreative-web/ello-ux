@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
+import { createProfessionalSignup } from '../../services/elloService'
 import { collectErrors, getFormValues, hasErrors, matchingPassword, required, validEmail, validPassword } from '../../utils/validation'
 
 const steps = ['Conta', 'Atendimento', 'Confianca', 'Vitrine']
@@ -37,6 +38,8 @@ export function ProfessionalSignup() {
   const [step, setStep] = useState(0)
   const [draft, setDraft] = useState({})
   const [errors, setErrors] = useState({})
+  const [formError, setFormError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
   const isLast = step === steps.length - 1
 
@@ -46,11 +49,12 @@ export function ProfessionalSignup() {
     setDraft((current) => ({ ...current, [name]: value }))
   }
 
-  function submit(event) {
+  async function submit(event) {
     event.preventDefault()
     const values = { ...draft, ...getFormValues(event.currentTarget) }
     const nextErrors = collectErrors(stepRules[step], values)
 
+    setFormError('')
     setErrors(nextErrors)
     if (hasErrors(nextErrors)) return
 
@@ -60,7 +64,16 @@ export function ProfessionalSignup() {
       return
     }
 
-    navigate('/profissional/central')
+    setSubmitting(true)
+    try {
+      await createProfessionalSignup(values)
+      navigate('/profissional/central')
+    } catch (error) {
+      setErrors(error.errors || {})
+      setFormError(error.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -163,11 +176,12 @@ export function ProfessionalSignup() {
           ) : (
             <span />
           )}
-          <Button type="submit">
+          <Button disabled={submitting} type="submit">
             {isLast ? <CheckCircle2 size={18} /> : <ArrowRight size={18} />}
-            {isLast ? 'Abrir central' : 'Continuar'}
+            {submitting ? 'Criando perfil...' : isLast ? 'Abrir central' : 'Continuar'}
           </Button>
         </div>
+        {formError ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{formError}</p> : null}
         </section>
       </form>
     </main>

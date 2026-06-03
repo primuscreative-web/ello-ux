@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
+import { createClientSignup } from '../../services/elloService'
 import { collectErrors, getFormValues, hasErrors, matchingPassword, required, validEmail, validPassword } from '../../utils/validation'
 
 const clientRules = {
@@ -18,18 +19,30 @@ const clientRules = {
 export function ClientSignup() {
   const [done, setDone] = useState(false)
   const [errors, setErrors] = useState({})
+  const [formError, setFormError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
 
-  function submit(event) {
+  async function submit(event) {
     event.preventDefault()
     const values = getFormValues(event.currentTarget)
     const nextErrors = collectErrors(clientRules, values)
 
+    setFormError('')
     setErrors(nextErrors)
     if (hasErrors(nextErrors)) return
 
-    setDone(true)
-    window.setTimeout(() => navigate('/cliente/feed'), 500)
+    setSubmitting(true)
+    try {
+      await createClientSignup(values)
+      setDone(true)
+      window.setTimeout(() => navigate('/cliente/feed'), 500)
+    } catch (error) {
+      setErrors(error.errors || {})
+      setFormError(error.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -92,11 +105,12 @@ export function ClientSignup() {
 
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
             <BackButton fallback="/comecar" label="Escolher outro perfil" className="justify-center" />
-            <Button type="submit" className="w-full sm:w-auto">
+            <Button disabled={submitting} type="submit" className="w-full sm:w-auto">
               {done ? <CheckCircle2 size={18} /> : null}
-              {done ? 'Cadastro criado' : 'Entrar no feed'}
+              {done ? 'Cadastro criado' : submitting ? 'Criando cadastro...' : 'Entrar no feed'}
             </Button>
           </div>
+          {formError ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{formError}</p> : null}
         </section>
       </form>
     </main>

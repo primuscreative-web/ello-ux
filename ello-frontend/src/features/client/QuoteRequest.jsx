@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
-import { getProfessionalById } from '../../services/elloService'
+import { createQuoteRequest, getProfessionalById } from '../../services/elloService'
 import { collectErrors, getFormValues, hasErrors, required } from '../../utils/validation'
 
 const quoteRules = {
@@ -19,21 +19,33 @@ export function QuoteRequest() {
   const [professional, setProfessional] = useState(null)
   const [sent, setSent] = useState(false)
   const [errors, setErrors] = useState({})
+  const [formError, setFormError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     getProfessionalById(id).then(setProfessional)
   }, [id])
 
-  function submit(event) {
+  async function submit(event) {
     event.preventDefault()
     const values = getFormValues(event.currentTarget)
     const nextErrors = collectErrors(quoteRules, values)
 
+    setFormError('')
     setErrors(nextErrors)
     if (hasErrors(nextErrors)) return
 
-    setSent(true)
-    window.setTimeout(() => navigate('/cliente/feed'), 700)
+    setSubmitting(true)
+    try {
+      await createQuoteRequest({ ...values, professionalId: id })
+      setSent(true)
+      window.setTimeout(() => navigate('/cliente/feed'), 700)
+    } catch (error) {
+      setErrors(error.errors || {})
+      setFormError(error.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -76,10 +88,11 @@ export function QuoteRequest() {
           </span>
         </button>
 
-        <Button type="submit" className="w-full sm:w-auto">
+        <Button disabled={submitting} type="submit" className="w-full sm:w-auto">
           {sent ? <CheckCircle2 size={18} /> : null}
-          {sent ? 'Pedido enviado' : 'Enviar pedido'}
+          {sent ? 'Pedido enviado' : submitting ? 'Enviando pedido...' : 'Enviar pedido'}
         </Button>
+        {formError ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{formError}</p> : null}
       </form>
     </main>
   )

@@ -12,6 +12,7 @@ router.get('/', (req, res) => {
       !search ||
       professional.name.toLowerCase().includes(search) ||
       professional.category.toLowerCase().includes(search) ||
+      professional.city.toLowerCase().includes(search) ||
       professional.neighborhood.toLowerCase().includes(search) ||
       professional.keywords.some((keyword) => keyword.includes(search))
 
