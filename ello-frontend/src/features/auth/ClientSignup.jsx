@@ -4,20 +4,37 @@ import { useNavigate } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
+import { collectErrors, getFormValues, hasErrors, matchingPassword, required, validEmail, validPassword } from '../../utils/validation'
+
+const clientRules = {
+  fullName: [(value) => required(value, 'Informe seu nome completo.')],
+  birthDate: [(value) => required(value, 'Informe sua data de nascimento.')],
+  city: [(value) => required(value, 'Informe sua cidade principal.')],
+  email: [validEmail],
+  password: [validPassword],
+  confirmPassword: [(_, values) => matchingPassword(values.password, values.confirmPassword)]
+}
 
 export function ClientSignup() {
   const [done, setDone] = useState(false)
+  const [errors, setErrors] = useState({})
   const navigate = useNavigate()
 
   function submit(event) {
     event.preventDefault()
+    const values = getFormValues(event.currentTarget)
+    const nextErrors = collectErrors(clientRules, values)
+
+    setErrors(nextErrors)
+    if (hasErrors(nextErrors)) return
+
     setDone(true)
     window.setTimeout(() => navigate('/cliente/feed'), 500)
   }
 
   return (
     <main className="min-h-screen px-4 py-5 text-ink sm:px-6 md:py-8">
-      <form onSubmit={submit} className="mx-auto grid max-w-6xl overflow-hidden rounded-[2.25rem] border border-white/70 bg-white/82 shadow-premium backdrop-blur-2xl lg:grid-cols-[0.9fr_1.1fr]">
+      <form noValidate onSubmit={submit} className="mx-auto grid max-w-6xl overflow-hidden rounded-[2.25rem] border border-white/70 bg-white/82 shadow-premium backdrop-blur-2xl lg:grid-cols-[0.9fr_1.1fr]">
         <section className="relative isolate grid content-between gap-8 overflow-hidden bg-ink p-6 text-white sm:p-8">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_12%,rgba(0,127,120,0.7),transparent_22rem),linear-gradient(145deg,#101a33,#055b57_65%,#071224)]" />
           <div className="relative z-10 flex items-center justify-between gap-4">
@@ -60,16 +77,16 @@ export function ClientSignup() {
 
           <div className="grid gap-5">
             <div className="grid gap-4 rounded-[1.6rem] border border-line bg-white p-4 md:grid-cols-2">
-              <Input label="Nome completo" placeholder="Seu nome completo" required />
-              <Input label="Data de nascimento" type="date" required />
-              <Input label="Cidade principal" placeholder="Ex: Sao Paulo, Recife, Curitiba" required />
-              <Input label="Bairro ou regiao" placeholder="Ex: Pinheiros, Boa Viagem, Batel" />
+              <Input error={errors.fullName} label="Nome completo" name="fullName" placeholder="Seu nome completo" />
+              <Input error={errors.birthDate} label="Data de nascimento" name="birthDate" type="date" />
+              <Input error={errors.city} label="Cidade principal" name="city" placeholder="Ex: Sao Paulo, Recife, Curitiba" />
+              <Input label="Bairro ou regiao" name="region" placeholder="Ex: Pinheiros, Boa Viagem, Batel" />
             </div>
             <div className="grid gap-4 rounded-[1.6rem] border border-line bg-white p-4 md:grid-cols-2">
-              <Input label="Email" type="email" placeholder="voce@email.com" required />
-              <Input label="Senha" type="password" placeholder="Minimo 8 caracteres" required />
-              <Input label="Confirmar senha" type="password" placeholder="Repita sua senha" required />
-              <Input label="Interesses" placeholder="Ex: casa, beleza, eventos, transporte" />
+              <Input error={errors.email} label="Email" name="email" type="email" placeholder="voce@email.com" />
+              <Input error={errors.password} label="Senha" name="password" type="password" placeholder="Minimo 8 caracteres" />
+              <Input error={errors.confirmPassword} label="Confirmar senha" name="confirmPassword" type="password" placeholder="Repita sua senha" />
+              <Input label="Interesses" name="interests" placeholder="Ex: casa, beleza, eventos, transporte" />
             </div>
           </div>
 

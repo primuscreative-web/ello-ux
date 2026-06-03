@@ -5,12 +5,20 @@ import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { getProfessionalById } from '../../services/elloService'
+import { collectErrors, getFormValues, hasErrors, required } from '../../utils/validation'
+
+const quoteRules = {
+  description: [(value) => required(value, 'Descreva o servico que voce precisa.')],
+  desiredDate: [(value) => required(value, 'Informe uma data desejada.')],
+  location: [(value) => required(value, 'Informe cidade e bairro.')]
+}
 
 export function QuoteRequest() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [professional, setProfessional] = useState(null)
   const [sent, setSent] = useState(false)
+  const [errors, setErrors] = useState({})
 
   useEffect(() => {
     getProfessionalById(id).then(setProfessional)
@@ -18,13 +26,19 @@ export function QuoteRequest() {
 
   function submit(event) {
     event.preventDefault()
+    const values = getFormValues(event.currentTarget)
+    const nextErrors = collectErrors(quoteRules, values)
+
+    setErrors(nextErrors)
+    if (hasErrors(nextErrors)) return
+
     setSent(true)
     window.setTimeout(() => navigate('/cliente/feed'), 700)
   }
 
   return (
     <main className="min-h-screen px-5 py-6 text-ink">
-      <form onSubmit={submit} className="mx-auto grid max-w-3xl gap-6 rounded-[2rem] bg-white p-5 shadow-premium md:p-8">
+      <form noValidate onSubmit={submit} className="mx-auto grid max-w-3xl gap-6 rounded-[2rem] bg-white p-5 shadow-premium md:p-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="grid gap-2">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand">Solicitar orcamento</p>
@@ -38,12 +52,18 @@ export function QuoteRequest() {
 
         <label className="grid gap-2 text-sm font-semibold text-ink">
           <span>Descricao do servico</span>
-          <textarea className="min-h-36 rounded-2xl border border-line bg-white px-4 py-3 text-sm text-ink focus:border-brand" placeholder="Ex: preciso pintar uma sala de 20m2 com pequenos reparos na parede." required />
+          <textarea
+            aria-invalid={errors.description ? 'true' : 'false'}
+            className={`min-h-36 rounded-2xl border bg-white px-4 py-3 text-sm text-ink focus:bg-white ${errors.description ? 'border-rose-300 focus:border-rose-500' : 'border-line focus:border-brand'}`}
+            name="description"
+            placeholder="Ex: preciso pintar uma sala de 20m2 com pequenos reparos na parede."
+          />
+          {errors.description ? <span className="text-xs font-bold text-rose-600">{errors.description}</span> : null}
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Input label="Data desejada" type="date" required />
-          <Input label="Cidade e bairro" placeholder="Ex: Recife, Boa Viagem" required />
+          <Input error={errors.desiredDate} label="Data desejada" name="desiredDate" type="date" />
+          <Input error={errors.location} label="Cidade e bairro" name="location" placeholder="Ex: Recife, Boa Viagem" />
         </div>
 
         <button className="flex min-h-24 items-center gap-4 rounded-[1.5rem] border border-dashed border-brand/40 bg-brand/5 p-4 text-left" type="button">
