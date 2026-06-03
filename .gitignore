@@ -8,4 +8,5 @@ yarn-debug.log*
 yarn-error.log*
 .qa/
 vite-dev*.log
+ello-backend/data/
 .DS_Store
