@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const { createQuote, listQuotes } = require('../data/store')
 const { required, validatePayload } = require('../lib/validation')
+const { requireAuth } = require('../middleware/auth')
 
 const router = Router()
 
@@ -15,7 +16,7 @@ router.get('/', (_req, res) => {
   res.json({ data: listQuotes() })
 })
 
-router.post('/', (req, res) => {
+router.post('/', requireAuth, (req, res) => {
   const errors = validatePayload(req.body, quoteRules)
 
   if (Object.keys(errors).length > 0) {
@@ -23,7 +24,7 @@ router.post('/', (req, res) => {
     return
   }
 
-  res.status(201).json({ data: createQuote(req.body) })
+  res.status(201).json({ data: createQuote(req.body, req.user) })
 })
 
 module.exports = router

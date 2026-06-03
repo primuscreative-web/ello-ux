@@ -1,19 +1,13 @@
 const { Router } = require('express')
-const { getUserByToken, loginUser } = require('../data/store')
+const { loginUser } = require('../data/store')
 const { email, required, validatePayload } = require('../lib/validation')
+const { requireAuth } = require('../middleware/auth')
 
 const router = Router()
 
 const loginRules = {
   email: [required('Informe seu email.'), email('Informe um email valido.')],
   password: [required('Informe sua senha.')]
-}
-
-function getBearerToken(req) {
-  const header = String(req.headers.authorization || '')
-  const [type, token] = header.split(' ')
-
-  return type === 'Bearer' ? token : ''
 }
 
 router.post('/login', (req, res) => {
@@ -31,15 +25,8 @@ router.post('/login', (req, res) => {
   }
 })
 
-router.get('/me', (req, res) => {
-  const user = getUserByToken(getBearerToken(req))
-
-  if (!user) {
-    res.status(401).json({ error: 'Sessao invalida.' })
-    return
-  }
-
-  res.json({ data: { user } })
+router.get('/me', requireAuth, (req, res) => {
+  res.json({ data: { user: req.user } })
 })
 
 module.exports = router

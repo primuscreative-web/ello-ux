@@ -16,7 +16,7 @@ Represents login identity.
 - `createdAt`
 - `updatedAt`
 
-Current local development uses a non-production password placeholder. Production must replace this with a real password hashing strategy and managed auth.
+Current local development hashes passwords with Node's built-in `crypto.scryptSync`. Production should still move to managed auth or a hardened auth service with rate limiting, recovery flows, email verification, and audited session handling.
 
 ### Session
 

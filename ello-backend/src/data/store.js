@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const { hashPassword, verifyPassword } = require('../lib/password')
 const { professionals } = require('./mockData')
 
 const dataDir = path.join(__dirname, '..', '..', 'data')
@@ -89,7 +90,7 @@ function createUser(state, payload, role, profileId) {
   const user = {
     id: createId('user'),
     email,
-    passwordHash: payload.password,
+    passwordHash: hashPassword(payload.password),
     role,
     profileId,
     createdAt: now,
@@ -149,7 +150,7 @@ function loginUser(payload) {
   const state = readState()
   const user = findUserByEmail(state, payload.email)
 
-  if (!user || user.passwordHash !== payload.password) {
+  if (!user || !verifyPassword(payload.password, user.passwordHash)) {
     const error = new Error('Email ou senha invalidos.')
     error.code = 'INVALID_CREDENTIALS'
     error.errors = { email: 'Confira email e senha.' }
@@ -171,12 +172,13 @@ function getUserByToken(token) {
   return toPublicUser(state.users.find((user) => user.id === session.userId))
 }
 
-function createQuote(payload) {
+function createQuote(payload, user) {
   const state = readState()
   const professional = professionals.find((item) => item.id === payload.professionalId)
   const quote = {
     id: createId('quote'),
     status: 'Novo pedido',
+    clientUserId: user?.id || null,
     professionalId: payload.professionalId,
     professionalName: professional?.name || 'Profissional ELLO',
     description: payload.description,

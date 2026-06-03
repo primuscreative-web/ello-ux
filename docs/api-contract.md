@@ -31,6 +31,8 @@ Response:
   "version": "0.2.0",
   "storage": "json-file",
   "records": {
+    "users": 0,
+    "sessions": 0,
     "clients": 0,
     "professionalSignups": 0,
     "quotes": 0
@@ -143,6 +145,12 @@ The API creates a professional signup with:
 ```http
 POST /quotes
 GET /quotes
+```
+
+Quote creation requires an authenticated session:
+
+```http
+Authorization: Bearer session-...
 ```
 
 Required fields for quote creation:
