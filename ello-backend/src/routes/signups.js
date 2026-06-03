@@ -39,7 +39,12 @@ router.post('/clients', (req, res) => {
     return
   }
 
-  res.status(201).json({ data: createClientSignup(req.body) })
+  try {
+    res.status(201).json({ data: createClientSignup(req.body) })
+  } catch (error) {
+    const status = error.code === 'EMAIL_EXISTS' ? 409 : 500
+    res.status(status).json({ error: error.message, errors: error.errors || {} })
+  }
 })
 
 router.post('/professionals', (req, res) => {
@@ -50,7 +55,12 @@ router.post('/professionals', (req, res) => {
     return
   }
 
-  res.status(201).json({ data: createProfessionalSignup(req.body) })
+  try {
+    res.status(201).json({ data: createProfessionalSignup(req.body) })
+  } catch (error) {
+    const status = error.code === 'EMAIL_EXISTS' ? 409 : 500
+    res.status(status).json({ error: error.message, errors: error.errors || {} })
+  }
 })
 
 module.exports = router

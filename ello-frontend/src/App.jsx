@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { ClientSignup } from './features/auth/ClientSignup'
+import { Login } from './features/auth/Login'
 import { ProfessionalSignup } from './features/auth/ProfessionalSignup'
 import { RoleChoice } from './features/auth/RoleChoice'
 import { ClientFeed } from './features/client/ClientFeed'
@@ -15,6 +16,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Onboarding />} />
       <Route path="/comecar" element={<RoleChoice />} />
+      <Route path="/entrar" element={<Login />} />
       <Route path="/cadastro/cliente" element={<ClientSignup />} />
       <Route path="/cadastro/profissional" element={<ProfessionalSignup />} />
       <Route path="/cliente/feed" element={<ClientFeed />} />

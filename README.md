@@ -29,7 +29,7 @@ The first version focuses on onboarding, role-based registration, client discove
 
 ## Current API State
 
-The backend now supports local write flows for client signup, professional signup, and quote requests. Development data is persisted to `ello-backend/data/ello-dev-store.json`, which is ignored by Git.
+The backend now supports local write flows for client signup, professional signup, quote requests, and development login sessions. Development data is persisted to `ello-backend/data/ello-dev-store.json`, which is ignored by Git.
 
 See:
 

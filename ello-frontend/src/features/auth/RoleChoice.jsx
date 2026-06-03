@@ -79,7 +79,8 @@ export function RoleChoice() {
 
           <div className="flex items-center gap-3 rounded-[1.5rem] bg-brand/8 p-4 text-sm font-bold text-muted">
             <BriefcaseBusiness size={18} className="text-brand" />
-            A decisao pode mudar depois, mas o cadastro inicial fica mais rapido com o caminho certo.
+            <span className="flex-1">A decisao pode mudar depois, mas o cadastro inicial fica mais rapido com o caminho certo.</span>
+            <button className="text-brand" onClick={() => navigate('/entrar')} type="button">Ja tenho conta</button>
           </div>
         </div>
       </section>

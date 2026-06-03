@@ -5,6 +5,7 @@ import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { createProfessionalSignup } from '../../services/elloService'
+import { saveSession } from '../../services/session'
 import { collectErrors, getFormValues, hasErrors, matchingPassword, required, validEmail, validPassword } from '../../utils/validation'
 
 const steps = ['Conta', 'Atendimento', 'Confianca', 'Vitrine']
@@ -66,7 +67,8 @@ export function ProfessionalSignup() {
 
     setSubmitting(true)
     try {
-      await createProfessionalSignup(values)
+      const session = await createProfessionalSignup(values)
+      saveSession(session)
       navigate('/profissional/central')
     } catch (error) {
       setErrors(error.errors || {})

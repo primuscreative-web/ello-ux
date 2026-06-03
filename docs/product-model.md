@@ -12,8 +12,19 @@ Represents login identity.
 - `email`
 - `passwordHash`
 - `role`: `client` or `professional`
+- `profileId`
 - `createdAt`
 - `updatedAt`
+
+Current local development uses a non-production password placeholder. Production must replace this with a real password hashing strategy and managed auth.
+
+### Session
+
+Represents a local development login session.
+
+- `token`
+- `userId`
+- `createdAt`
 
 ### Client Profile
 

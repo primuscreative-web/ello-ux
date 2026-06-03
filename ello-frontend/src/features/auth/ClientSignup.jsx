@@ -5,6 +5,7 @@ import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { createClientSignup } from '../../services/elloService'
+import { saveSession } from '../../services/session'
 import { collectErrors, getFormValues, hasErrors, matchingPassword, required, validEmail, validPassword } from '../../utils/validation'
 
 const clientRules = {
@@ -34,7 +35,8 @@ export function ClientSignup() {
 
     setSubmitting(true)
     try {
-      await createClientSignup(values)
+      const session = await createClientSignup(values)
+      saveSession(session)
       setDone(true)
       window.setTimeout(() => navigate('/cliente/feed'), 500)
     } catch (error) {

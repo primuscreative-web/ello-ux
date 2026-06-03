@@ -5,6 +5,8 @@ const { professionals } = require('./mockData')
 const dataDir = path.join(__dirname, '..', '..', 'data')
 const dataFile = path.join(dataDir, 'ello-dev-store.json')
 const initialState = {
+  users: [],
+  sessions: [],
   clients: [],
   professionalSignups: [],
   quotes: []
@@ -27,6 +29,8 @@ function readState() {
     const parsed = JSON.parse(fs.readFileSync(dataFile, 'utf8'))
 
     return {
+      users: Array.isArray(parsed.users) ? parsed.users : [],
+      sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
       clients: Array.isArray(parsed.clients) ? parsed.clients : [],
       professionalSignups: Array.isArray(parsed.professionalSignups) ? parsed.professionalSignups : [],
       quotes: Array.isArray(parsed.quotes) ? parsed.quotes : []
@@ -50,6 +54,63 @@ function withoutSensitiveFields(payload) {
   return safePayload
 }
 
+function normalizeEmail(email) {
+  return String(email || '').trim().toLowerCase()
+}
+
+function findUserByEmail(state, email) {
+  const normalizedEmail = normalizeEmail(email)
+  return state.users.find((user) => user.email === normalizedEmail)
+}
+
+function toPublicUser(user) {
+  if (!user) return null
+
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    profileId: user.profileId,
+    createdAt: user.createdAt
+  }
+}
+
+function createUser(state, payload, role, profileId) {
+  const email = normalizeEmail(payload.email)
+
+  if (findUserByEmail(state, email)) {
+    const error = new Error('Email ja cadastrado.')
+    error.code = 'EMAIL_EXISTS'
+    error.errors = { email: 'Este email ja esta em uso.' }
+    throw error
+  }
+
+  const now = new Date().toISOString()
+  const user = {
+    id: createId('user'),
+    email,
+    passwordHash: payload.password,
+    role,
+    profileId,
+    createdAt: now,
+    updatedAt: now
+  }
+
+  state.users.push(user)
+  return user
+}
+
+function createSessionForUser(state, user) {
+  const session = {
+    token: createId('session'),
+    userId: user.id,
+    createdAt: new Date().toISOString()
+  }
+
+  state.sessions.push(session)
+  return session
+}
+
 function createClientSignup(payload) {
   const state = readState()
   const client = {
@@ -58,10 +119,12 @@ function createClientSignup(payload) {
     ...withoutSensitiveFields(payload),
     createdAt: new Date().toISOString()
   }
+  const user = createUser(state, payload, 'client', client.id)
+  const session = createSessionForUser(state, user)
 
   state.clients.push(client)
   writeState(state)
-  return client
+  return { profile: client, token: session.token, user: toPublicUser(user) }
 }
 
 function createProfessionalSignup(payload) {
@@ -74,10 +137,38 @@ function createProfessionalSignup(payload) {
     ...withoutSensitiveFields(payload),
     createdAt: new Date().toISOString()
   }
+  const user = createUser(state, payload, 'professional', signup.id)
+  const session = createSessionForUser(state, user)
 
   state.professionalSignups.push(signup)
   writeState(state)
-  return signup
+  return { profile: signup, token: session.token, user: toPublicUser(user) }
+}
+
+function loginUser(payload) {
+  const state = readState()
+  const user = findUserByEmail(state, payload.email)
+
+  if (!user || user.passwordHash !== payload.password) {
+    const error = new Error('Email ou senha invalidos.')
+    error.code = 'INVALID_CREDENTIALS'
+    error.errors = { email: 'Confira email e senha.' }
+    throw error
+  }
+
+  const session = createSessionForUser(state, user)
+  writeState(state)
+
+  return { token: session.token, user: toPublicUser(user) }
+}
+
+function getUserByToken(token) {
+  const state = readState()
+  const session = state.sessions.find((item) => item.token === token)
+
+  if (!session) return null
+
+  return toPublicUser(state.users.find((user) => user.id === session.userId))
 }
 
 function createQuote(payload) {
@@ -108,6 +199,8 @@ function getStoreSummary() {
   const state = readState()
 
   return {
+    users: state.users.length,
+    sessions: state.sessions.length,
     clients: state.clients.length,
     professionalSignups: state.professionalSignups.length,
     quotes: state.quotes.length
@@ -118,7 +211,9 @@ module.exports = {
   createClientSignup,
   createProfessionalSignup,
   createQuote,
+  getUserByToken,
   getStoreSummary,
+  loginUser,
   listQuotes,
   readState
 }

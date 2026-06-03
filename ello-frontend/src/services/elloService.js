@@ -5,6 +5,7 @@ import {
   professionals,
   requests
 } from '../data/elloData'
+import { getSessionToken } from './session'
 
 const wait = (ms = 180) => new Promise((resolve) => window.setTimeout(resolve, ms))
 const API_URL = import.meta.env.VITE_ELLO_API_URL || 'http://localhost:3001'
@@ -16,7 +17,8 @@ async function postJson(path, payload) {
     response = await fetch(`${API_URL}${path}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...(getSessionToken() ? { Authorization: `Bearer ${getSessionToken()}` } : {})
       },
       body: JSON.stringify(payload)
     })
@@ -36,7 +38,11 @@ async function postJson(path, payload) {
 }
 
 async function getJson(path) {
-  const response = await fetch(`${API_URL}${path}`)
+  const response = await fetch(`${API_URL}${path}`, {
+    headers: {
+      ...(getSessionToken() ? { Authorization: `Bearer ${getSessionToken()}` } : {})
+    }
+  })
   const body = await response.json().catch(() => ({}))
 
   if (!response.ok) {
@@ -116,4 +122,12 @@ export function createProfessionalSignup(payload) {
 
 export function createQuoteRequest(payload) {
   return postJson('/quotes', payload)
+}
+
+export function login(payload) {
+  return postJson('/auth/login', payload)
+}
+
+export function getCurrentUser() {
+  return getJson('/auth/me')
 }

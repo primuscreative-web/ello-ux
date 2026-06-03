@@ -38,6 +38,46 @@ Response:
 }
 ```
 
+## Authentication
+
+```http
+POST /auth/login
+GET /auth/me
+```
+
+Login payload:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "12345678"
+}
+```
+
+Successful login returns:
+
+```json
+{
+  "data": {
+    "token": "session-...",
+    "user": {
+      "id": "user-...",
+      "email": "user@example.com",
+      "role": "client",
+      "profileId": "client-...",
+      "createdAt": "2026-06-03T00:00:00.000Z"
+    }
+  }
+}
+```
+
+Current user lookup:
+
+```http
+GET /auth/me
+Authorization: Bearer session-...
+```
+
 ## Client Signup
 
 ```http
@@ -58,7 +98,7 @@ Optional fields:
 - `region`
 - `interests`
 
-The API validates the payload and returns sanitized data. Password fields are not returned.
+The API validates the payload and returns sanitized profile data plus a development session token. Password fields are not returned.
 
 ## Professional Signup
 
