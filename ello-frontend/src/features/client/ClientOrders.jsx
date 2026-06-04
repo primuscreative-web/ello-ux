@@ -2,9 +2,10 @@ import { MessageCircle, SearchCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BottomNav } from '../../components/navigation/BottomNav'
+import { Button } from '../../components/ui/Button'
 import { BackButton } from '../../components/ui/BackButton'
 import { StatusPill } from '../../components/ui/StatusPill'
-import { getRequests } from '../../services/elloService'
+import { getRequests, updateQuoteStatus } from '../../services/elloService'
 
 const statusTone = {
   'Novo pedido': 'brand',
@@ -15,10 +16,27 @@ const statusTone = {
 
 export function ClientOrders() {
   const [items, setItems] = useState([])
+  const [actionError, setActionError] = useState('')
+  const [busyAction, setBusyAction] = useState('')
 
   useEffect(() => {
     getRequests().then(setItems)
   }, [])
+
+  async function changeStatus(requestId, status) {
+    setActionError('')
+    setBusyAction(`${requestId}-${status}`)
+    try {
+      const quote = await updateQuoteStatus(requestId, status)
+      setItems((current) => current.map((item) => (
+        item.id === requestId ? { ...item, status: quote.status } : item
+      )))
+    } catch (error) {
+      setActionError(error.message)
+    } finally {
+      setBusyAction('')
+    }
+  }
 
   return (
     <main className="min-h-screen px-4 pb-28 pt-5 text-ink sm:px-6 md:py-8">
@@ -57,13 +75,33 @@ export function ClientOrders() {
                     Aguardando resposta do profissional.
                   </p>
                 )}
+                {actionError ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{actionError}</p> : null}
               </div>
-              <Link
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-white/90 px-5 text-sm font-extrabold tracking-[-0.01em] text-ink shadow-[0_10px_28px_rgba(7,19,25,0.08)] transition duration-200 hover:-translate-y-0.5 hover:border-brand/50 hover:bg-white"
-                to={`/pedidos/${request.id}/chat`}
-              >
-                <MessageCircle size={18} /> Conversar
-              </Link>
+              <div className="grid gap-2 sm:grid-cols-2 md:min-w-64 md:grid-cols-1">
+                {request.status === 'Orcamento enviado' ? (
+                  <Button
+                    disabled={busyAction === `${request.id}-Aceito`}
+                    onClick={() => changeStatus(request.id, 'Aceito')}
+                  >
+                    {busyAction === `${request.id}-Aceito` ? 'Aceitando...' : 'Aceitar'}
+                  </Button>
+                ) : null}
+                {request.status !== 'Cancelado' && request.status !== 'Aceito' ? (
+                  <Button
+                    disabled={busyAction === `${request.id}-Cancelado`}
+                    onClick={() => changeStatus(request.id, 'Cancelado')}
+                    variant="secondary"
+                  >
+                    {busyAction === `${request.id}-Cancelado` ? 'Cancelando...' : 'Cancelar'}
+                  </Button>
+                ) : null}
+                <Link
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-white/90 px-5 text-sm font-extrabold tracking-[-0.01em] text-ink shadow-[0_10px_28px_rgba(7,19,25,0.08)] transition duration-200 hover:-translate-y-0.5 hover:border-brand/50 hover:bg-white"
+                  to={`/pedidos/${request.id}/chat`}
+                >
+                  <MessageCircle size={18} /> Conversar
+                </Link>
+              </div>
             </article>
           ))}
 

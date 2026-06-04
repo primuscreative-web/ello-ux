@@ -146,6 +146,7 @@ The API creates a professional signup with:
 POST /quotes
 GET /quotes
 PATCH /quotes/:id/response
+PATCH /quotes/:id/status
 GET /quotes/:id/messages
 POST /quotes/:id/messages
 ```
@@ -203,6 +204,19 @@ Quote message payload:
 ```
 
 Quote messages are scoped by session. Clients can read and send messages only in their own requests. Professional sessions can read and send messages in available local development requests.
+
+Client status update payload:
+
+```json
+{
+  "status": "Aceito"
+}
+```
+
+Allowed client statuses:
+
+- `Aceito`
+- `Cancelado`
 
 ## Error Shape
 

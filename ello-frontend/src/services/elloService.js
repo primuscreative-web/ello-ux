@@ -136,6 +136,10 @@ export function respondToQuote(id, payload) {
   return postJson(`/quotes/${id}/response`, payload, 'PATCH')
 }
 
+export function updateQuoteStatus(id, status) {
+  return postJson(`/quotes/${id}/status`, { status }, 'PATCH')
+}
+
 export function getQuoteMessages(id) {
   return getJson(`/quotes/${id}/messages`)
 }

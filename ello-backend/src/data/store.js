@@ -237,6 +237,42 @@ function respondToQuote(id, payload, user) {
   return quote
 }
 
+function updateQuoteStatus(id, payload, user) {
+  const state = readState()
+  const quote = findQuoteForUser(state, id, user)
+  const allowedStatuses = ['Aceito', 'Cancelado']
+
+  if (!quote) {
+    const error = new Error('Pedido nao encontrado.')
+    error.code = 'QUOTE_NOT_FOUND'
+    throw error
+  }
+
+  if (user?.role !== 'client') {
+    const error = new Error('Apenas clientes podem alterar o status do pedido.')
+    error.code = 'FORBIDDEN'
+    throw error
+  }
+
+  if (!allowedStatuses.includes(payload.status)) {
+    const error = new Error('Status invalido para esta etapa.')
+    error.code = 'INVALID_STATUS'
+    throw error
+  }
+
+  if (payload.status === 'Aceito' && quote.status !== 'Orcamento enviado') {
+    const error = new Error('Aceite disponivel apenas apos o orcamento.')
+    error.code = 'INVALID_STATUS'
+    throw error
+  }
+
+  quote.status = payload.status
+  quote.statusUpdatedAt = new Date().toISOString()
+
+  writeState(state)
+  return quote
+}
+
 function findQuoteForUser(state, id, user) {
   const quote = state.quotes.find((item) => item.id === id)
 
@@ -310,5 +346,6 @@ module.exports = {
   listQuotes,
   listQuotesForUser,
   readState,
-  respondToQuote
+  respondToQuote,
+  updateQuoteStatus
 }

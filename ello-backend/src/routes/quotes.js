@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const { createQuote, createQuoteMessage, listQuoteMessages, listQuotesForUser, respondToQuote } = require('../data/store')
+const { createQuote, createQuoteMessage, listQuoteMessages, listQuotesForUser, respondToQuote, updateQuoteStatus } = require('../data/store')
 const { required, validatePayload } = require('../lib/validation')
 const { requireAuth } = require('../middleware/auth')
 
@@ -20,6 +20,10 @@ const responseRules = {
 
 const messageRules = {
   body: [required('Escreva uma mensagem.')]
+}
+
+const statusRules = {
+  status: [required('Informe o novo status.')]
 }
 
 router.get('/', requireAuth, (req, res) => {
@@ -49,6 +53,22 @@ router.patch('/:id/response', requireAuth, (req, res) => {
     res.json({ data: respondToQuote(req.params.id, req.body, req.user) })
   } catch (error) {
     const status = error.code === 'QUOTE_NOT_FOUND' ? 404 : error.code === 'FORBIDDEN' ? 403 : 500
+    res.status(status).json({ error: error.message })
+  }
+})
+
+router.patch('/:id/status', requireAuth, (req, res) => {
+  const errors = validatePayload(req.body, statusRules)
+
+  if (Object.keys(errors).length > 0) {
+    res.status(422).json({ errors })
+    return
+  }
+
+  try {
+    res.json({ data: updateQuoteStatus(req.params.id, req.body, req.user) })
+  } catch (error) {
+    const status = error.code === 'QUOTE_NOT_FOUND' ? 404 : error.code === 'FORBIDDEN' ? 403 : error.code === 'INVALID_STATUS' ? 422 : 500
     res.status(status).json({ error: error.message })
   }
 })
