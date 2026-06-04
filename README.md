@@ -34,6 +34,7 @@ The backend now supports local write flows for client signup, professional signu
 See:
 
 - `docs/api-contract.md`
+- `docs/deploy-production.md`
 - `docs/product-model.md`
 - `supabase/README.md`
 
