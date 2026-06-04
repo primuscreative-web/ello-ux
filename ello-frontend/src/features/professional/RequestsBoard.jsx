@@ -4,6 +4,7 @@ import { BottomNav } from '../../components/navigation/BottomNav'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
+import { OrderCardSkeleton } from '../../components/ui/Skeleton'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getRequests, respondToQuote } from '../../services/elloService'
 
@@ -22,9 +23,10 @@ export function RequestsBoard() {
   const [activeId, setActiveId] = useState('')
   const [formError, setFormError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getRequests().then(setItems)
+    getRequests().then(setItems).finally(() => setLoading(false))
   }, [])
 
   async function submitResponse(event, requestId) {
@@ -68,7 +70,9 @@ export function RequestsBoard() {
         </div>
 
         <div className="grid gap-3">
-          {items.map((request) => (
+          {loading ? [0, 1, 2].map((item) => (
+            <OrderCardSkeleton key={item} />
+          )) : items.map((request) => (
             <article className="grid gap-4 rounded-[1.5rem] bg-white p-5 shadow-soft" key={request.id}>
               <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
                 <div className="grid gap-2">

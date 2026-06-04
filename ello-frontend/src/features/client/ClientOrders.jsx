@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { BottomNav } from '../../components/navigation/BottomNav'
 import { Button } from '../../components/ui/Button'
 import { BackButton } from '../../components/ui/BackButton'
+import { OrderCardSkeleton } from '../../components/ui/Skeleton'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getRequests, updateQuoteStatus } from '../../services/elloService'
 
@@ -18,9 +19,10 @@ export function ClientOrders() {
   const [items, setItems] = useState([])
   const [actionError, setActionError] = useState('')
   const [busyAction, setBusyAction] = useState('')
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getRequests().then(setItems)
+    getRequests().then(setItems).finally(() => setLoading(false))
   }, [])
 
   async function changeStatus(requestId, status) {
@@ -55,7 +57,9 @@ export function ClientOrders() {
         </div>
 
         <div className="grid gap-3">
-          {items.map((request) => (
+          {loading ? [0, 1, 2].map((item) => (
+            <OrderCardSkeleton key={item} />
+          )) : items.map((request) => (
             <article className="premium-surface grid gap-4 rounded-[1.6rem] p-5 md:grid-cols-[1fr_auto] md:items-center" key={request.id}>
               <div className="grid gap-2">
                 <div className="flex flex-wrap items-center gap-2">
@@ -105,7 +109,7 @@ export function ClientOrders() {
             </article>
           ))}
 
-          {items.length === 0 ? (
+          {!loading && items.length === 0 ? (
             <div className="premium-surface rounded-[1.6rem] p-6 text-center">
               <p className="text-xl font-extrabold">Nenhum pedido ainda.</p>
               <p className="mt-2 text-sm font-medium text-muted">Quando voce solicitar um orcamento, ele aparece aqui.</p>

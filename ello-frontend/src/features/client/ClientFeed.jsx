@@ -2,6 +2,7 @@ import { Bell, Search, SlidersHorizontal } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { BottomNav } from '../../components/navigation/BottomNav'
+import { ProfessionalCardSkeleton } from '../../components/ui/Skeleton'
 import { categories } from '../../data/elloData'
 import { getProfessionals } from '../../services/elloService'
 import { ProfessionalCard } from './ProfessionalCard'
@@ -9,10 +10,29 @@ import { ProfessionalCard } from './ProfessionalCard'
 export function ClientFeed() {
   const [activeCategory, setActiveCategory] = useState('Todos')
   const [search, setSearch] = useState('')
-  const [items, setItems] = useState([])
+  const [results, setResults] = useState({ items: [], loading: true })
+  const { items, loading } = results
+
+  function selectCategory(category) {
+    setResults((current) => ({ ...current, loading: true }))
+    setActiveCategory(category)
+  }
+
+  function updateSearch(value) {
+    setResults((current) => ({ ...current, loading: true }))
+    setSearch(value)
+  }
 
   useEffect(() => {
-    getProfessionals({ search, category: activeCategory }).then(setItems)
+    let alive = true
+    getProfessionals({ search, category: activeCategory }).then((nextItems) => {
+      if (!alive) return
+      setResults({ items: nextItems, loading: false })
+    })
+
+    return () => {
+      alive = false
+    }
   }, [activeCategory, search])
 
   return (
@@ -31,7 +51,7 @@ export function ClientFeed() {
               <button
                 className={`rounded-2xl px-4 py-3 text-left text-sm font-extrabold transition ${activeCategory === category ? 'bg-brand text-white shadow-[0_14px_34px_rgba(16,184,170,0.25)]' : 'text-white/62 hover:bg-white/10 hover:text-white'}`}
                 key={category}
-                onClick={() => setActiveCategory(category)}
+                onClick={() => selectCategory(category)}
                 type="button"
               >
                 {category}
@@ -61,7 +81,7 @@ export function ClientFeed() {
               <Search size={20} className="text-brand" />
               <input
                 className="w-full bg-transparent text-sm font-bold text-white outline-none placeholder:font-semibold placeholder:text-white/45"
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => updateSearch(event.target.value)}
                 placeholder="Buscar servico, profissional, cidade ou bairro..."
                 value={search}
               />
@@ -72,7 +92,7 @@ export function ClientFeed() {
                 <button
                   className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-extrabold transition ${activeCategory === category ? 'bg-brand text-white shadow-[0_12px_28px_rgba(16,184,170,0.28)]' : 'bg-white/8 text-white/62 hover:bg-white/14 hover:text-white'}`}
                   key={category}
-                  onClick={() => setActiveCategory(category)}
+                  onClick={() => selectCategory(category)}
                   type="button"
                 >
                   {category}
@@ -87,12 +107,14 @@ export function ClientFeed() {
             initial="hidden"
             variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
           >
-            {items.map((professional) => (
+            {loading ? [0, 1, 2, 3].map((item) => (
+              <ProfessionalCardSkeleton key={item} />
+            )) : items.map((professional) => (
               <ProfessionalCard key={professional.id} professional={professional} />
             ))}
           </motion.div>
 
-          {items.length === 0 ? (
+          {!loading && items.length === 0 ? (
             <motion.div
               animate={{ opacity: 1, y: 0 }}
               className="premium-surface grid justify-items-center gap-3 rounded-[1.8rem] p-7 text-center"
@@ -108,6 +130,7 @@ export function ClientFeed() {
               <button
                 className="rounded-2xl bg-brand px-5 py-3 text-sm font-extrabold text-white shadow-[0_14px_34px_rgba(16,184,170,0.24)]"
                 onClick={() => {
+                  setResults((current) => ({ ...current, loading: true }))
                   setActiveCategory('Todos')
                   setSearch('')
                 }}
