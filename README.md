@@ -35,6 +35,7 @@ See:
 
 - `docs/api-contract.md`
 - `docs/deploy-production.md`
+- `docs/launch-checklist.md`
 - `docs/product-model.md`
 - `supabase/README.md`
 
