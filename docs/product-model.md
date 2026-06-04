@@ -152,3 +152,21 @@ Current development storage is JSON-file based. Production storage should move t
 - public professional fields can be read by clients;
 - quote participants can read the quote and related messages;
 - only the assigned professional can respond to a quote.
+
+## Supabase Schema Status
+
+The initial production schema is now versioned in:
+
+```text
+supabase/migrations/20260604193000_initial_ello_schema.sql
+```
+
+It includes:
+
+- Supabase Auth-linked `profiles`;
+- client and professional profile tables;
+- services and portfolio tables;
+- quote requests and quote messages;
+- reviews and audit events;
+- row-level security policies for ownership and participant access;
+- storage buckets for avatars, portfolio images, and private quote attachments.

@@ -35,6 +35,11 @@ See:
 
 - `docs/api-contract.md`
 - `docs/product-model.md`
+- `supabase/README.md`
+
+## Production Path
+
+The first production foundation is versioned under `supabase/migrations`. The app still defaults to JSON storage locally, but the database schema, RLS policies, indexes, and storage buckets are ready to apply to a linked Supabase project.
 
 ## Local NPM Note
 
