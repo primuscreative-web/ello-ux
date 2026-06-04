@@ -10,12 +10,12 @@ import { getSessionToken } from './session'
 const wait = (ms = 180) => new Promise((resolve) => window.setTimeout(resolve, ms))
 const API_URL = import.meta.env.VITE_ELLO_API_URL || 'http://localhost:3001'
 
-async function postJson(path, payload) {
+async function postJson(path, payload, method = 'POST') {
   let response
 
   try {
     response = await fetch(`${API_URL}${path}`, {
-      method: 'POST',
+      method,
       headers: {
         'Content-Type': 'application/json',
         ...(getSessionToken() ? { Authorization: `Bearer ${getSessionToken()}` } : {})
@@ -107,7 +107,10 @@ export async function getRequests() {
         service: quote.description,
         status: quote.status,
         date: 'Agora',
-        value: 'A definir'
+        value: quote.responsePrice || 'A definir',
+        responseEta: quote.responseEta,
+        responseMessage: quote.responseMessage,
+        professionalName: quote.professionalName
       }))
     }
   } catch {
@@ -127,6 +130,10 @@ export function createProfessionalSignup(payload) {
 
 export function createQuoteRequest(payload) {
   return postJson('/quotes', payload)
+}
+
+export function respondToQuote(id, payload) {
+  return postJson(`/quotes/${id}/response`, payload, 'PATCH')
 }
 
 export function login(payload) {

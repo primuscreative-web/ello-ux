@@ -145,6 +145,7 @@ The API creates a professional signup with:
 ```http
 POST /quotes
 GET /quotes
+PATCH /quotes/:id/response
 ```
 
 Quote creation requires an authenticated session:
@@ -165,6 +166,29 @@ Created quotes currently start with:
 ```json
 {
   "status": "Novo pedido"
+}
+```
+
+Quote listing is scoped by session:
+
+- client sessions see their own quote requests;
+- professional sessions see quote requests available for response in the local development store.
+
+Professional response payload:
+
+```json
+{
+  "responsePrice": "R$ 180",
+  "responseEta": "Amanha as 14h",
+  "responseMessage": "Consigo fazer o servico com material incluso."
+}
+```
+
+Responding changes the quote status to:
+
+```json
+{
+  "status": "Orcamento enviado"
 }
 ```
 

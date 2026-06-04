@@ -184,6 +184,10 @@ function createQuote(payload, user) {
     description: payload.description,
     desiredDate: payload.desiredDate,
     location: payload.location,
+    responsePrice: '',
+    responseMessage: '',
+    responseEta: '',
+    respondedAt: '',
     createdAt: new Date().toISOString()
   }
 
@@ -195,6 +199,42 @@ function createQuote(payload, user) {
 function listQuotes() {
   const state = readState()
   return [...state.quotes].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+}
+
+function listQuotesForUser(user) {
+  const quotes = listQuotes()
+
+  if (user?.role === 'client') {
+    return quotes.filter((quote) => quote.clientUserId === user.id)
+  }
+
+  return quotes
+}
+
+function respondToQuote(id, payload, user) {
+  const state = readState()
+  const quote = state.quotes.find((item) => item.id === id)
+
+  if (!quote) {
+    const error = new Error('Pedido nao encontrado.')
+    error.code = 'QUOTE_NOT_FOUND'
+    throw error
+  }
+
+  if (user?.role !== 'professional') {
+    const error = new Error('Apenas profissionais podem responder pedidos.')
+    error.code = 'FORBIDDEN'
+    throw error
+  }
+
+  quote.status = 'Orcamento enviado'
+  quote.responsePrice = payload.responsePrice
+  quote.responseEta = payload.responseEta
+  quote.responseMessage = payload.responseMessage
+  quote.respondedAt = new Date().toISOString()
+
+  writeState(state)
+  return quote
 }
 
 function getStoreSummary() {
@@ -217,5 +257,7 @@ module.exports = {
   getStoreSummary,
   loginUser,
   listQuotes,
-  readState
+  listQuotesForUser,
+  readState,
+  respondToQuote
 }

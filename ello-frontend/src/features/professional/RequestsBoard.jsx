@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
+import { Input } from '../../components/ui/Input'
 import { StatusPill } from '../../components/ui/StatusPill'
-import { getRequests } from '../../services/elloService'
+import { getRequests, respondToQuote } from '../../services/elloService'
 
 const statusTone = {
   'Novo pedido': 'brand',
@@ -16,10 +17,41 @@ const statusTone = {
 
 export function RequestsBoard() {
   const [items, setItems] = useState([])
+  const [activeId, setActiveId] = useState('')
+  const [formError, setFormError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     getRequests().then(setItems)
   }, [])
+
+  async function submitResponse(event, requestId) {
+    event.preventDefault()
+    const form = new FormData(event.currentTarget)
+    const payload = Object.fromEntries(form.entries())
+
+    setFormError('')
+    setSubmitting(true)
+    try {
+      const quote = await respondToQuote(requestId, payload)
+      setItems((current) => current.map((item) => (
+        item.id === requestId
+          ? {
+              ...item,
+              status: quote.status,
+              value: quote.responsePrice,
+              responseEta: quote.responseEta,
+              responseMessage: quote.responseMessage
+            }
+          : item
+      )))
+      setActiveId('')
+    } catch (error) {
+      setFormError(error.message)
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <main className="min-h-screen px-5 py-6 text-ink">
@@ -35,19 +67,42 @@ export function RequestsBoard() {
 
         <div className="grid gap-3">
           {items.map((request) => (
-            <article className="grid gap-4 rounded-[1.5rem] bg-white p-5 shadow-soft md:grid-cols-[1fr_auto] md:items-center" key={request.id}>
-              <div className="grid gap-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <StatusPill tone={statusTone[request.status]}>{request.status}</StatusPill>
-                  <span className="text-xs font-bold text-muted">{request.id} - {request.date}</span>
+            <article className="grid gap-4 rounded-[1.5rem] bg-white p-5 shadow-soft" key={request.id}>
+              <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
+                <div className="grid gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusPill tone={statusTone[request.status]}>{request.status}</StatusPill>
+                    <span className="text-xs font-bold text-muted">{request.id} - {request.date}</span>
+                  </div>
+                  <h2 className="text-xl font-extrabold">{request.service}</h2>
+                  <p className="text-sm font-medium text-muted">{request.client} - {request.value}</p>
+                  {request.responseMessage ? (
+                    <p className="rounded-2xl bg-brand/8 px-4 py-3 text-sm font-semibold text-muted">
+                      {request.responseMessage} Prazo: {request.responseEta}.
+                    </p>
+                  ) : null}
                 </div>
-                <h2 className="text-xl font-extrabold">{request.service}</h2>
-                <p className="text-sm font-medium text-muted">{request.client} - {request.value}</p>
+                <div className="flex gap-2">
+                  <Button variant="secondary">Detalhes</Button>
+                  <Button onClick={() => setActiveId((current) => (current === request.id ? '' : request.id))}>
+                    {activeId === request.id ? 'Fechar' : 'Responder'}
+                  </Button>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <Button variant="secondary">Detalhes</Button>
-                <Button>Responder</Button>
-              </div>
+
+              {activeId === request.id ? (
+                <form className="grid gap-4 rounded-[1.35rem] border border-line bg-cloud/70 p-4 md:grid-cols-3" onSubmit={(event) => submitResponse(event, request.id)}>
+                  <Input label="Valor" name="responsePrice" placeholder="Ex: R$ 180" />
+                  <Input label="Prazo" name="responseEta" placeholder="Ex: amanha as 14h" />
+                  <Input label="Mensagem" name="responseMessage" placeholder="Explique sua proposta" />
+                  <div className="md:col-span-3">
+                    <Button disabled={submitting} type="submit" className="w-full md:w-auto">
+                      {submitting ? 'Enviando...' : 'Enviar orcamento'}
+                    </Button>
+                    {formError ? <p className="mt-3 text-sm font-bold text-rose-600">{formError}</p> : null}
+                  </div>
+                </form>
+              ) : null}
             </article>
           ))}
         </div>
