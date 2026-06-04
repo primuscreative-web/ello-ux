@@ -44,7 +44,7 @@
 }
 
 :root[data-theme='dark'] {
-  --ello-ink: #f4fbfb;
+  --ello-ink: #071319;
   --ello-graphite: #d9e6e8;
   --ello-muted: #9fb0b8;
   --ello-line: rgba(198, 240, 235, 0.16);
@@ -58,6 +58,7 @@
   --ello-surface: rgba(10, 28, 34, 0.76);
   --ello-surface-strong: rgba(13, 32, 38, 0.96);
   --ello-surface-soft: rgba(10, 28, 34, 0.86);
+  color: #f4fbfb;
 }
 
 * {
@@ -129,6 +130,14 @@ select:focus-visible {
   box-shadow: 0 22px 70px rgba(0, 0, 0, 0.32);
 }
 
+:root[data-theme='dark'] .text-ink {
+  color: #f4fbfb !important;
+}
+
+:root[data-theme='dark'] .bg-ink {
+  background-color: #071319 !important;
+}
+
 :root[data-theme='dark'] [class~='bg-white'],
 :root[data-theme='dark'] [class*='bg-white/'] {
   background-color: rgba(13, 32, 38, 0.86) !important;
@@ -141,7 +150,7 @@ select:focus-visible {
 :root[data-theme='dark'] input,
 :root[data-theme='dark'] textarea {
   background: rgba(255, 255, 255, 0.08);
-  color: var(--ello-ink);
+  color: #f4fbfb;
 }
 
 :root[data-theme='dark'] input::placeholder,
