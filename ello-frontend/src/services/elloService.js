@@ -136,6 +136,14 @@ export function respondToQuote(id, payload) {
   return postJson(`/quotes/${id}/response`, payload, 'PATCH')
 }
 
+export function getQuoteMessages(id) {
+  return getJson(`/quotes/${id}/messages`)
+}
+
+export function sendQuoteMessage(id, payload) {
+  return postJson(`/quotes/${id}/messages`, payload)
+}
+
 export function login(payload) {
   return postJson('/auth/login', payload)
 }

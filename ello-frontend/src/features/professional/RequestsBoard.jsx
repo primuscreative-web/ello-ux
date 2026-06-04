@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
@@ -82,8 +83,13 @@ export function RequestsBoard() {
                     </p>
                   ) : null}
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="secondary">Detalhes</Button>
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-white/90 px-5 text-sm font-extrabold tracking-[-0.01em] text-ink shadow-[0_10px_28px_rgba(7,19,25,0.08)] transition duration-200 hover:-translate-y-0.5 hover:border-brand/50 hover:bg-white"
+                    to={`/pedidos/${request.id}/chat`}
+                  >
+                    Chat
+                  </Link>
                   <Button onClick={() => setActiveId((current) => (current === request.id ? '' : request.id))}>
                     {activeId === request.id ? 'Fechar' : 'Responder'}
                   </Button>

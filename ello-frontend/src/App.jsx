@@ -10,6 +10,7 @@ import { ClientOrders } from './features/client/ClientOrders'
 import { ProfessionalProfile } from './features/client/ProfessionalProfile'
 import { QuoteRequest } from './features/client/QuoteRequest'
 import { Onboarding } from './features/onboarding/Onboarding'
+import { QuoteChat } from './features/messages/QuoteChat'
 import { ProfessionalCentral } from './features/professional/ProfessionalCentral'
 import { ProfessionalProfileEditor } from './features/professional/ProfessionalProfileEditor'
 import { RequestsBoard } from './features/professional/RequestsBoard'
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/cadastro/profissional" element={<ProfessionalSignup />} />
           <Route path="/cliente/feed" element={<ClientFeed />} />
           <Route path="/cliente/pedidos" element={<ClientOrders />} />
+          <Route path="/pedidos/:id/chat" element={<QuoteChat />} />
           <Route path="/cliente/profissionais/:id" element={<ProfessionalProfile />} />
           <Route path="/cliente/orcamento/:id" element={<QuoteRequest />} />
           <Route path="/profissional/central" element={<ProfessionalCentral />} />

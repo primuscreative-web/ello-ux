@@ -1,7 +1,7 @@
 import { MessageCircle, SearchCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
-import { Button } from '../../components/ui/Button'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getRequests } from '../../services/elloService'
 
@@ -57,9 +57,12 @@ export function ClientOrders() {
                   </p>
                 )}
               </div>
-              <Button variant="secondary">
+              <Link
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-white/90 px-5 text-sm font-extrabold tracking-[-0.01em] text-ink shadow-[0_10px_28px_rgba(7,19,25,0.08)] transition duration-200 hover:-translate-y-0.5 hover:border-brand/50 hover:bg-white"
+                to={`/pedidos/${request.id}/chat`}
+              >
                 <MessageCircle size={18} /> Conversar
-              </Button>
+              </Link>
             </article>
           ))}
 

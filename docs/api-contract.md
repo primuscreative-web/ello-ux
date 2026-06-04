@@ -146,6 +146,8 @@ The API creates a professional signup with:
 POST /quotes
 GET /quotes
 PATCH /quotes/:id/response
+GET /quotes/:id/messages
+POST /quotes/:id/messages
 ```
 
 Quote creation requires an authenticated session:
@@ -191,6 +193,16 @@ Responding changes the quote status to:
   "status": "Orcamento enviado"
 }
 ```
+
+Quote message payload:
+
+```json
+{
+  "body": "Ola, podemos alinhar o horario?"
+}
+```
+
+Quote messages are scoped by session. Clients can read and send messages only in their own requests. Professional sessions can read and send messages in available local development requests.
 
 ## Error Shape
 

@@ -237,6 +237,55 @@ function respondToQuote(id, payload, user) {
   return quote
 }
 
+function findQuoteForUser(state, id, user) {
+  const quote = state.quotes.find((item) => item.id === id)
+
+  if (!quote) return null
+  if (user?.role === 'client' && quote.clientUserId !== user.id) return null
+
+  return quote
+}
+
+function listQuoteMessages(id, user) {
+  const state = readState()
+  const quote = findQuoteForUser(state, id, user)
+
+  if (!quote) {
+    const error = new Error('Pedido nao encontrado.')
+    error.code = 'QUOTE_NOT_FOUND'
+    throw error
+  }
+
+  return Array.isArray(quote.messages) ? quote.messages : []
+}
+
+function createQuoteMessage(id, payload, user) {
+  const state = readState()
+  const quote = findQuoteForUser(state, id, user)
+
+  if (!quote) {
+    const error = new Error('Pedido nao encontrado.')
+    error.code = 'QUOTE_NOT_FOUND'
+    throw error
+  }
+
+  const message = {
+    id: createId('msg'),
+    quoteId: quote.id,
+    senderUserId: user.id,
+    senderRole: user.role,
+    body: payload.body,
+    createdAt: new Date().toISOString()
+  }
+
+  quote.messages = Array.isArray(quote.messages) ? quote.messages : []
+  quote.messages.push(message)
+  quote.lastMessageAt = message.createdAt
+
+  writeState(state)
+  return message
+}
+
 function getStoreSummary() {
   const state = readState()
 
@@ -253,8 +302,10 @@ module.exports = {
   createClientSignup,
   createProfessionalSignup,
   createQuote,
+  createQuoteMessage,
   getUserByToken,
   getStoreSummary,
+  listQuoteMessages,
   loginUser,
   listQuotes,
   listQuotesForUser,
