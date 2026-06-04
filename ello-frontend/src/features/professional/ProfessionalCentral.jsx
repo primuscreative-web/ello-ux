@@ -2,6 +2,7 @@ import { BriefcaseBusiness, CalendarDays, ChevronRight, ImagePlus, MessageCircle
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { BottomNav } from '../../components/navigation/BottomNav'
 import { Button } from '../../components/ui/Button'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getProfessionalStats, getRequests } from '../../services/elloService'
@@ -23,7 +24,7 @@ export function ProfessionalCentral() {
   }, [])
 
   return (
-    <main className="min-h-screen p-4 text-ink md:p-8">
+    <main className="min-h-screen px-4 pb-28 pt-4 text-ink md:p-8">
       <div className="mx-auto grid w-full max-w-[88rem] gap-6 xl:grid-cols-[17rem_minmax(0,1fr)]">
         <motion.aside
           animate={{ opacity: 1, x: 0 }}
@@ -152,6 +153,7 @@ export function ProfessionalCentral() {
           </div>
         </section>
       </div>
+      <BottomNav mode="professional" />
     </main>
   )
 }

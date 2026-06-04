@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { BottomNav } from '../../components/navigation/BottomNav'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
@@ -55,7 +56,7 @@ export function RequestsBoard() {
   }
 
   return (
-    <main className="min-h-screen px-5 py-6 text-ink">
+    <main className="min-h-screen px-5 pb-28 pt-6 text-ink md:py-6">
       <section className="mx-auto grid max-w-6xl gap-6">
         <div className="flex flex-col gap-4 rounded-[2rem] bg-white p-5 shadow-premium md:flex-row md:items-start md:justify-between md:p-8">
           <div>
@@ -113,6 +114,7 @@ export function RequestsBoard() {
           ))}
         </div>
       </section>
+      <BottomNav mode="professional" />
     </main>
   )
 }

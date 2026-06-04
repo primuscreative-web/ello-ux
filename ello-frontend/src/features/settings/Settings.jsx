@@ -1,8 +1,11 @@
 import { Bell, Check, ChevronRight, LockKeyhole, Moon, ShieldCheck, Smartphone, Sun, UserRound } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useLocation } from 'react-router-dom'
+import { BottomNav } from '../../components/navigation/BottomNav'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { useTheme } from '../../providers/useTheme'
+import { getSession } from '../../services/session'
 
 const rows = [
   { icon: UserRound, label: 'Conta', text: 'Dados pessoais, email e seguranca.' },
@@ -13,9 +16,13 @@ const rows = [
 
 export function Settings() {
   const { isDark, setTheme, theme } = useTheme()
+  const { pathname } = useLocation()
+  const session = getSession()
+  const mode = pathname.startsWith('/cliente') || session?.user?.role === 'client' ? 'client' : 'professional'
+  const fallback = mode === 'client' ? '/cliente/feed' : '/profissional/central'
 
   return (
-    <main className="min-h-screen px-4 py-5 text-ink sm:px-6 md:py-8">
+    <main className="min-h-screen px-4 pb-28 pt-5 text-ink sm:px-6 md:py-8">
       <section className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[0.86fr_1.14fr]">
         <motion.aside
           animate={{ opacity: 1, x: 0 }}
@@ -25,7 +32,7 @@ export function Settings() {
         >
           <div className="flex items-center justify-between gap-4">
             <div className="text-3xl font-extrabold tracking-[-0.05em]">ELLO</div>
-            <BackButton fallback="/profissional/central" className="border-white/10 bg-white/10 text-white hover:bg-white hover:text-ink" />
+            <BackButton fallback={fallback} className="border-white/10 bg-white/10 text-white hover:bg-white hover:text-ink" />
           </div>
 
           <div className="grid gap-4">
@@ -125,6 +132,7 @@ export function Settings() {
           </Button>
         </motion.div>
       </section>
+      <BottomNav mode={mode} />
     </main>
   )
 }

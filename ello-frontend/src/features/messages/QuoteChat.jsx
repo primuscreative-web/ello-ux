@@ -1,6 +1,7 @@
 import { SendHorizonal } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { BottomNav } from '../../components/navigation/BottomNav'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { getQuoteMessages, sendQuoteMessage } from '../../services/elloService'
@@ -38,7 +39,7 @@ export function QuoteChat() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-5 text-ink sm:px-6 md:py-8">
+    <main className="min-h-screen px-4 pb-28 pt-5 text-ink sm:px-6 md:py-8">
       <section className="mx-auto grid max-w-4xl overflow-hidden rounded-[2.25rem] border border-white/70 bg-white/80 shadow-premium backdrop-blur-2xl">
         <header className="ios-dark-panel p-5 text-white md:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -91,6 +92,7 @@ export function QuoteChat() {
           {error ? <p className="text-sm font-bold text-rose-600 md:col-span-2">{error}</p> : null}
         </form>
       </section>
+      <BottomNav mode={session?.user?.role === 'professional' ? 'professional' : 'client'} />
     </main>
   )
 }

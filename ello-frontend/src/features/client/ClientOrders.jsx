@@ -1,6 +1,7 @@
 import { MessageCircle, SearchCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { BottomNav } from '../../components/navigation/BottomNav'
 import { BackButton } from '../../components/ui/BackButton'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getRequests } from '../../services/elloService'
@@ -20,7 +21,7 @@ export function ClientOrders() {
   }, [])
 
   return (
-    <main className="min-h-screen px-4 py-5 text-ink sm:px-6 md:py-8">
+    <main className="min-h-screen px-4 pb-28 pt-5 text-ink sm:px-6 md:py-8">
       <section className="mx-auto grid max-w-5xl gap-5">
         <div className="ios-dark-panel rounded-[2.25rem] p-6 text-white shadow-premium md:p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -74,6 +75,7 @@ export function ClientOrders() {
           ) : null}
         </div>
       </section>
+      <BottomNav mode="client" />
     </main>
   )
 }
