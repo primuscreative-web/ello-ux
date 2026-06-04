@@ -1,10 +1,41 @@
 {
   "name": "ELLO",
   "short_name": "ELLO",
-  "description": "Marketplace premium de servicos locais.",
+  "description": "Marketplace nacional para clientes e profissionais combinarem servicos com confianca.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#F7F9FC",
-  "theme_color": "#0B7A75",
-  "icons": []
+  "orientation": "portrait-primary",
+  "background_color": "#071319",
+  "theme_color": "#10b8aa",
+  "categories": ["business", "productivity", "lifestyle"],
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-icon-maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Buscar servicos",
+      "short_name": "Buscar",
+      "description": "Abrir o feed de profissionais.",
+      "url": "/cliente/feed"
+    },
+    {
+      "name": "Pedidos",
+      "short_name": "Pedidos",
+      "description": "Acompanhar orcamentos e conversas.",
+      "url": "/cliente/pedidos"
+    }
+  ]
 }
