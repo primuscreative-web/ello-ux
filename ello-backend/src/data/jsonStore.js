@@ -345,6 +345,30 @@ function getStoreSummary() {
   }
 }
 
+function listProfessionals({ search = '', category = '' } = {}) {
+  const normalizedSearch = String(search || '').toLowerCase()
+  const normalizedCategory = String(category || '').toLowerCase()
+
+  return professionals.filter((professional) => {
+    const matchesSearch =
+      !normalizedSearch ||
+      professional.name.toLowerCase().includes(normalizedSearch) ||
+      professional.category.toLowerCase().includes(normalizedSearch) ||
+      professional.city.toLowerCase().includes(normalizedSearch) ||
+      professional.neighborhood.toLowerCase().includes(normalizedSearch) ||
+      professional.keywords.some((keyword) => keyword.includes(normalizedSearch))
+
+    const matchesCategory =
+      !normalizedCategory || normalizedCategory === 'todos' || professional.category.toLowerCase() === normalizedCategory
+
+    return matchesSearch && matchesCategory
+  })
+}
+
+function getProfessionalById(id) {
+  return professionals.find((item) => item.id === id) || null
+}
+
 module.exports = {
   createClientSignup,
   createProfessionalSignup,
@@ -353,7 +377,9 @@ module.exports = {
   getUserByToken,
   getStoreSummary,
   listQuoteMessages,
+  listProfessionals,
   loginUser,
+  getProfessionalById,
   listQuotes,
   listQuotesForUser,
   readState,

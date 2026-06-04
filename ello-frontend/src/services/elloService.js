@@ -63,9 +63,20 @@ export async function getCategories() {
 }
 
 export async function getProfessionals({ search = '', category = 'Todos' } = {}) {
-  await wait()
-  const normalizedSearch = search.toLowerCase().trim()
+  try {
+    const params = new URLSearchParams()
+    if (search) params.set('search', search)
+    if (category && category !== 'Todos') params.set('category', category)
+    const apiProfessionals = await getJson(`/professionals${params.toString() ? `?${params}` : ''}`)
 
+    if (apiProfessionals.length > 0) {
+      return apiProfessionals
+    }
+  } catch {
+    await wait()
+  }
+
+  const normalizedSearch = search.toLowerCase().trim()
   return professionals.filter((professional) => {
     const matchesCategory = category === 'Todos' || professional.category === category
     const matchesSearch =
@@ -82,7 +93,12 @@ export async function getProfessionals({ search = '', category = 'Todos' } = {})
 }
 
 export async function getProfessionalById(id) {
-  await wait()
+  try {
+    return await getJson(`/professionals/${id}`)
+  } catch {
+    await wait()
+  }
+
   return professionals.find((professional) => professional.id === id) || professionals[0]
 }
 

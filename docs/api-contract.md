@@ -28,6 +28,31 @@ The local API now applies baseline production-minded safeguards:
 - random session tokens with expiration controlled by `ELLO_SESSION_TTL_MS`;
 - request trimming and maximum field lengths on public write endpoints.
 
+## Storage Driver
+
+Local development defaults to JSON:
+
+```text
+ELLO_STORE_DRIVER=json
+```
+
+Production can switch to Supabase after applying migrations and configuring:
+
+```text
+ELLO_STORE_DRIVER=supabase
+SUPABASE_URL=...
+SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+```
+
+The backend storage boundary is:
+
+```text
+ello-backend/src/data/store.js
+```
+
+Routes should continue importing from that boundary instead of importing a driver directly.
+
 Example allowed origins override:
 
 ```text
