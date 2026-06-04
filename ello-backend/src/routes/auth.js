@@ -1,17 +1,19 @@
 const { Router } = require('express')
 const { loginUser } = require('../data/store')
-const { email, required, validatePayload } = require('../lib/validation')
+const { email, maxLength, normalizePayload, required, validatePayload } = require('../lib/validation')
 const { requireAuth } = require('../middleware/auth')
+const { rateLimit } = require('../middleware/rateLimit')
 
 const router = Router()
 
 const loginRules = {
-  email: [required('Informe seu email.'), email('Informe um email valido.')],
-  password: [required('Informe sua senha.')]
+  email: [required('Informe seu email.'), email('Informe um email valido.'), maxLength(160, 'Email muito longo.')],
+  password: [required('Informe sua senha.'), maxLength(128, 'Senha muito longa.')]
 }
 
-router.post('/login', (req, res) => {
-  const errors = validatePayload(req.body, loginRules)
+router.post('/login', rateLimit({ limit: 12, windowMs: 60_000 }), (req, res) => {
+  const payload = normalizePayload(req.body, ['email'])
+  const errors = validatePayload(payload, loginRules)
 
   if (Object.keys(errors).length > 0) {
     res.status(422).json({ errors })
@@ -19,7 +21,7 @@ router.post('/login', (req, res) => {
   }
 
   try {
-    res.json({ data: loginUser(req.body) })
+    res.json({ data: loginUser(payload) })
   } catch (error) {
     res.status(401).json({ error: error.message, errors: error.errors || {} })
   }

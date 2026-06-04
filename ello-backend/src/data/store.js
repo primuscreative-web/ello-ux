@@ -1,10 +1,12 @@
 const fs = require('fs')
 const path = require('path')
+const crypto = require('crypto')
 const { hashPassword, verifyPassword } = require('../lib/password')
 const { professionals } = require('./mockData')
 
 const dataDir = path.join(__dirname, '..', '..', 'data')
 const dataFile = path.join(dataDir, 'ello-dev-store.json')
+const SESSION_TTL_MS = Number(process.env.ELLO_SESSION_TTL_MS || 1000 * 60 * 60 * 24 * 30)
 const initialState = {
   users: [],
   sessions: [],
@@ -47,7 +49,11 @@ function writeState(nextState) {
 }
 
 function createId(prefix) {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  return `${prefix}-${Date.now()}-${crypto.randomBytes(8).toString('hex')}`
+}
+
+function createSessionToken() {
+  return `session-${crypto.randomBytes(32).toString('base64url')}`
 }
 
 function withoutSensitiveFields(payload) {
@@ -102,10 +108,12 @@ function createUser(state, payload, role, profileId) {
 }
 
 function createSessionForUser(state, user) {
+  const createdAt = new Date().toISOString()
   const session = {
-    token: createId('session'),
+    token: createSessionToken(),
     userId: user.id,
-    createdAt: new Date().toISOString()
+    createdAt,
+    expiresAt: new Date(Date.now() + SESSION_TTL_MS).toISOString()
   }
 
   state.sessions.push(session)
@@ -164,10 +172,13 @@ function loginUser(payload) {
 }
 
 function getUserByToken(token) {
+  if (!token) return null
+
   const state = readState()
   const session = state.sessions.find((item) => item.token === token)
 
   if (!session) return null
+  if (session.expiresAt && Date.parse(session.expiresAt) <= Date.now()) return null
 
   return toPublicUser(state.users.find((user) => user.id === session.userId))
 }

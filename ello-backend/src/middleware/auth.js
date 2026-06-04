@@ -4,7 +4,11 @@ function getBearerToken(req) {
   const header = String(req.headers.authorization || '')
   const [type, token] = header.split(' ')
 
-  return type === 'Bearer' ? token : ''
+  if (type !== 'Bearer' || !token || token.length > 256) {
+    return ''
+  }
+
+  return token
 }
 
 function requireAuth(req, res, next) {

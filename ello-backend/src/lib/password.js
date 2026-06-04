@@ -16,7 +16,7 @@ function verifyPassword(password, storedHash) {
   const [scheme, salt, hash] = String(storedHash).split('$')
 
   if (scheme !== HASH_PREFIX || !salt || !hash) {
-    return storedHash === password
+    return false
   }
 
   const candidate = crypto.scryptSync(String(password), salt, KEY_LENGTH)

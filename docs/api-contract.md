@@ -16,6 +16,24 @@ Frontend override:
 VITE_ELLO_API_URL=http://localhost:3001
 ```
 
+## Security Defaults
+
+The local API now applies baseline production-minded safeguards:
+
+- restricted CORS via `ELLO_ALLOWED_ORIGINS` with localhost defaults;
+- `64kb` JSON body limit;
+- security headers such as `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, and `Permissions-Policy`;
+- general in-memory rate limit for local development;
+- stricter login/signup rate limits;
+- random session tokens with expiration controlled by `ELLO_SESSION_TTL_MS`;
+- request trimming and maximum field lengths on public write endpoints.
+
+Example allowed origins override:
+
+```text
+ELLO_ALLOWED_ORIGINS=https://ello.app,https://www.ello.app
+```
+
 ## Health
 
 ```http

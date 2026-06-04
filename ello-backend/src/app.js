@@ -2,6 +2,8 @@ require('dotenv').config()
 
 const cors = require('cors')
 const express = require('express')
+const { rateLimit } = require('./middleware/rateLimit')
+const { corsOptions, errorHandler, notFound, securityHeaders } = require('./middleware/security')
 const authRoutes = require('./routes/auth')
 const healthRoutes = require('./routes/health')
 const professionalRoutes = require('./routes/professionals')
@@ -10,8 +12,15 @@ const signupRoutes = require('./routes/signups')
 
 const app = express()
 
-app.use(cors())
-app.use(express.json())
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1)
+}
+
+app.disable('x-powered-by')
+app.use(securityHeaders)
+app.use(cors(corsOptions()))
+app.use(express.json({ limit: '64kb' }))
+app.use(rateLimit({ limit: 180, windowMs: 60_000 }))
 
 app.use('/auth', authRoutes)
 app.use('/health', healthRoutes)
@@ -22,5 +31,8 @@ app.use('/signups', signupRoutes)
 app.get('/', (_req, res) => {
   res.json({ message: 'ELLO API rodando' })
 })
+
+app.use(notFound)
+app.use(errorHandler)
 
 module.exports = app

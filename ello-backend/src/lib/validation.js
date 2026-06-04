@@ -13,6 +13,16 @@ function validatePayload(payload, rules) {
   }, {})
 }
 
+function normalizePayload(payload, fields) {
+  return fields.reduce((nextPayload, field) => {
+    if (typeof nextPayload[field] === 'string') {
+      return { ...nextPayload, [field]: nextPayload[field].trim() }
+    }
+
+    return nextPayload
+  }, { ...payload })
+}
+
 function required(message) {
   return (value) => (isPresent(value) ? '' : message)
 }
@@ -25,6 +35,10 @@ function minLength(length, message) {
   return (value) => (String(value || '').length >= length ? '' : message)
 }
 
+function maxLength(length, message) {
+  return (value) => (String(value || '').trim().length <= length ? '' : message)
+}
+
 function matches(otherField, message) {
   return (value, payload) => (value === payload[otherField] ? '' : message)
 }
@@ -32,7 +46,9 @@ function matches(otherField, message) {
 module.exports = {
   email,
   matches,
+  maxLength,
   minLength,
+  normalizePayload,
   required,
   validatePayload
 }
