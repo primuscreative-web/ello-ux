@@ -1,6 +1,7 @@
 import { CheckCircle2, ImagePlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { BottomNav } from '../../components/navigation/BottomNav'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
@@ -39,7 +40,7 @@ export function QuoteRequest() {
     try {
       await createQuoteRequest({ ...values, professionalId: id })
       setSent(true)
-      window.setTimeout(() => navigate('/cliente/feed'), 700)
+      window.setTimeout(() => navigate('/cliente/pedidos'), 700)
     } catch (error) {
       setErrors(error.errors || {})
       setFormError(error.message)
@@ -49,7 +50,7 @@ export function QuoteRequest() {
   }
 
   return (
-    <main className="min-h-screen px-5 py-6 text-ink">
+    <main className="min-h-screen px-5 pb-28 pt-6 text-ink md:py-6">
       <form noValidate onSubmit={submit} className="mx-auto grid max-w-3xl gap-6 rounded-[2rem] bg-white p-5 shadow-premium md:p-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="grid gap-2">
@@ -94,6 +95,7 @@ export function QuoteRequest() {
         </Button>
         {formError ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{formError}</p> : null}
       </form>
+      <BottomNav mode="client" />
     </main>
   )
 }

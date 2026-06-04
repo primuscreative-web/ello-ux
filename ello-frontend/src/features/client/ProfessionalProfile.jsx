@@ -1,6 +1,7 @@
 import { ArrowLeft, CalendarDays, MessageCircle, Star } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { BottomNav } from '../../components/navigation/BottomNav'
 import { Button } from '../../components/ui/Button'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getProfessionalById } from '../../services/elloService'
@@ -18,7 +19,7 @@ export function ProfessionalProfile() {
   }
 
   return (
-    <main className="min-h-screen px-4 pb-24 pt-5 text-ink md:px-8 md:pb-8">
+    <main className="min-h-screen px-4 pb-28 pt-5 text-ink md:px-8 md:pb-8">
       <section className="mx-auto grid max-w-6xl gap-5 md:grid-cols-[1fr_22rem]">
         <div className="overflow-hidden rounded-[2rem] bg-white shadow-premium">
           <div className="h-56 bg-gradient-to-br from-brand via-sky to-gold p-5">
@@ -64,11 +65,14 @@ export function ProfessionalProfile() {
           <Link to={`/cliente/orcamento/${professional.id}`}>
             <Button className="w-full">Solicitar orcamento</Button>
           </Link>
-          <Button variant="secondary" className="w-full">
-            <MessageCircle size={18} /> Conversar
-          </Button>
+          <Link to={`/cliente/orcamento/${professional.id}`}>
+            <Button variant="secondary" className="w-full">
+              <MessageCircle size={18} /> Enviar mensagem
+            </Button>
+          </Link>
         </aside>
       </section>
+      <BottomNav mode="client" />
     </main>
   )
 }

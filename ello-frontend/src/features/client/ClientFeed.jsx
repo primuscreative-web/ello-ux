@@ -1,4 +1,4 @@
-import { Bell, Search } from 'lucide-react'
+import { Bell, Search, SlidersHorizontal } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { BottomNav } from '../../components/navigation/BottomNav'
@@ -91,6 +91,32 @@ export function ClientFeed() {
               <ProfessionalCard key={professional.id} professional={professional} />
             ))}
           </motion.div>
+
+          {items.length === 0 ? (
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              className="premium-surface grid justify-items-center gap-3 rounded-[1.8rem] p-7 text-center"
+              initial={{ opacity: 0, y: 16 }}
+            >
+              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/10 text-brand">
+                <SlidersHorizontal size={24} />
+              </span>
+              <h2 className="text-2xl font-extrabold tracking-[-0.04em]">Nenhum profissional encontrado.</h2>
+              <p className="max-w-md text-sm font-medium leading-6 text-muted">
+                Tente buscar por uma categoria maior, cidade, bairro ou tipo de servico. A ELLO foi pensada para crescer no Brasil inteiro.
+              </p>
+              <button
+                className="rounded-2xl bg-brand px-5 py-3 text-sm font-extrabold text-white shadow-[0_14px_34px_rgba(16,184,170,0.24)]"
+                onClick={() => {
+                  setActiveCategory('Todos')
+                  setSearch('')
+                }}
+                type="button"
+              >
+                Limpar busca
+              </button>
+            </motion.div>
+          ) : null}
         </section>
 
         <motion.aside
