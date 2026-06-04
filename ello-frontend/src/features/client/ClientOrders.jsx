@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { BottomNav } from '../../components/navigation/BottomNav'
 import { Button } from '../../components/ui/Button'
 import { BackButton } from '../../components/ui/BackButton'
+import { OrderTimeline } from '../../components/ui/OrderTimeline'
 import { OrderCardSkeleton } from '../../components/ui/Skeleton'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getRequests, updateQuoteStatus } from '../../services/elloService'
@@ -68,6 +69,7 @@ export function ClientOrders() {
                 </div>
                 <h2 className="text-xl font-extrabold">{request.service}</h2>
                 <p className="text-sm font-medium text-muted">Local: {request.client}</p>
+                <OrderTimeline status={request.status} />
                 {request.responseMessage ? (
                   <div className="mt-2 rounded-[1.25rem] bg-brand/8 p-4">
                     <p className="text-sm font-extrabold text-brand">{request.value} - {request.responseEta}</p>

@@ -4,6 +4,7 @@ import { BottomNav } from '../../components/navigation/BottomNav'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
+import { OrderTimeline } from '../../components/ui/OrderTimeline'
 import { OrderCardSkeleton } from '../../components/ui/Skeleton'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getRequests, respondToQuote } from '../../services/elloService'
@@ -82,6 +83,7 @@ export function RequestsBoard() {
                   </div>
                   <h2 className="text-xl font-extrabold">{request.service}</h2>
                   <p className="text-sm font-medium text-muted">{request.client} - {request.value}</p>
+                  <OrderTimeline status={request.status} />
                   {request.responseMessage ? (
                     <p className="rounded-2xl bg-brand/8 px-4 py-3 text-sm font-semibold text-muted">
                       {request.responseMessage} Prazo: {request.responseEta}.
