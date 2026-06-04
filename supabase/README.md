@@ -30,3 +30,23 @@ supabase db push --linked --yes
 ## Security Direction
 
 The schema enables RLS for all app tables. Public read access is limited to professional/service/portfolio/review data that is intentionally visible. Quote and message data is scoped to the participating client and professional.
+
+## Backend Driver Plan
+
+The backend now has a storage boundary:
+
+```text
+ello-backend/src/data/store.js
+```
+
+Local development still defaults to:
+
+```text
+ELLO_STORE_DRIVER=json
+```
+
+The next implementation step is replacing the placeholder `supabaseStore` with the real Supabase Auth/PostgREST adapter and then switching:
+
+```text
+ELLO_STORE_DRIVER=supabase
+```
