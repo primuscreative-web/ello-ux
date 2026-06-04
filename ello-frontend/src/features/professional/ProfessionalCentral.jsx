@@ -39,7 +39,7 @@ export function ProfessionalCentral() {
             <span className="rounded-2xl px-4 py-3 text-white/45">Chat</span>
             <span className="rounded-2xl px-4 py-3 text-white/45">Carteira</span>
             <Link className="rounded-2xl px-4 py-3 text-white/70 hover:bg-white/10" to="/profissional/perfil">Perfil</Link>
-            <span className="rounded-2xl px-4 py-3 text-white/45">Configuracoes</span>
+            <Link className="rounded-2xl px-4 py-3 text-white/70 hover:bg-white/10" to="/profissional/configuracoes">Configuracoes</Link>
           </nav>
           <div className="ios-surface-dark mt-10 rounded-[1.5rem] p-4">
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/40">Perfil</p>

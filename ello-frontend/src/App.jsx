@@ -12,6 +12,7 @@ import { Onboarding } from './features/onboarding/Onboarding'
 import { ProfessionalCentral } from './features/professional/ProfessionalCentral'
 import { ProfessionalProfileEditor } from './features/professional/ProfessionalProfileEditor'
 import { RequestsBoard } from './features/professional/RequestsBoard'
+import { Settings } from './features/settings/Settings'
 
 export default function App() {
   const location = useLocation()
@@ -37,6 +38,9 @@ export default function App() {
           <Route path="/profissional/central" element={<ProfessionalCentral />} />
           <Route path="/profissional/perfil" element={<ProfessionalProfileEditor />} />
           <Route path="/profissional/pedidos" element={<RequestsBoard />} />
+          <Route path="/configuracoes" element={<Settings />} />
+          <Route path="/profissional/configuracoes" element={<Settings />} />
+          <Route path="/cliente/configuracoes" element={<Settings />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </motion.div>

@@ -1,6 +1,7 @@
-import { Bell, BriefcaseBusiness, Home, MessageCircle, Plus, Search, UserCircle } from 'lucide-react'
+import { Bell, BriefcaseBusiness, Home, MessageCircle, Plus, Search, Settings } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { categories } from '../../data/elloData'
 import { getProfessionals } from '../../services/elloService'
 import { ProfessionalCard } from './ProfessionalCard'
@@ -117,7 +118,7 @@ export function ClientFeed() {
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand to-sky text-ink shadow-[0_18px_42px_rgba(16,184,170,0.38)]"><Plus size={28} /></span>
         </button>
         <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/58" type="button"><MessageCircle size={16} /> Chat</button>
-        <button className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/58" type="button"><UserCircle size={16} /> Perfil</button>
+        <Link className="grid justify-items-center gap-0.5 px-2 py-1.5 text-white/58" to="/cliente/configuracoes"><Settings size={16} /> Ajustes</Link>
       </nav>
     </main>
   )
