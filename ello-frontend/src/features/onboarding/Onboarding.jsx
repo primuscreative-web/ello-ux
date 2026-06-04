@@ -11,6 +11,61 @@ const iconMap = {
   trust: CheckCircle2
 }
 
+const visualCards = {
+  client: [
+    ['Manicure em gel', '4.9', 'Hoje'],
+    ['Pintura residencial', '4.8', 'Amanha'],
+    ['Limpeza detalhada', '5.0', 'Esta semana']
+  ],
+  professional: [
+    ['Perfil completo', '92%', 'vitrine'],
+    ['Pedidos novos', '8', 'hoje'],
+    ['Resposta media', '20 min', 'rapido']
+  ],
+  trust: [
+    ['Pedido enviado', '1', 'cliente'],
+    ['Orcamento recebido', '2', 'profissional'],
+    ['Conversa alinhada', '3', 'chat']
+  ]
+}
+
+function SlideVisual({ type }) {
+  const cards = visualCards[type] || visualCards.client
+
+  return (
+    <div className="pointer-events-none absolute bottom-6 right-5 z-10 hidden w-72 rounded-[2rem] border border-white/14 bg-white/12 p-3 shadow-[0_30px_90px_rgba(0,0,0,0.28)] backdrop-blur-2xl md:grid">
+      <div className="rounded-[1.55rem] bg-white p-4 text-ink shadow-soft">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">ELLO</p>
+            <p className="mt-1 text-xl font-extrabold tracking-[-0.04em]">Agora no app</p>
+          </div>
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand text-white">
+            <Sparkles size={18} />
+          </span>
+        </div>
+        <div className="mt-4 grid gap-2">
+          {cards.map(([label, value, meta], index) => (
+            <motion.div
+              animate={{ opacity: 1, x: 0 }}
+              className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-[1.15rem] border border-line bg-cloud/70 p-3"
+              initial={{ opacity: 0, x: 18 }}
+              key={label}
+              transition={{ delay: 0.08 * index, duration: 0.28 }}
+            >
+              <div>
+                <p className="text-sm font-extrabold">{label}</p>
+                <p className="mt-0.5 text-xs font-bold text-muted">{meta}</p>
+              </div>
+              <span className="rounded-xl bg-brand/10 px-3 py-2 text-sm font-extrabold text-brand">{value}</span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function Onboarding() {
   const [active, setActive] = useState(0)
   const navigate = useNavigate()
@@ -33,6 +88,7 @@ export function Onboarding() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(0,127,120,0.58),transparent_25rem),radial-gradient(circle_at_80%_18%,rgba(255,114,94,0.24),transparent_20rem),linear-gradient(140deg,#101a33_0%,#075e59_58%,#071224_100%)]" />
           <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,rgba(255,255,255,0.12))]" />
           <div className="absolute bottom-8 left-8 right-8 hidden h-28 rounded-[2rem] border border-white/10 bg-white/8 backdrop-blur md:block" />
+          <SlideVisual type={slide.image} />
 
           <div className="relative z-10 flex h-full min-h-[22rem] flex-col justify-between sm:min-h-[30rem]">
             <div className="flex items-center justify-between">
