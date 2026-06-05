@@ -9,4 +9,5 @@ yarn-error.log*
 .qa/
 vite-dev*.log
 ello-backend/data/
+supabase/.temp/
 .DS_Store
