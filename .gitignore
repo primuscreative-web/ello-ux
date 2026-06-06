@@ -8,6 +8,9 @@ yarn-debug.log*
 yarn-error.log*
 .qa/
 vite-dev*.log
+.playwright-cli/
+ello-backend/.api-server*.log
+ello-frontend/.dev-server*.log
 ello-backend/data/
 supabase/.temp/
 .DS_Store

@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
+    "dev:ca": "nodemon --exec \"node --use-system-ca\" server.js",
     "start": "node server.js",
-    "test:smoke": "node scripts/smoke.js"
+    "start:ca": "node --use-system-ca server.js",
+    "test:smoke": "node scripts/smoke.js",
+    "test:smoke:ca": "node --use-system-ca scripts/smoke.js"
   },
   "keywords": [],
   "author": "",

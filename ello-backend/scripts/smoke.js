@@ -66,7 +66,7 @@ async function run() {
     assert(professional.response.ok, `professional signup failed ${professional.response.status}`)
     assert(professional.body.data?.token, 'professional token missing')
 
-    const pros = await request(base, 'GET', '/professionals?category=Beleza')
+    const pros = await request(base, 'GET', '/professionals')
     assert(pros.response.ok && pros.body.data.length > 0, 'professionals discovery failed')
 
     const quote = await request(base, 'POST', '/quotes', {

@@ -26,11 +26,11 @@ const statusRules = {
   status: [required('Informe o novo status.'), maxLength(40, 'Status invalido.')]
 }
 
-router.get('/', requireAuth, (req, res) => {
-  res.json({ data: listQuotesForUser(req.user) })
+router.get('/', requireAuth, async (req, res) => {
+  res.json({ data: await listQuotesForUser(req.user) })
 })
 
-router.post('/', requireAuth, (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   const payload = normalizePayload(req.body, ['professionalId', 'description', 'desiredDate', 'location'])
   const errors = validatePayload(payload, quoteRules)
 
@@ -39,10 +39,10 @@ router.post('/', requireAuth, (req, res) => {
     return
   }
 
-  res.status(201).json({ data: createQuote(payload, req.user) })
+  res.status(201).json({ data: await createQuote(payload, req.user) })
 })
 
-router.patch('/:id/response', requireAuth, (req, res) => {
+router.patch('/:id/response', requireAuth, async (req, res) => {
   const payload = normalizePayload(req.body, ['responsePrice', 'responseEta', 'responseMessage'])
   const errors = validatePayload(payload, responseRules)
 
@@ -52,14 +52,14 @@ router.patch('/:id/response', requireAuth, (req, res) => {
   }
 
   try {
-    res.json({ data: respondToQuote(req.params.id, payload, req.user) })
+    res.json({ data: await respondToQuote(req.params.id, payload, req.user) })
   } catch (error) {
     const status = error.code === 'QUOTE_NOT_FOUND' ? 404 : error.code === 'FORBIDDEN' ? 403 : 500
     res.status(status).json({ error: error.message })
   }
 })
 
-router.patch('/:id/status', requireAuth, (req, res) => {
+router.patch('/:id/status', requireAuth, async (req, res) => {
   const payload = normalizePayload(req.body, ['status'])
   const errors = validatePayload(payload, statusRules)
 
@@ -69,23 +69,23 @@ router.patch('/:id/status', requireAuth, (req, res) => {
   }
 
   try {
-    res.json({ data: updateQuoteStatus(req.params.id, payload, req.user) })
+    res.json({ data: await updateQuoteStatus(req.params.id, payload, req.user) })
   } catch (error) {
     const status = error.code === 'QUOTE_NOT_FOUND' ? 404 : error.code === 'FORBIDDEN' ? 403 : error.code === 'INVALID_STATUS' ? 422 : 500
     res.status(status).json({ error: error.message })
   }
 })
 
-router.get('/:id/messages', requireAuth, (req, res) => {
+router.get('/:id/messages', requireAuth, async (req, res) => {
   try {
-    res.json({ data: listQuoteMessages(req.params.id, req.user) })
+    res.json({ data: await listQuoteMessages(req.params.id, req.user) })
   } catch (error) {
     const status = error.code === 'QUOTE_NOT_FOUND' ? 404 : 500
     res.status(status).json({ error: error.message })
   }
 })
 
-router.post('/:id/messages', requireAuth, (req, res) => {
+router.post('/:id/messages', requireAuth, async (req, res) => {
   const payload = normalizePayload(req.body, ['body'])
   const errors = validatePayload(payload, messageRules)
 
@@ -95,7 +95,7 @@ router.post('/:id/messages', requireAuth, (req, res) => {
   }
 
   try {
-    res.status(201).json({ data: createQuoteMessage(req.params.id, payload, req.user) })
+    res.status(201).json({ data: await createQuoteMessage(req.params.id, payload, req.user) })
   } catch (error) {
     const status = error.code === 'QUOTE_NOT_FOUND' ? 404 : 500
     res.status(status).json({ error: error.message })

@@ -32,7 +32,7 @@ const professionalRules = {
   chargeType: [required('Informe como voce cobra.'), maxLength(80, 'Tipo de cobranca muito longo.')]
 }
 
-router.post('/clients', rateLimit({ limit: 20, windowMs: 60_000 }), (req, res) => {
+router.post('/clients', rateLimit({ limit: 20, windowMs: 60_000 }), async (req, res) => {
   const payload = normalizePayload(req.body, ['fullName', 'city', 'email', 'region', 'interests'])
   const errors = validatePayload(payload, clientRules)
 
@@ -42,14 +42,14 @@ router.post('/clients', rateLimit({ limit: 20, windowMs: 60_000 }), (req, res) =
   }
 
   try {
-    res.status(201).json({ data: createClientSignup(payload) })
+    res.status(201).json({ data: await createClientSignup(payload) })
   } catch (error) {
     const status = error.code === 'EMAIL_EXISTS' ? 409 : 500
     res.status(status).json({ error: error.message, errors: error.errors || {} })
   }
 })
 
-router.post('/professionals', rateLimit({ limit: 20, windowMs: 60_000 }), (req, res) => {
+router.post('/professionals', rateLimit({ limit: 20, windowMs: 60_000 }), async (req, res) => {
   const payload = normalizePayload(req.body, [
     'fullName', 'specialty', 'email', 'experience', 'city', 'coverage', 'document',
     'phone', 'fiscalCity', 'description', 'basePrice', 'chargeType', 'materials',
@@ -63,7 +63,7 @@ router.post('/professionals', rateLimit({ limit: 20, windowMs: 60_000 }), (req, 
   }
 
   try {
-    res.status(201).json({ data: createProfessionalSignup(payload) })
+    res.status(201).json({ data: await createProfessionalSignup(payload) })
   } catch (error) {
     const status = error.code === 'EMAIL_EXISTS' ? 409 : 500
     res.status(status).json({ error: error.message, errors: error.errors || {} })

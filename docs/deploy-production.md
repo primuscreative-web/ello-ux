@@ -5,6 +5,9 @@ This is the first production deploy path for ELLO.
 ## 1. Create Supabase Project
 
 1. Create a Supabase project.
+   - Current ELLO project: `ello-production`
+   - Project ref: `qqrkchlxztdxxxvetxau`
+   - Region: `sa-east-1`
 2. Link the local workspace with the Supabase CLI.
 3. Apply migrations:
 
@@ -20,6 +23,13 @@ supabase db push --linked --yes
 - `SUPABASE_SERVICE_ROLE_KEY`
 
 Keep the service role key server-side only.
+
+For local Windows verification, if Node cannot validate the Supabase TLS certificate, run:
+
+```powershell
+npm run test:smoke:ca
+npm run start:ca
+```
 
 ## 2. Deploy Backend on Render
 
@@ -78,6 +88,7 @@ After both deploys:
 6. Respond as the professional.
 7. Accept as the client.
 8. Send messages in the quote chat.
+9. Confirm `/health` shows `storage: "supabase"` and `records.auditEvents` increasing.
 
 ## 5. Before Public Launch
 

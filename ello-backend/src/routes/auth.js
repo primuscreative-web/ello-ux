@@ -11,7 +11,7 @@ const loginRules = {
   password: [required('Informe sua senha.'), maxLength(128, 'Senha muito longa.')]
 }
 
-router.post('/login', rateLimit({ limit: 12, windowMs: 60_000 }), (req, res) => {
+router.post('/login', rateLimit({ limit: 12, windowMs: 60_000 }), async (req, res) => {
   const payload = normalizePayload(req.body, ['email'])
   const errors = validatePayload(payload, loginRules)
 
@@ -21,7 +21,7 @@ router.post('/login', rateLimit({ limit: 12, windowMs: 60_000 }), (req, res) => 
   }
 
   try {
-    res.json({ data: loginUser(payload) })
+    res.json({ data: await loginUser(payload) })
   } catch (error) {
     res.status(401).json({ error: error.message, errors: error.errors || {} })
   }

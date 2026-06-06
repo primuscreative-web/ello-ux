@@ -5,6 +5,7 @@ Use this checklist before any public test.
 ## Backend
 
 - Supabase project created.
+- Supabase project is `ello-production` (`qqrkchlxztdxxxvetxau`).
 - `supabase db push --linked --yes` applied.
 - Render service deployed from `render.yaml`.
 - `ELLO_STORE_DRIVER=supabase`.
@@ -41,7 +42,7 @@ Use this checklist before any public test.
 
 - CI is green.
 - Backend audit has no critical vulnerabilities.
-- Backend smoke test passes with `npm run test:smoke`.
+- Backend smoke test passes with `npm run test:smoke` or `npm run test:smoke:ca` on local Windows.
 - Audit events are created during signup, login, quote, quote response, status update and chat message flows.
 - Demo shortcuts are only visible in development builds.
 - Supabase RLS is enabled on all app tables.
