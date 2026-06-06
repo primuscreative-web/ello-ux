@@ -10,6 +10,7 @@ Use this checklist before any public test.
 - `ELLO_STORE_DRIVER=supabase`.
 - `ELLO_ALLOWED_ORIGINS` contains only real frontend domains.
 - `SUPABASE_SERVICE_ROLE_KEY` exists only in backend hosting.
+- Backend production env validation passes on startup.
 - `/health` returns `storage: "supabase"`.
 
 ## Frontend

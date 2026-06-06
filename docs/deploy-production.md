@@ -47,6 +47,8 @@ After deploy, test:
 https://your-api-domain/health
 ```
 
+The backend validates production envs at startup. If any required Supabase or CORS variable is missing, Render should fail fast instead of serving a broken API.
+
 ## 3. Deploy Frontend on Vercel
 
 The frontend deploy is described in:

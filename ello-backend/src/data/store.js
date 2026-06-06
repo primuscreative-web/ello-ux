@@ -1,7 +1,8 @@
 const jsonStore = require('./jsonStore')
+const { getStoreDriver } = require('../config/env')
 
 function loadStoreDriver() {
-  const driver = String(process.env.ELLO_STORE_DRIVER || 'json').trim().toLowerCase()
+  const driver = getStoreDriver()
 
   if (driver === 'json') {
     return jsonStore

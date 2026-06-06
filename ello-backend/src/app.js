@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const cors = require('cors')
 const express = require('express')
+const { isProduction } = require('./config/env')
 const { rateLimit } = require('./middleware/rateLimit')
 const { corsOptions, errorHandler, notFound, securityHeaders } = require('./middleware/security')
 const authRoutes = require('./routes/auth')
@@ -12,7 +13,7 @@ const signupRoutes = require('./routes/signups')
 
 const app = express()
 
-if (process.env.NODE_ENV === 'production') {
+if (isProduction()) {
   app.set('trust proxy', 1)
 }
 
