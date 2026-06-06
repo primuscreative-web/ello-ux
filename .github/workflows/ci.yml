@@ -60,3 +60,6 @@ jobs:
 
       - name: Load app
         run: node -e "require('./src/app'); console.log('backend ok')"
+
+      - name: Smoke test
+        run: npm run test:smoke

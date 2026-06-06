@@ -34,6 +34,7 @@ Use this checklist before any public test.
 
 - CI is green.
 - Backend audit has no critical vulnerabilities.
+- Backend smoke test passes with `npm run test:smoke`.
 - Demo shortcuts are only visible in development builds.
 - Supabase RLS is enabled on all app tables.
 - No `.env` files are committed.
