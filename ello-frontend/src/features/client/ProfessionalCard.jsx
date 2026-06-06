@@ -1,7 +1,8 @@
-import { Clock, MapPin, ShieldCheck, Star } from 'lucide-react'
+import { BadgeCheck, Clock, MapPin, ShieldCheck, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
+import { FavoriteButton } from '../../components/ui/FavoriteButton'
 
 export function ProfessionalCard({ professional }) {
   return (
@@ -27,9 +28,7 @@ export function ProfessionalCard({ professional }) {
                 <h2 className="text-xl font-extrabold tracking-[-0.03em] text-ink">{professional.name}</h2>
               </div>
             </div>
-            <div className="rounded-2xl bg-ink px-3 py-2 text-right text-xs font-extrabold leading-tight text-white shadow-soft">
-              {professional.price}
-            </div>
+            <FavoriteButton professionalId={professional.id} />
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -51,6 +50,19 @@ export function ProfessionalCard({ professional }) {
         </div>
 
         <p className="text-sm font-medium leading-6 text-muted">{professional.bio}</p>
+
+        <div className="grid gap-2 rounded-[1.25rem] border border-line bg-cloud/60 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <span className="inline-flex items-center gap-1 text-xs font-extrabold text-brand">
+              <BadgeCheck size={15} /> {professional.verified ? 'Verificado' : 'Em verificacao'}
+            </span>
+            <span className="text-xs font-bold text-muted">{professional.reviewCount || professional.jobs} avaliacoes</span>
+          </div>
+          <div className="h-2 overflow-hidden rounded-full bg-white">
+            <div className="h-full rounded-full bg-brand" style={{ width: `${Math.min(professional.profileHealth || 70, 100)}%` }} />
+          </div>
+          <p className="text-xs font-semibold text-muted">{professional.price} - {professional.chargeType}</p>
+        </div>
 
         <div className="grid grid-cols-[0.9fr_1.1fr] gap-3">
           <Link to={`/cliente/profissionais/${professional.id}`}>

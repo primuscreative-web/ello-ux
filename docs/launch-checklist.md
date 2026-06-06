@@ -28,10 +28,14 @@ Use this checklist before any public test.
 - Create client account.
 - Create professional account.
 - Professional appears in discovery.
+- Favorite a professional.
 - Client creates quote.
 - Professional responds.
 - Client accepts quote.
 - Both participants exchange chat messages.
+- Client submits a review after an accepted/completed order.
+- Trust/support page renders.
+- Admin demo page renders and shows reports/professionals.
 
 ## Security
 
@@ -43,3 +47,4 @@ Use this checklist before any public test.
 - Supabase RLS is enabled on all app tables.
 - Supabase Storage policies are active for avatars, portfolio and quote attachments.
 - No `.env` files are committed.
+- Local demo fallbacks are replaced or backed by Supabase before public launch.

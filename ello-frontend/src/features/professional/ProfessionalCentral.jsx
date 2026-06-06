@@ -1,10 +1,11 @@
-import { BriefcaseBusiness, CalendarDays, ChevronRight, ImagePlus, MessageCircle, Settings, TrendingUp, Wallet } from 'lucide-react'
+import { BriefcaseBusiness, CalendarDays, CheckCircle2, ChevronRight, ImagePlus, MessageCircle, Settings, ShieldCheck, TrendingUp, Wallet } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BottomNav } from '../../components/navigation/BottomNav'
 import { Button } from '../../components/ui/Button'
 import { StatusPill } from '../../components/ui/StatusPill'
+import { trustChecklist } from '../../data/elloData'
 import { getProfessionalStats, getRequests } from '../../services/elloService'
 
 const actions = [
@@ -49,6 +50,17 @@ export function ProfessionalCentral() {
               <motion.div animate={{ width: '92%' }} className="h-full rounded-full bg-brand" initial={{ width: 0 }} transition={{ delay: 0.35, duration: 0.8 }} />
             </div>
             <p className="mt-3 text-xs font-medium leading-5 text-white/56">Complete portfolio e disponibilidade para aumentar conversao.</p>
+          </div>
+          <div className="ios-surface-dark mt-4 rounded-[1.5rem] p-4">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/40">Confianca</p>
+            <div className="mt-3 grid gap-2">
+              {trustChecklist.slice(0, 3).map((item) => (
+                <p className="flex items-center gap-2 text-xs font-bold text-white/64" key={item.label}>
+                  <CheckCircle2 size={14} className={item.done ? 'text-brand' : 'text-white/30'} />
+                  {item.label}
+                </p>
+              ))}
+            </div>
           </div>
         </motion.aside>
 
@@ -130,6 +142,26 @@ export function ProfessionalCentral() {
                 </div>
                 <p className="mt-3 max-w-3xl text-sm font-medium leading-6 text-white/75">Perfis com pelo menos 3 fotos, preco claro e resposta rapida tendem a receber mais pedidos.</p>
               </article>
+
+              <section className="premium-surface rounded-[1.8rem] p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">Pronto para vender</p>
+                    <h2 className="mt-1 text-2xl font-extrabold tracking-[-0.04em]">Checklist de perfil.</h2>
+                  </div>
+                  <ShieldCheck className="text-brand" size={26} />
+                </div>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {trustChecklist.map((item) => (
+                    <div className="flex items-center gap-3 rounded-2xl border border-line bg-card p-3" key={item.label}>
+                      <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${item.done ? 'bg-brand/10 text-brand' : 'bg-cloud text-muted'}`}>
+                        <CheckCircle2 size={18} />
+                      </span>
+                      <span className="text-sm font-extrabold text-muted">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
             </div>
 
             <motion.aside

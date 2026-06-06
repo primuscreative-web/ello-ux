@@ -19,7 +19,7 @@ import {
   WalletCards
 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { BottomNav } from '../../components/navigation/BottomNav'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
@@ -249,7 +249,7 @@ export function Settings() {
             {supportRows.map((row) => {
               const Icon = row.icon
               return (
-                <button className="group flex items-center gap-4 rounded-[1.35rem] border border-line bg-cloud/50 p-4 text-left transition hover:-translate-y-0.5 hover:border-brand/40" key={row.label} type="button">
+                <Link className="group flex items-center gap-4 rounded-[1.35rem] border border-line bg-cloud/50 p-4 text-left transition hover:-translate-y-0.5 hover:border-brand/40" key={row.label} to="/suporte">
                   <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand">
                     <Icon size={22} />
                   </span>
@@ -258,7 +258,7 @@ export function Settings() {
                     <span className="mt-1 block text-sm font-medium text-muted">{row.text}</span>
                   </span>
                   <ChevronRight size={18} className="text-muted transition group-hover:translate-x-1 group-hover:text-brand" />
-                </button>
+                </Link>
               )
             })}
           </div>

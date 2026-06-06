@@ -11,10 +11,12 @@ import { ProfessionalProfile } from './features/client/ProfessionalProfile'
 import { QuoteRequest } from './features/client/QuoteRequest'
 import { Onboarding } from './features/onboarding/Onboarding'
 import { QuoteChat } from './features/messages/QuoteChat'
+import { AdminConsole } from './features/admin/AdminConsole'
 import { ProfessionalCentral } from './features/professional/ProfessionalCentral'
 import { ProfessionalProfileEditor } from './features/professional/ProfessionalProfileEditor'
 import { RequestsBoard } from './features/professional/RequestsBoard'
 import { Settings } from './features/settings/Settings'
+import { TrustSupport } from './features/settings/TrustSupport'
 
 export default function App() {
   const location = useLocation()
@@ -45,6 +47,8 @@ export default function App() {
           <Route path="/configuracoes" element={<Settings />} />
           <Route path="/profissional/configuracoes" element={<Settings />} />
           <Route path="/cliente/configuracoes" element={<Settings />} />
+          <Route path="/suporte" element={<TrustSupport />} />
+          <Route path="/admin" element={<AdminConsole />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </motion.div>

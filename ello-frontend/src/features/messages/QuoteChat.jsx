@@ -1,4 +1,4 @@
-import { SendHorizonal } from 'lucide-react'
+import { ImagePlus, LockKeyhole, SendHorizonal, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { BottomNav } from '../../components/navigation/BottomNav'
@@ -15,6 +15,9 @@ export function QuoteChat() {
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
   const fallback = session?.user?.role === 'professional' ? '/profissional/pedidos' : '/cliente/pedidos'
+  const quickReplies = session?.user?.role === 'professional'
+    ? ['Consigo atender nessa data.', 'Posso enviar uma proposta com material incluso.', 'Preciso de uma foto para estimar melhor.']
+    : ['Qual o melhor horario?', 'O material esta incluso?', 'Pode me enviar o valor final?']
 
   useEffect(() => {
     getQuoteMessages(id).then(setMessages).catch((err) => setError(err.message))
@@ -55,6 +58,13 @@ export function QuoteChat() {
         </header>
 
         <div className="grid min-h-[28rem] content-end gap-3 p-4 md:p-6">
+          <div className="rounded-[1.35rem] border border-brand/20 bg-brand/8 p-4">
+            <p className="flex items-center gap-2 text-sm font-extrabold text-brand">
+              <LockKeyhole size={17} /> Conversa com contexto do pedido
+            </p>
+            <p className="mt-1 text-sm font-medium leading-6 text-muted">Mantenha combinados, valores e prazos por escrito para facilitar suporte e avaliacao depois.</p>
+          </div>
+
           {messages.length === 0 ? (
             <div className="mx-auto max-w-sm rounded-[1.5rem] bg-brand/8 p-5 text-center">
               <p className="text-lg font-extrabold">Nenhuma mensagem ainda.</p>
@@ -76,7 +86,26 @@ export function QuoteChat() {
           })}
         </div>
 
-        <form className="grid gap-3 border-t border-line bg-card p-4 md:grid-cols-[1fr_auto] md:p-5" onSubmit={submit}>
+        <div className="grid gap-2 border-t border-line bg-card px-4 py-3 md:px-5">
+          <div className="flex gap-2 overflow-x-auto">
+            {quickReplies.map((reply) => (
+              <button
+                className="shrink-0 rounded-full border border-line bg-cloud px-3 py-2 text-xs font-extrabold text-muted transition hover:border-brand/40 hover:text-brand"
+                key={reply}
+                onClick={() => setBody(reply)}
+                type="button"
+              >
+                <Sparkles size={13} className="mr-1 inline text-brand" />
+                {reply}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <form className="grid gap-3 border-t border-line bg-card p-4 md:grid-cols-[auto_1fr_auto] md:p-5" onSubmit={submit}>
+          <button className="flex min-h-12 items-center justify-center rounded-2xl border border-line bg-white px-4 text-brand transition hover:border-brand/40" type="button">
+            <ImagePlus size={19} />
+          </button>
           <label className="sr-only" htmlFor="chat-message">Mensagem</label>
           <input
             className="min-h-12 rounded-2xl border border-line bg-white px-4 text-sm font-semibold text-ink outline-none transition placeholder:text-muted/60 focus:border-brand"

@@ -1,17 +1,22 @@
-import { Bell, Search, SlidersHorizontal } from 'lucide-react'
+import { Bell, Heart, Search, ShieldCheck, SlidersHorizontal, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { BottomNav } from '../../components/navigation/BottomNav'
+import { EmptyState } from '../../components/ui/EmptyState'
 import { ProfessionalCardSkeleton } from '../../components/ui/Skeleton'
 import { categories } from '../../data/elloData'
 import { getProfessionals } from '../../services/elloService'
+import { getFavoriteIds } from '../../services/localExperience'
 import { ProfessionalCard } from './ProfessionalCard'
 
 export function ClientFeed() {
   const [activeCategory, setActiveCategory] = useState('Todos')
   const [search, setSearch] = useState('')
+  const [favoritesOnly, setFavoritesOnly] = useState(false)
   const [results, setResults] = useState({ items: [], loading: true })
   const { items, loading } = results
+  const favoriteIds = getFavoriteIds()
+  const visibleItems = favoritesOnly ? items.filter((item) => favoriteIds.includes(item.id)) : items
 
   function selectCategory(category) {
     setResults((current) => ({ ...current, loading: true }))
@@ -34,6 +39,15 @@ export function ClientFeed() {
       alive = false
     }
   }, [activeCategory, search])
+
+  useEffect(() => {
+    function syncFavorites() {
+      setResults((current) => ({ ...current }))
+    }
+
+    window.addEventListener('ello:favorites-changed', syncFavorites)
+    return () => window.removeEventListener('ello:favorites-changed', syncFavorites)
+  }, [])
 
   return (
     <main className="min-h-screen px-4 pb-28 pt-4 text-ink md:px-8 md:pb-10 md:pt-8">
@@ -87,6 +101,22 @@ export function ClientFeed() {
               />
             </label>
 
+            <div className="grid gap-3 rounded-[1.35rem] border border-white/10 bg-white/8 p-3 md:grid-cols-3">
+              {[
+                { icon: ShieldCheck, label: 'Profissionais com sinais de confianca' },
+                { icon: Sparkles, label: 'Orcamento mais claro em poucos passos' },
+                { icon: Heart, label: `${favoriteIds.length} favoritos salvos` }
+              ].map((item) => {
+                const Icon = item.icon
+                return (
+                  <span className="flex items-center gap-2 text-xs font-extrabold text-white/70" key={item.label}>
+                    <Icon size={16} className="text-brand" />
+                    {item.label}
+                  </span>
+                )
+              })}
+            </div>
+
             <div className="flex gap-2 overflow-x-auto pb-1">
               {categories.map((category) => (
                 <button
@@ -98,6 +128,13 @@ export function ClientFeed() {
                   {category}
                 </button>
               ))}
+              <button
+                className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-extrabold transition ${favoritesOnly ? 'bg-coral text-white shadow-[0_12px_28px_rgba(255,114,94,0.22)]' : 'bg-white/8 text-white/62 hover:bg-white/14 hover:text-white'}`}
+                onClick={() => setFavoritesOnly((current) => !current)}
+                type="button"
+              >
+                Favoritos
+              </button>
             </div>
           </motion.div>
 
@@ -109,36 +146,31 @@ export function ClientFeed() {
           >
             {loading ? [0, 1, 2, 3].map((item) => (
               <ProfessionalCardSkeleton key={item} />
-            )) : items.map((professional) => (
+            )) : visibleItems.map((professional) => (
               <ProfessionalCard key={professional.id} professional={professional} />
             ))}
           </motion.div>
 
-          {!loading && items.length === 0 ? (
-            <motion.div
-              animate={{ opacity: 1, y: 0 }}
-              className="premium-surface grid justify-items-center gap-3 rounded-[1.8rem] p-7 text-center"
-              initial={{ opacity: 0, y: 16 }}
-            >
-              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/10 text-brand">
-                <SlidersHorizontal size={24} />
-              </span>
-              <h2 className="text-2xl font-extrabold tracking-[-0.04em]">Nenhum profissional encontrado.</h2>
-              <p className="max-w-md text-sm font-medium leading-6 text-muted">
-                Tente buscar por uma categoria maior, cidade, bairro ou tipo de servico. A ELLO foi pensada para crescer no Brasil inteiro.
-              </p>
-              <button
-                className="rounded-2xl bg-brand px-5 py-3 text-sm font-extrabold text-white shadow-[0_14px_34px_rgba(16,184,170,0.24)]"
-                onClick={() => {
-                  setResults((current) => ({ ...current, loading: true }))
-                  setActiveCategory('Todos')
-                  setSearch('')
-                }}
-                type="button"
-              >
-                Limpar busca
-              </button>
-            </motion.div>
+          {!loading && visibleItems.length === 0 ? (
+            <EmptyState
+              action={(
+                <button
+                  className="rounded-2xl bg-brand px-5 py-3 text-sm font-extrabold text-white shadow-[0_14px_34px_rgba(16,184,170,0.24)]"
+                  onClick={() => {
+                    setResults((current) => ({ ...current, loading: true }))
+                    setFavoritesOnly(false)
+                    setActiveCategory('Todos')
+                    setSearch('')
+                  }}
+                  type="button"
+                >
+                  Limpar busca
+                </button>
+              )}
+              description={favoritesOnly ? 'Toque no coracao de um profissional para salvar aqui.' : 'Tente buscar por uma categoria maior, cidade, bairro ou tipo de servico. A ELLO foi pensada para crescer no Brasil inteiro.'}
+              icon={SlidersHorizontal}
+              title={favoritesOnly ? 'Nenhum favorito ainda.' : 'Nenhum profissional encontrado.'}
+            />
           ) : null}
         </section>
 
@@ -156,6 +188,19 @@ export function ClientFeed() {
           <div className="animated-glow rounded-[2rem] bg-gradient-to-br from-brand to-ink p-5 text-white shadow-premium">
             <p className="text-sm font-bold text-white/65">ELLO protege</p>
             <p className="mt-2 text-3xl font-extrabold tracking-[-0.04em]">Confianca em cada etapa.</p>
+          </div>
+          <div className="premium-surface rounded-[2rem] p-5">
+            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">Como escolher</p>
+            <div className="mt-4 grid gap-3">
+              {['Compare avaliacoes recentes', 'Veja prazo de resposta', 'Prefira proposta por escrito'].map((tip) => (
+                <div className="flex items-center gap-3 rounded-2xl border border-line bg-card p-3" key={tip}>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                    <ShieldCheck size={16} />
+                  </span>
+                  <span className="text-sm font-bold text-muted">{tip}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </motion.aside>
       </div>

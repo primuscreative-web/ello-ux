@@ -9,6 +9,8 @@ import { OrderCardSkeleton } from '../../components/ui/Skeleton'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getRequests, respondToQuote } from '../../services/elloService'
 
+const filters = ['Todos', 'Novos', 'Orcados', 'Ativos']
+
 const statusTone = {
   'Novo pedido': 'brand',
   'Aguardando resposta': 'warning',
@@ -25,6 +27,13 @@ export function RequestsBoard() {
   const [formError, setFormError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState('Todos')
+  const visibleItems = items.filter((item) => {
+    if (filter === 'Novos') return item.status === 'Novo pedido'
+    if (filter === 'Orcados') return item.status === 'Orcamento enviado'
+    if (filter === 'Ativos') return ['Aceito', 'Em andamento'].includes(item.status)
+    return true
+  })
 
   useEffect(() => {
     getRequests().then(setItems).finally(() => setLoading(false))
@@ -70,11 +79,24 @@ export function RequestsBoard() {
           <BackButton fallback="/profissional/central" />
         </div>
 
+        <div className="flex gap-2 overflow-x-auto rounded-[1.5rem] border border-line bg-card p-2 shadow-soft">
+          {filters.map((item) => (
+            <button
+              className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-extrabold transition ${filter === item ? 'bg-brand text-white' : 'text-muted hover:bg-cloud hover:text-ink'}`}
+              key={item}
+              onClick={() => setFilter(item)}
+              type="button"
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+
         <div className="grid gap-3">
           {loading ? [0, 1, 2].map((item) => (
             <OrderCardSkeleton key={item} />
-          )) : items.map((request) => (
-            <article className="grid gap-4 rounded-[1.5rem] bg-white p-5 shadow-soft" key={request.id}>
+          )) : visibleItems.map((request) => (
+            <article className="grid gap-4 rounded-[1.5rem] border border-line bg-card p-5 shadow-soft" key={request.id}>
               <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
                 <div className="grid gap-2">
                   <div className="flex flex-wrap items-center gap-2">
@@ -83,6 +105,11 @@ export function RequestsBoard() {
                   </div>
                   <h2 className="text-xl font-extrabold">{request.service}</h2>
                   <p className="text-sm font-medium text-muted">{request.client} - {request.value}</p>
+                  <div className="grid gap-2 rounded-[1.2rem] bg-cloud/70 p-3 sm:grid-cols-3">
+                    <span className="text-xs font-bold text-muted">Resposta ideal: ate 2h</span>
+                    <span className="text-xs font-bold text-muted">Origem: app cliente</span>
+                    <span className="text-xs font-bold text-muted">Historico salvo</span>
+                  </div>
                   <OrderTimeline status={request.status} />
                   {request.responseMessage ? (
                     <p className="rounded-2xl bg-brand/8 px-4 py-3 text-sm font-semibold text-muted">
@@ -118,6 +145,13 @@ export function RequestsBoard() {
               ) : null}
             </article>
           ))}
+
+          {!loading && visibleItems.length === 0 ? (
+            <div className="premium-surface rounded-[1.6rem] p-6 text-center">
+              <p className="text-xl font-extrabold">Nenhum pedido nessa etapa.</p>
+              <p className="mt-2 text-sm font-medium text-muted">Quando surgirem novas oportunidades, elas aparecem aqui com prioridade.</p>
+            </div>
+          ) : null}
         </div>
       </section>
       <BottomNav mode="professional" />

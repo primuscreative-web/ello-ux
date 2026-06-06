@@ -5,12 +5,17 @@ import {
   professionals,
   requests
 } from '../data/elloData'
+import { createLocalQuote, getDemoMessages, getLocalQuotes, respondToLocalQuote, updateLocalQuoteStatus } from './localExperience'
 import { getSessionToken } from './session'
 
 const wait = (ms = 180) => new Promise((resolve) => window.setTimeout(resolve, ms))
-const API_URL = import.meta.env.VITE_ELLO_API_URL || 'http://localhost:3001'
+const API_URL = import.meta.env.VITE_ELLO_API_URL || ''
 
 async function postJson(path, payload, method = 'POST') {
+  if (!API_URL) {
+    throw new Error('API nao configurada para este ambiente.')
+  }
+
   let response
 
   try {
@@ -38,6 +43,10 @@ async function postJson(path, payload, method = 'POST') {
 }
 
 async function getJson(path) {
+  if (!API_URL) {
+    throw new Error('API nao configurada para este ambiente.')
+  }
+
   const response = await fetch(`${API_URL}${path}`, {
     headers: {
       ...(getSessionToken() ? { Authorization: `Bearer ${getSessionToken()}` } : {})
@@ -110,7 +119,7 @@ export async function getProfessionalStats() {
 export async function getRequests() {
   if (!getSessionToken()) {
     await wait()
-    return requests
+    return [...getLocalQuotes(), ...requests]
   }
 
   try {
@@ -126,6 +135,7 @@ export async function getRequests() {
         value: quote.responsePrice || 'A definir',
         responseEta: quote.responseEta,
         responseMessage: quote.responseMessage,
+        professionalId: quote.professionalId,
         professionalName: quote.professionalName
       }))
     }
@@ -133,7 +143,7 @@ export async function getRequests() {
     await wait()
   }
 
-  return requests
+  return [...getLocalQuotes(), ...requests]
 }
 
 export function createClientSignup(payload) {
@@ -144,24 +154,63 @@ export function createProfessionalSignup(payload) {
   return postJson('/signups/professionals', payload)
 }
 
-export function createQuoteRequest(payload) {
-  return postJson('/quotes', payload)
+export async function createQuoteRequest(payload) {
+  try {
+    return await postJson('/quotes', payload)
+  } catch {
+    await wait(120)
+    const professional = professionals.find((item) => item.id === payload.professionalId)
+    return createLocalQuote(payload, professional)
+  }
 }
 
-export function respondToQuote(id, payload) {
-  return postJson(`/quotes/${id}/response`, payload, 'PATCH')
+export async function respondToQuote(id, payload) {
+  try {
+    return await postJson(`/quotes/${id}/response`, payload, 'PATCH')
+  } catch {
+    await wait(120)
+    return respondToLocalQuote(id, payload) || {
+      id,
+      status: 'Orcamento enviado',
+      responsePrice: payload.responsePrice,
+      responseEta: payload.responseEta,
+      responseMessage: payload.responseMessage
+    }
+  }
 }
 
-export function updateQuoteStatus(id, status) {
-  return postJson(`/quotes/${id}/status`, { status }, 'PATCH')
+export async function updateQuoteStatus(id, status) {
+  try {
+    return await postJson(`/quotes/${id}/status`, { status }, 'PATCH')
+  } catch {
+    await wait(120)
+    return updateLocalQuoteStatus(id, status) || { id, status }
+  }
 }
 
-export function getQuoteMessages(id) {
-  return getJson(`/quotes/${id}/messages`)
+export async function getQuoteMessages(id) {
+  try {
+    return await getJson(`/quotes/${id}/messages`)
+  } catch {
+    await wait()
+    return getDemoMessages(id)
+  }
 }
 
-export function sendQuoteMessage(id, payload) {
-  return postJson(`/quotes/${id}/messages`, payload)
+export async function sendQuoteMessage(id, payload) {
+  try {
+    return await postJson(`/quotes/${id}/messages`, payload)
+  } catch {
+    await wait(120)
+    return {
+      id: `msg-local-${Date.now()}`,
+      quoteId: id,
+      senderUserId: 'local-user',
+      senderRole: 'client',
+      body: payload.body,
+      createdAt: new Date().toISOString()
+    }
+  }
 }
 
 export function login(payload) {
