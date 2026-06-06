@@ -38,4 +38,5 @@ Use this checklist before any public test.
 - Backend smoke test passes with `npm run test:smoke`.
 - Demo shortcuts are only visible in development builds.
 - Supabase RLS is enabled on all app tables.
+- Supabase Storage policies are active for avatars, portfolio and quote attachments.
 - No `.env` files are committed.

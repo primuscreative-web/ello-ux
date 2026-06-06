@@ -27,6 +27,12 @@ supabase db push --linked --yes
 - `portfolio`
 - `quote-attachments`
 
+Expected object paths:
+
+- `avatars/{user_id}/avatar.webp`
+- `portfolio/{professional_profile_id}/{asset_name}.webp`
+- `quote-attachments/{quote_request_id}/{asset_name}`
+
 ## Security Direction
 
 The schema enables RLS for all app tables. Public read access is limited to professional/service/portfolio/review data that is intentionally visible. Quote and message data is scoped to the participating client and professional.
