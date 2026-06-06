@@ -29,6 +29,7 @@ async function run() {
     const health = await request(base, 'GET', '/health', undefined, '', { Origin: 'http://127.0.0.1:5180' })
     assert(health.response.ok, `health failed ${health.response.status}`)
     assert(health.response.headers.get('x-frame-options') === 'DENY', 'missing x-frame-options header')
+    assert(health.response.headers.get('x-request-id'), 'missing x-request-id header')
 
     const blockedOrigin = await request(base, 'GET', '/health', undefined, '', { Origin: 'https://invalid.example' })
     assert(blockedOrigin.response.status === 403, `CORS should block invalid origin, got ${blockedOrigin.response.status}`)
@@ -101,12 +102,17 @@ async function run() {
     }, client.body.data.token)
     assert(accepted.response.ok && accepted.body.data.status === 'Aceito', 'quote accept failed')
 
+    const finalHealth = await request(base, 'GET', '/health')
+    assert(finalHealth.response.ok, `final health failed ${finalHealth.response.status}`)
+    assert(finalHealth.body.records?.auditEvents >= 7, 'audit events were not recorded')
+
     console.log(JSON.stringify({
       ok: true,
-      storage: health.body.records ? health.body.storage : 'unknown',
+      storage: finalHealth.body.records ? finalHealth.body.storage : 'unknown',
       quoteId: quote.body.data.id,
       messages: messages.body.data.length,
-      status: accepted.body.data.status
+      status: accepted.body.data.status,
+      auditEvents: finalHealth.body.records.auditEvents
     }, null, 2))
   } finally {
     server.close()

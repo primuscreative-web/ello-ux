@@ -4,6 +4,7 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'http://127.0.0.1:5173',
   'http://127.0.0.1:5180'
 ]
+const logger = require('../lib/logger')
 
 function getAllowedOrigins() {
   const configured = String(process.env.ELLO_ALLOWED_ORIGINS || '')
@@ -45,7 +46,7 @@ function notFound(_req, res) {
   res.status(404).json({ error: 'Rota nao encontrada.' })
 }
 
-function errorHandler(error, _req, res, _next) {
+function errorHandler(error, req, res, _next) {
   if (error.type === 'entity.too.large') {
     res.status(413).json({ error: 'Payload muito grande.' })
     return
@@ -60,6 +61,17 @@ function errorHandler(error, _req, res, _next) {
     res.status(403).json({ error: error.message })
     return
   }
+
+  logger.error('request.failed', {
+    requestId: req.id,
+    method: req.method,
+    path: req.originalUrl || req.url,
+    error: {
+      code: error.code,
+      message: error.message,
+      status: error.status
+    }
+  })
 
   res.status(500).json({ error: 'Erro interno.' })
 }

@@ -26,6 +26,9 @@ The local API now applies baseline production-minded safeguards:
 - general in-memory rate limit for local development;
 - stricter login/signup rate limits;
 - random session tokens with expiration controlled by `ELLO_SESSION_TTL_MS`;
+- `X-Request-Id` on every response for production support and log correlation;
+- structured server logs with sensitive fields redacted;
+- audit events for signup, login, quotes, quote responses, status changes and quote messages;
 - request trimming and maximum field lengths on public write endpoints.
 
 ## Storage Driver
@@ -78,10 +81,19 @@ Response:
     "sessions": 0,
     "clients": 0,
     "professionalSignups": 0,
-    "quotes": 0
+    "quotes": 0,
+    "auditEvents": 0
   }
 }
 ```
+
+Every response includes:
+
+```http
+X-Request-Id: request-id
+```
+
+When a support or production incident happens, use this ID to find the matching structured log entry.
 
 ## Authentication
 
@@ -288,3 +300,5 @@ ello-backend/data/ello-dev-store.json
 ```
 
 This directory is ignored by Git because it may contain user data from local testing.
+
+Audit events are stored in the same local JSON file for development. In production, the Supabase driver writes them to `audit_events` using the server-side service role key only.

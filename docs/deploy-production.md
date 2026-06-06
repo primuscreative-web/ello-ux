@@ -48,6 +48,7 @@ https://your-api-domain/health
 ```
 
 The backend validates production envs at startup. If any required Supabase or CORS variable is missing, Render should fail fast instead of serving a broken API.
+Responses include `X-Request-Id`; keep that ID in support reports so logs can be correlated quickly. The Supabase driver also writes business audit events to `audit_events`.
 
 ## 3. Deploy Frontend on Vercel
 

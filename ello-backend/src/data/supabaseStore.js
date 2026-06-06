@@ -1,4 +1,5 @@
 const { professionals: fallbackProfessionals } = require('./mockData')
+const logger = require('../lib/logger')
 
 const quoteStatusToDb = {
   'Novo pedido': 'new',
@@ -103,6 +104,28 @@ async function countTable(table) {
   const count = Number(range.split('/')[1])
 
   return Number.isFinite(count) ? count : 0
+}
+
+async function recordAuditEvent({ actorUserId = null, entityType, entityId, action, metadata = {} }) {
+  try {
+    await insertRow('audit_events', {
+      actor_user_id: actorUserId,
+      entity_type: entityType,
+      entity_id: entityId,
+      action,
+      metadata
+    })
+  } catch (error) {
+    logger.warn('audit.write_failed', {
+      action,
+      entityType,
+      entityId,
+      error: {
+        message: error.message,
+        status: error.status
+      }
+    })
+  }
 }
 
 function withoutSensitiveFields(payload) {
@@ -260,6 +283,13 @@ async function createClientSignup(payload) {
     interests: payload.interests || null
   })
   const session = await createSession(payload)
+  await recordAuditEvent({
+    actorUserId: authUser.id,
+    entityType: 'client_profile',
+    entityId: client.id,
+    action: 'client.signup',
+    metadata: { city: client.city }
+  })
 
   return {
     profile: { id: client.id, type: 'client', ...withoutSensitiveFields(payload), createdAt: client.created_at },
@@ -294,6 +324,13 @@ async function createProfessionalSignup(payload) {
     profile_status: 'published'
   })
   const session = await createSession(payload)
+  await recordAuditEvent({
+    actorUserId: authUser.id,
+    entityType: 'professional_profile',
+    entityId: professional.id,
+    action: 'professional.signup',
+    metadata: { specialty: professional.specialty, city: professional.city }
+  })
 
   return {
     profile: { id: professional.id, type: 'professional', verificationStatus: 'pending', profileStatus: 'published', ...withoutSensitiveFields(payload), createdAt: professional.created_at },
@@ -312,6 +349,13 @@ async function loginUser(payload) {
     error.code = 'INVALID_CREDENTIALS'
     throw error
   }
+  await recordAuditEvent({
+    actorUserId: profile.id,
+    entityType: 'session',
+    entityId: session.user.id,
+    action: 'auth.login',
+    metadata: { role: profile.role }
+  })
 
   return {
     token: session.access_token,
@@ -392,6 +436,13 @@ async function createQuote(payload, user) {
     location: payload.location,
     status: 'new'
   })
+  await recordAuditEvent({
+    actorUserId: user.id,
+    entityType: 'quote_request',
+    entityId: quote.id,
+    action: 'quote.create',
+    metadata: { professionalId: professional.id, status: 'new' }
+  })
 
   return mapQuote(quote)
 }
@@ -439,6 +490,14 @@ async function respondToQuote(id, payload, user) {
     throw error
   }
 
+  await recordAuditEvent({
+    actorUserId: user.id,
+    entityType: 'quote_request',
+    entityId: rows[0].id,
+    action: 'quote.respond',
+    metadata: { status: 'quoted' }
+  })
+
   return mapQuote(rows[0])
 }
 
@@ -473,6 +532,13 @@ async function updateQuoteStatus(id, payload, user) {
     status,
     accepted_at: status === 'accepted' ? new Date().toISOString() : null,
     cancelled_at: status === 'cancelled' ? new Date().toISOString() : null
+  })
+  await recordAuditEvent({
+    actorUserId: user.id,
+    entityType: 'quote_request',
+    entityId: id,
+    action: 'quote.status_update',
+    metadata: { status }
   })
 
   return mapQuote(rows[0])
@@ -509,6 +575,13 @@ async function createQuoteMessage(id, payload, user) {
     sender_user_id: user.id,
     body: payload.body
   })
+  await recordAuditEvent({
+    actorUserId: user.id,
+    entityType: 'quote_message',
+    entityId: message.id,
+    action: 'quote.message_create',
+    metadata: { quoteId: id, senderRole: user.role }
+  })
 
   return {
     id: message.id,
@@ -526,7 +599,8 @@ async function getStoreSummary() {
     sessions: 0,
     clients: await countTable('client_profiles'),
     professionalSignups: await countTable('professional_profiles'),
-    quotes: await countTable('quote_requests')
+    quotes: await countTable('quote_requests'),
+    auditEvents: await countTable('audit_events')
   }
 }
 
@@ -536,7 +610,8 @@ function readState() {
     sessions: [],
     clients: [],
     professionalSignups: [],
-    quotes: []
+    quotes: [],
+    auditEvents: []
   }
 }
 

@@ -12,6 +12,8 @@ Use this checklist before any public test.
 - `SUPABASE_SERVICE_ROLE_KEY` exists only in backend hosting.
 - Backend production env validation passes on startup.
 - `/health` returns `storage: "supabase"`.
+- `/health` records include `auditEvents`.
+- Responses include `X-Request-Id` and backend logs include matching request IDs.
 
 ## Frontend
 
@@ -36,6 +38,7 @@ Use this checklist before any public test.
 - CI is green.
 - Backend audit has no critical vulnerabilities.
 - Backend smoke test passes with `npm run test:smoke`.
+- Audit events are created during signup, login, quote, quote response, status update and chat message flows.
 - Demo shortcuts are only visible in development builds.
 - Supabase RLS is enabled on all app tables.
 - Supabase Storage policies are active for avatars, portfolio and quote attachments.

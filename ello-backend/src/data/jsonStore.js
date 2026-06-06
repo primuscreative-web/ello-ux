@@ -12,7 +12,8 @@ const initialState = {
   sessions: [],
   clients: [],
   professionalSignups: [],
-  quotes: []
+  quotes: [],
+  auditEvents: []
 }
 
 function ensureStoreFile() {
@@ -36,7 +37,8 @@ function readState() {
       sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
       clients: Array.isArray(parsed.clients) ? parsed.clients : [],
       professionalSignups: Array.isArray(parsed.professionalSignups) ? parsed.professionalSignups : [],
-      quotes: Array.isArray(parsed.quotes) ? parsed.quotes : []
+      quotes: Array.isArray(parsed.quotes) ? parsed.quotes : [],
+      auditEvents: Array.isArray(parsed.auditEvents) ? parsed.auditEvents : []
     }
   } catch {
     return { ...initialState }
@@ -120,6 +122,19 @@ function createSessionForUser(state, user) {
   return session
 }
 
+function recordAuditEvent(state, { actorUserId = null, entityType, entityId, action, metadata = {} }) {
+  state.auditEvents = Array.isArray(state.auditEvents) ? state.auditEvents : []
+  state.auditEvents.push({
+    id: createId('audit'),
+    actorUserId,
+    entityType,
+    entityId,
+    action,
+    metadata,
+    createdAt: new Date().toISOString()
+  })
+}
+
 function createClientSignup(payload) {
   const state = readState()
   const client = {
@@ -132,6 +147,13 @@ function createClientSignup(payload) {
   const session = createSessionForUser(state, user)
 
   state.clients.push(client)
+  recordAuditEvent(state, {
+    actorUserId: user.id,
+    entityType: 'client_profile',
+    entityId: client.id,
+    action: 'client.signup',
+    metadata: { city: client.city }
+  })
   writeState(state)
   return { profile: client, token: session.token, user: toPublicUser(user) }
 }
@@ -150,6 +172,13 @@ function createProfessionalSignup(payload) {
   const session = createSessionForUser(state, user)
 
   state.professionalSignups.push(signup)
+  recordAuditEvent(state, {
+    actorUserId: user.id,
+    entityType: 'professional_profile',
+    entityId: signup.id,
+    action: 'professional.signup',
+    metadata: { specialty: signup.specialty, city: signup.city }
+  })
   writeState(state)
   return { profile: signup, token: session.token, user: toPublicUser(user) }
 }
@@ -166,6 +195,13 @@ function loginUser(payload) {
   }
 
   const session = createSessionForUser(state, user)
+  recordAuditEvent(state, {
+    actorUserId: user.id,
+    entityType: 'session',
+    entityId: session.token.slice(0, 18),
+    action: 'auth.login',
+    metadata: { role: user.role }
+  })
   writeState(state)
 
   return { token: session.token, user: toPublicUser(user) }
@@ -203,6 +239,13 @@ function createQuote(payload, user) {
   }
 
   state.quotes.push(quote)
+  recordAuditEvent(state, {
+    actorUserId: user?.id || null,
+    entityType: 'quote_request',
+    entityId: quote.id,
+    action: 'quote.create',
+    metadata: { professionalId: quote.professionalId, status: quote.status }
+  })
   writeState(state)
   return quote
 }
@@ -243,6 +286,13 @@ function respondToQuote(id, payload, user) {
   quote.responseEta = payload.responseEta
   quote.responseMessage = payload.responseMessage
   quote.respondedAt = new Date().toISOString()
+  recordAuditEvent(state, {
+    actorUserId: user.id,
+    entityType: 'quote_request',
+    entityId: quote.id,
+    action: 'quote.respond',
+    metadata: { status: quote.status }
+  })
 
   writeState(state)
   return quote
@@ -279,6 +329,13 @@ function updateQuoteStatus(id, payload, user) {
 
   quote.status = payload.status
   quote.statusUpdatedAt = new Date().toISOString()
+  recordAuditEvent(state, {
+    actorUserId: user.id,
+    entityType: 'quote_request',
+    entityId: quote.id,
+    action: 'quote.status_update',
+    metadata: { status: quote.status }
+  })
 
   writeState(state)
   return quote
@@ -328,6 +385,13 @@ function createQuoteMessage(id, payload, user) {
   quote.messages = Array.isArray(quote.messages) ? quote.messages : []
   quote.messages.push(message)
   quote.lastMessageAt = message.createdAt
+  recordAuditEvent(state, {
+    actorUserId: user.id,
+    entityType: 'quote_message',
+    entityId: message.id,
+    action: 'quote.message_create',
+    metadata: { quoteId: quote.id, senderRole: user.role }
+  })
 
   writeState(state)
   return message
@@ -341,7 +405,8 @@ function getStoreSummary() {
     sessions: state.sessions.length,
     clients: state.clients.length,
     professionalSignups: state.professionalSignups.length,
-    quotes: state.quotes.length
+    quotes: state.quotes.length,
+    auditEvents: state.auditEvents.length
   }
 }
 
