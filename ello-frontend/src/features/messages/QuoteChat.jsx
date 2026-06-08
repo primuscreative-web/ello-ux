@@ -20,7 +20,27 @@ export function QuoteChat() {
     : ['Qual o melhor horario?', 'O material esta incluso?', 'Pode me enviar o valor final?']
 
   useEffect(() => {
-    getQuoteMessages(id).then(setMessages).catch((err) => setError(err.message))
+    let alive = true
+
+    async function loadMessages({ silent = false } = {}) {
+      try {
+        const nextMessages = await getQuoteMessages(id)
+        if (!alive) return
+        setMessages(nextMessages)
+        if (!silent) setError('')
+      } catch (err) {
+        if (!alive || silent) return
+        setError(err.message)
+      }
+    }
+
+    loadMessages()
+    const interval = window.setInterval(() => loadMessages({ silent: true }), 5000)
+
+    return () => {
+      alive = false
+      window.clearInterval(interval)
+    }
   }, [id])
 
   async function submit(event) {
@@ -78,7 +98,7 @@ export function QuoteChat() {
             return (
               <article className={`max-w-[82%] rounded-[1.35rem] px-4 py-3 shadow-soft ${mine ? 'ml-auto bg-brand text-white' : 'mr-auto bg-card text-ink'}`} key={message.id}>
                 <p className={`text-xs font-extrabold uppercase tracking-[0.16em] ${mine ? 'text-white/58' : 'text-brand'}`}>
-                  {mine ? 'Voce' : message.senderRole === 'professional' ? 'Profissional' : 'Cliente'}
+                  {mine ? 'Voce' : message.senderName || (message.senderRole === 'professional' ? 'Profissional' : 'Cliente')}
                 </p>
                 <p className={`mt-1 text-sm font-semibold leading-6 ${mine ? 'text-white' : 'text-muted'}`}>{message.body}</p>
               </article>

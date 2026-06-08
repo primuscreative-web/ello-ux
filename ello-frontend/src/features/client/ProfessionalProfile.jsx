@@ -17,6 +17,7 @@ const toneClass = {
 export function ProfessionalProfile() {
   const { id } = useParams()
   const [professional, setProfessional] = useState(null)
+  const [loadError, setLoadError] = useState('')
   const [reviews, setReviews] = useState([])
   const [reportOpen, setReportOpen] = useState(false)
   const [reportSent, setReportSent] = useState(false)
@@ -25,7 +26,7 @@ export function ProfessionalProfile() {
     getProfessionalById(id).then((item) => {
       setProfessional(item)
       setReviews(getProfessionalReviews(item.id))
-    })
+    }).catch((error) => setLoadError(error.message))
   }, [id])
 
   function submitReport(event) {
@@ -42,6 +43,18 @@ export function ProfessionalProfile() {
       setReportOpen(false)
       setReportSent(false)
     }, 1000)
+  }
+
+  if (loadError) {
+    return (
+      <main className="min-h-screen p-6 text-ink">
+        <section className="mx-auto grid max-w-xl gap-4 rounded-[2rem] bg-card p-6 shadow-soft">
+          <h1 className="text-3xl font-extrabold">Perfil nao encontrado.</h1>
+          <p className="text-sm font-medium leading-6 text-muted">{loadError}</p>
+          <Link className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-brand px-5 text-sm font-extrabold text-white" to="/cliente/feed">Voltar para busca</Link>
+        </section>
+      </main>
+    )
   }
 
   if (!professional) {
@@ -112,7 +125,11 @@ export function ProfessionalProfile() {
                 <h2 className="mt-1 text-2xl font-extrabold tracking-[-0.04em]">O que clientes dizem.</h2>
               </div>
               <div className="grid gap-3 md:grid-cols-2">
-                {reviews.map((review) => (
+                {reviews.length === 0 ? (
+                  <article className="rounded-[1.4rem] border border-line bg-cloud/60 p-4">
+                    <p className="text-sm font-bold text-muted">Este profissional ainda nao recebeu avaliacoes na ELLO.</p>
+                  </article>
+                ) : reviews.map((review) => (
                   <article className="rounded-[1.4rem] border border-line bg-cloud/60 p-4" key={review.id}>
                     <div className="flex items-center justify-between gap-3">
                       <strong>{review.name}</strong>

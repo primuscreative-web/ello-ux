@@ -1,4 +1,4 @@
-import { MessageCircle, SearchCheck, SlidersHorizontal, Star } from 'lucide-react'
+import { MessageCircle, SearchCheck, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BottomNav } from '../../components/navigation/BottomNav'
@@ -9,7 +9,6 @@ import { OrderTimeline } from '../../components/ui/OrderTimeline'
 import { OrderCardSkeleton } from '../../components/ui/Skeleton'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { getRequests, updateQuoteStatus } from '../../services/elloService'
-import { addProfessionalReview } from '../../services/localExperience'
 
 const statusTone = {
   'Novo pedido': 'brand',
@@ -35,8 +34,6 @@ export function ClientOrders() {
   const [busyAction, setBusyAction] = useState('')
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState('Todos')
-  const [reviewing, setReviewing] = useState(null)
-  const [reviewSent, setReviewSent] = useState(false)
   const visibleItems = useMemo(() => items.filter((item) => matchesFilter(item, activeFilter)), [activeFilter, items])
 
   useEffect(() => {
@@ -56,21 +53,6 @@ export function ClientOrders() {
     } finally {
       setBusyAction('')
     }
-  }
-
-  function submitReview(event) {
-    event.preventDefault()
-    const form = new FormData(event.currentTarget)
-    addProfessionalReview(reviewing.professionalId || 'ana-martins', {
-      name: 'Voce',
-      rating: form.get('rating'),
-      text: form.get('text')
-    })
-    setReviewSent(true)
-    window.setTimeout(() => {
-      setReviewing(null)
-      setReviewSent(false)
-    }, 900)
   }
 
   return (
@@ -145,11 +127,6 @@ export function ClientOrders() {
                     {busyAction === `${request.id}-Cancelado` ? 'Cancelando...' : 'Cancelar'}
                   </Button>
                 ) : null}
-                {['Aceito', 'Concluido'].includes(request.status) ? (
-                  <Button onClick={() => setReviewing(request)} variant="secondary">
-                    <Star size={18} /> Avaliar
-                  </Button>
-                ) : null}
                 <Link
                   className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-white/90 px-5 text-sm font-extrabold tracking-[-0.01em] text-ink shadow-[0_10px_28px_rgba(7,19,25,0.08)] transition duration-200 hover:-translate-y-0.5 hover:border-brand/50 hover:bg-white"
                   to={`/pedidos/${request.id}/chat`}
@@ -169,27 +146,6 @@ export function ClientOrders() {
           ) : null}
         </div>
       </section>
-
-      {reviewing ? (
-        <div className="fixed inset-0 z-30 grid place-items-end bg-ink/40 p-4 backdrop-blur-sm md:place-items-center">
-          <form className="grid w-full max-w-md gap-4 rounded-[2rem] bg-card p-5 shadow-premium" onSubmit={submitReview}>
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-brand">Avaliacao</p>
-              <h2 className="mt-1 text-2xl font-extrabold tracking-[-0.04em]">{reviewing.professionalName || 'Profissional ELLO'}</h2>
-            </div>
-            <select className="min-h-12 rounded-2xl border border-line bg-card px-4 text-sm font-bold text-ink" name="rating">
-              <option value="5">5 estrelas</option>
-              <option value="4">4 estrelas</option>
-              <option value="3">3 estrelas</option>
-            </select>
-            <textarea className="min-h-28 rounded-2xl border border-line bg-card px-4 py-3 text-sm font-semibold text-ink" name="text" placeholder="Conte como foi a experiencia." required />
-            <div className="grid gap-2 sm:grid-cols-2">
-              <Button type="submit">{reviewSent ? 'Avaliado' : 'Enviar avaliacao'}</Button>
-              <Button onClick={() => setReviewing(null)} type="button" variant="secondary">Fechar</Button>
-            </div>
-          </form>
-        </div>
-      ) : null}
 
       <BottomNav mode="client" />
     </main>

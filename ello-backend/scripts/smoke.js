@@ -21,9 +21,25 @@ async function request(base, method, path, payload, token, extraHeaders = {}) {
   return { body, response }
 }
 
+async function cleanupSupabaseUsers(userIds) {
+  const url = String(process.env.SUPABASE_URL || '').replace(/\/$/, '')
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!url || !serviceKey || userIds.length === 0) return
+
+  await Promise.allSettled(userIds.map((userId) => fetch(`${url}/auth/v1/admin/users/${userId}`, {
+    method: 'DELETE',
+    headers: {
+      apikey: serviceKey,
+      Authorization: `Bearer ${serviceKey}`
+    }
+  })))
+}
+
 async function run() {
   const server = app.listen(0)
   const base = `http://127.0.0.1:${server.address().port}`
+  const createdUserIds = []
 
   try {
     const health = await request(base, 'GET', '/health', undefined, '', { Origin: 'http://127.0.0.1:5180' })
@@ -45,6 +61,7 @@ async function run() {
     })
     assert(client.response.ok, `client signup failed ${client.response.status}`)
     assert(client.body.data?.token, 'client token missing')
+    if (client.body.data?.user?.id) createdUserIds.push(client.body.data.user.id)
 
     const professional = await request(base, 'POST', '/signups/professionals', {
       fullName: 'Pro Smoke',
@@ -65,6 +82,7 @@ async function run() {
     })
     assert(professional.response.ok, `professional signup failed ${professional.response.status}`)
     assert(professional.body.data?.token, 'professional token missing')
+    if (professional.body.data?.user?.id) createdUserIds.push(professional.body.data.user.id)
 
     const pros = await request(base, 'GET', '/professionals')
     assert(pros.response.ok && pros.body.data.length > 0, 'professionals discovery failed')
@@ -115,6 +133,7 @@ async function run() {
       auditEvents: finalHealth.body.records.auditEvents
     }, null, 2))
   } finally {
+    await cleanupSupabaseUsers(createdUserIds)
     server.close()
   }
 }

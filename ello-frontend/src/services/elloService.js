@@ -1,12 +1,8 @@
 import {
   categories,
-  onboardingSlides,
-  professionalStats,
-  professionals,
-  requests
+  onboardingSlides
 } from '../data/elloData'
-import { createLocalQuote, getDemoMessages, getLocalQuotes, respondToLocalQuote, updateLocalQuoteStatus } from './localExperience'
-import { getSession, getSessionToken } from './session'
+import { getSessionToken } from './session'
 
 const wait = (ms = 180) => new Promise((resolve) => window.setTimeout(resolve, ms))
 const API_URL = import.meta.env.VITE_ELLO_API_URL || ''
@@ -83,63 +79,33 @@ export async function getProfessionals({ search = '', category = 'Todos' } = {})
     await wait()
   }
 
-  const normalizedSearch = search.toLowerCase().trim()
-  return professionals.filter((professional) => {
-    const matchesCategory = category === 'Todos' || professional.category === category
-    const matchesSearch =
-      !normalizedSearch ||
-      professional.name.toLowerCase().includes(normalizedSearch) ||
-      professional.category.toLowerCase().includes(normalizedSearch) ||
-      professional.city.toLowerCase().includes(normalizedSearch) ||
-      professional.neighborhood.toLowerCase().includes(normalizedSearch) ||
-      professional.bio.toLowerCase().includes(normalizedSearch) ||
-      professional.keywords.some((keyword) => keyword.includes(normalizedSearch))
-
-    return matchesCategory && matchesSearch
-  })
+  return []
 }
 
 export async function getProfessionalById(id) {
-  try {
-    return await getJson(`/professionals/${id}`)
-  } catch {
-    await wait()
-  }
-
-  return professionals.find((professional) => professional.id === id) || professionals[0]
-}
-
-export async function getProfessionalStats() {
-  await wait()
-  return professionalStats
+  return getJson(`/professionals/${id}`)
 }
 
 export async function getRequests() {
   if (!getSessionToken()) {
-    await wait()
-    return [...getLocalQuotes(), ...requests]
+    return []
   }
 
-  try {
-    const apiQuotes = await getJson('/quotes')
+  const apiQuotes = await getJson('/quotes')
 
-    return apiQuotes.map((quote) => ({
-      id: quote.id,
-      client: quote.location,
-      service: quote.description,
-      status: quote.status,
-      date: 'Agora',
-      value: quote.responsePrice || 'A definir',
-      responseEta: quote.responseEta,
-      responseMessage: quote.responseMessage,
-      professionalId: quote.professionalId,
-      professionalName: quote.professionalName
-    }))
-  } catch {
-    await wait()
-  }
-
-  return [...getLocalQuotes(), ...requests]
+  return apiQuotes.map((quote) => ({
+    id: quote.id,
+    client: quote.location,
+    clientName: quote.clientName,
+    service: quote.description,
+    status: quote.status,
+    date: 'Agora',
+    value: quote.responsePrice || 'A definir',
+    responseEta: quote.responseEta,
+    responseMessage: quote.responseMessage,
+    professionalId: quote.professionalId,
+    professionalName: quote.professionalName
+  }))
 }
 
 export function createClientSignup(payload) {
@@ -151,63 +117,23 @@ export function createProfessionalSignup(payload) {
 }
 
 export async function createQuoteRequest(payload) {
-  try {
-    return await postJson('/quotes', payload)
-  } catch {
-    await wait(120)
-    const professional = professionals.find((item) => item.id === payload.professionalId)
-    return createLocalQuote(payload, professional)
-  }
+  return postJson('/quotes', payload)
 }
 
 export async function respondToQuote(id, payload) {
-  try {
-    return await postJson(`/quotes/${id}/response`, payload, 'PATCH')
-  } catch {
-    await wait(120)
-    return respondToLocalQuote(id, payload) || {
-      id,
-      status: 'Orcamento enviado',
-      responsePrice: payload.responsePrice,
-      responseEta: payload.responseEta,
-      responseMessage: payload.responseMessage
-    }
-  }
+  return postJson(`/quotes/${id}/response`, payload, 'PATCH')
 }
 
 export async function updateQuoteStatus(id, status) {
-  try {
-    return await postJson(`/quotes/${id}/status`, { status }, 'PATCH')
-  } catch {
-    await wait(120)
-    return updateLocalQuoteStatus(id, status) || { id, status }
-  }
+  return postJson(`/quotes/${id}/status`, { status }, 'PATCH')
 }
 
 export async function getQuoteMessages(id) {
-  try {
-    return await getJson(`/quotes/${id}/messages`)
-  } catch {
-    await wait()
-    return getDemoMessages(id)
-  }
+  return getJson(`/quotes/${id}/messages`)
 }
 
 export async function sendQuoteMessage(id, payload) {
-  try {
-    return await postJson(`/quotes/${id}/messages`, payload)
-  } catch {
-    const session = getSession()
-    await wait(120)
-    return {
-      id: `msg-local-${Date.now()}`,
-      quoteId: id,
-      senderUserId: session?.user?.id || 'local-user',
-      senderRole: session?.user?.role || 'client',
-      body: payload.body,
-      createdAt: new Date().toISOString()
-    }
-  }
+  return postJson(`/quotes/${id}/messages`, payload)
 }
 
 export function login(payload) {

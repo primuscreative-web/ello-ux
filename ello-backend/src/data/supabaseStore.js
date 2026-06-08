@@ -1,4 +1,3 @@
-const { professionals: fallbackProfessionals } = require('./mockData')
 const logger = require('../lib/logger')
 
 const quoteStatusToDb = {
@@ -171,11 +170,13 @@ function mapProfessional(row) {
 
 function mapQuote(row) {
   const professionalName = row.professional_profiles?.public_name || row.professional_profiles?.profiles?.full_name || 'Profissional ELLO'
+  const clientName = row.client_profiles?.profiles?.full_name || 'Cliente ELLO'
 
   return {
     id: row.id,
     status: quoteStatusFromDb[row.status] || 'Novo pedido',
     clientUserId: row.client_profiles?.user_id || null,
+    clientName,
     professionalId: row.professional_id,
     professionalName,
     description: row.description,
@@ -197,6 +198,7 @@ function toPublicUser(profile, profileId) {
     id: profile.id,
     email: profile.email,
     role: profile.role,
+    fullName: profile.full_name,
     profileId,
     createdAt: profile.created_at
   }
@@ -393,7 +395,7 @@ async function listProfessionals({ search = '', category = '' } = {}) {
 
 async function getProfessionalById(id) {
   const row = await selectOne('professional_profiles', `id=eq.${id}&select=*,profiles(full_name)`)
-  return row ? mapProfessional(row) : fallbackProfessionals.find((item) => item.id === id) || null
+  return row ? mapProfessional(row) : null
 }
 
 async function getClientProfile(user) {
@@ -448,7 +450,7 @@ async function createQuote(payload, user) {
 }
 
 async function listQuotesForUser(user) {
-  const select = 'select=*,client_profiles(user_id),professional_profiles(public_name,profiles(full_name))&order=created_at.desc'
+  const select = 'select=*,client_profiles(user_id,profiles(full_name)),professional_profiles(public_name,profiles(full_name))&order=created_at.desc'
 
   if (user.role === 'client') {
     const client = await getClientProfile(user)
@@ -460,7 +462,7 @@ async function listQuotesForUser(user) {
 }
 
 async function listQuotes() {
-  return (await selectRows('quote_requests', 'select=*,client_profiles(user_id),professional_profiles(public_name,profiles(full_name))&order=created_at.desc')).map(mapQuote)
+  return (await selectRows('quote_requests', 'select=*,client_profiles(user_id,profiles(full_name)),professional_profiles(public_name,profiles(full_name))&order=created_at.desc')).map(mapQuote)
 }
 
 async function findQuoteForUser(id, user) {
@@ -552,14 +554,24 @@ async function listQuoteMessages(id, user) {
     throw error
   }
 
-  return (await selectRows('quote_messages', `quote_request_id=eq.${id}&select=*&order=created_at.asc`)).map((message) => ({
-    id: message.id,
-    quoteId: message.quote_request_id,
-    senderUserId: message.sender_user_id,
-    senderRole: message.sender_user_id === user.id ? user.role : '',
-    body: message.body,
-    createdAt: message.created_at
-  }))
+  const messages = await selectRows('quote_messages', `quote_request_id=eq.${id}&select=*&order=created_at.asc`)
+
+  return messages.map((message) => {
+    const mine = message.sender_user_id === user.id
+    const senderRole = mine
+      ? user.role
+      : user.role === 'client' ? 'professional' : 'client'
+
+    return {
+      id: message.id,
+      quoteId: message.quote_request_id,
+      senderUserId: message.sender_user_id,
+      senderRole,
+      senderName: mine ? 'Voce' : senderRole === 'professional' ? quote.professionalName : quote.clientName,
+      body: message.body,
+      createdAt: message.created_at
+    }
+  })
 }
 
 async function createQuoteMessage(id, payload, user) {

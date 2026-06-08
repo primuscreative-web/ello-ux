@@ -2,7 +2,6 @@ const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
 const { hashPassword, verifyPassword } = require('../lib/password')
-const { professionals } = require('./mockData')
 
 const dataDir = path.join(__dirname, '..', '..', 'data')
 const dataFile = path.join(dataDir, 'ello-dev-store.json')
@@ -67,6 +66,47 @@ function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase()
 }
 
+function toInitials(name) {
+  return String(name || 'ELLO')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase() || 'EL'
+}
+
+function mapProfessional(signup) {
+  const name = signup.publicName || signup.fullName || 'Profissional ELLO'
+  const category = signup.specialty || 'Servicos'
+
+  return {
+    id: signup.id,
+    name,
+    category,
+    city: signup.city || 'Brasil',
+    neighborhood: signup.coverage || signup.city || 'Brasil',
+    rating: 0,
+    jobs: 0,
+    responseTime: 'responde em breve',
+    price: signup.basePrice || 'A combinar',
+    chargeType: signup.chargeType || 'por atendimento',
+    keywords: [category, signup.city, signup.coverage, signup.description].filter(Boolean).map((item) => String(item).toLowerCase()),
+    bio: signup.description || 'Perfil profissional em construcao.',
+    portfolio: [],
+    reviewCount: 0,
+    verified: signup.verificationStatus === 'verified',
+    completedJobsLabel: '0 servicos',
+    trustSignals: [],
+    recentWork: [],
+    availability: signup.availability || 'A combinar',
+    avatar: toInitials(name),
+    accent: 'from-[#E8FFF7] via-white to-[#FFF0DD]',
+    chips: [category, signup.city, signup.availability || 'A combinar'].filter(Boolean).slice(0, 3),
+    profileHealth: signup.profileStatus === 'published' ? 72 : 48
+  }
+}
+
 function findUserByEmail(state, email) {
   const normalizedEmail = normalizeEmail(email)
   return state.users.find((user) => user.email === normalizedEmail)
@@ -79,6 +119,7 @@ function toPublicUser(user) {
     id: user.id,
     email: user.email,
     role: user.role,
+    fullName: user.fullName,
     profileId: user.profileId,
     createdAt: user.createdAt
   }
@@ -100,6 +141,7 @@ function createUser(state, payload, role, profileId) {
     email,
     passwordHash: hashPassword(payload.password),
     role,
+    fullName: payload.fullName,
     profileId,
     createdAt: now,
     updatedAt: now
@@ -221,13 +263,20 @@ function getUserByToken(token) {
 
 function createQuote(payload, user) {
   const state = readState()
-  const professional = professionals.find((item) => item.id === payload.professionalId)
+  const professional = state.professionalSignups.find((item) => item.id === payload.professionalId)
+  if (!professional) {
+    const error = new Error('Profissional nao encontrado.')
+    error.code = 'QUOTE_NOT_FOUND'
+    throw error
+  }
+
   const quote = {
     id: createId('quote'),
     status: 'Novo pedido',
     clientUserId: user?.id || null,
     professionalId: payload.professionalId,
-    professionalName: professional?.name || 'Profissional ELLO',
+    clientName: user?.fullName || 'Cliente ELLO',
+    professionalName: professional.publicName || professional.fullName || 'Profissional ELLO',
     description: payload.description,
     desiredDate: payload.desiredDate,
     location: payload.location,
@@ -262,7 +311,7 @@ function listQuotesForUser(user) {
     return quotes.filter((quote) => quote.clientUserId === user.id)
   }
 
-  return quotes
+  return quotes.filter((quote) => quote.professionalId === user.profileId)
 }
 
 function respondToQuote(id, payload, user) {
@@ -278,6 +327,12 @@ function respondToQuote(id, payload, user) {
   if (user?.role !== 'professional') {
     const error = new Error('Apenas profissionais podem responder pedidos.')
     error.code = 'FORBIDDEN'
+    throw error
+  }
+
+  if (quote.professionalId !== user.profileId) {
+    const error = new Error('Pedido nao encontrado.')
+    error.code = 'QUOTE_NOT_FOUND'
     throw error
   }
 
@@ -346,6 +401,7 @@ function findQuoteForUser(state, id, user) {
 
   if (!quote) return null
   if (user?.role === 'client' && quote.clientUserId !== user.id) return null
+  if (user?.role === 'professional' && quote.professionalId !== user.profileId) return null
 
   return quote
 }
@@ -360,7 +416,18 @@ function listQuoteMessages(id, user) {
     throw error
   }
 
-  return Array.isArray(quote.messages) ? quote.messages : []
+  return (Array.isArray(quote.messages) ? quote.messages : []).map((message) => {
+    const mine = message.senderUserId === user.id
+    const senderRole = mine
+      ? user.role
+      : user.role === 'client' ? 'professional' : 'client'
+
+    return {
+      ...message,
+      senderRole,
+      senderName: mine ? 'Voce' : senderRole === 'professional' ? quote.professionalName : quote.clientName
+    }
+  })
 }
 
 function createQuoteMessage(id, payload, user) {
@@ -378,6 +445,7 @@ function createQuoteMessage(id, payload, user) {
     quoteId: quote.id,
     senderUserId: user.id,
     senderRole: user.role,
+    senderName: 'Voce',
     body: payload.body,
     createdAt: new Date().toISOString()
   }
@@ -411,10 +479,11 @@ function getStoreSummary() {
 }
 
 function listProfessionals({ search = '', category = '' } = {}) {
+  const state = readState()
   const normalizedSearch = String(search || '').toLowerCase()
   const normalizedCategory = String(category || '').toLowerCase()
 
-  return professionals.filter((professional) => {
+  return state.professionalSignups.map(mapProfessional).filter((professional) => {
     const matchesSearch =
       !normalizedSearch ||
       professional.name.toLowerCase().includes(normalizedSearch) ||
@@ -431,7 +500,9 @@ function listProfessionals({ search = '', category = '' } = {}) {
 }
 
 function getProfessionalById(id) {
-  return professionals.find((item) => item.id === id) || null
+  const state = readState()
+  const professional = state.professionalSignups.find((item) => item.id === id)
+  return professional ? mapProfessional(professional) : null
 }
 
 module.exports = {

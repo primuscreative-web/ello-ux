@@ -6,7 +6,7 @@ import { BottomNav } from '../../components/navigation/BottomNav'
 import { Button } from '../../components/ui/Button'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { trustChecklist } from '../../data/elloData'
-import { getProfessionalStats, getRequests } from '../../services/elloService'
+import { getRequests } from '../../services/elloService'
 import { firstName, getCurrentProfile } from '../../services/currentProfile'
 
 const actions = [
@@ -17,12 +17,16 @@ const actions = [
 ]
 
 export function ProfessionalCentral() {
-  const [stats, setStats] = useState([])
   const [requests, setRequests] = useState([])
   const profile = getCurrentProfile()
+  const stats = [
+    { label: 'Pedidos novos', value: String(requests.filter((item) => item.status === 'Novo pedido').length) },
+    { label: 'Orcamentos enviados', value: String(requests.filter((item) => item.status === 'Orcamento enviado').length) },
+    { label: 'Servicos ativos', value: String(requests.filter((item) => ['Aceito', 'Em andamento'].includes(item.status)).length) },
+    { label: 'Pedidos totais', value: String(requests.length) }
+  ]
 
   useEffect(() => {
-    getProfessionalStats().then(setStats)
     getRequests().then(setRequests)
   }, [])
 

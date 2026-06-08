@@ -1,10 +1,10 @@
-import { CheckCircle2, LogIn, Sparkles } from 'lucide-react'
+import { CheckCircle2, LogIn } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
-import { createClientSignup, createProfessionalSignup, login } from '../../services/elloService'
+import { login } from '../../services/elloService'
 import { saveSession } from '../../services/session'
 import { collectErrors, getFormValues, hasErrors, required, validEmail } from '../../utils/validation'
 
@@ -19,7 +19,6 @@ export function Login() {
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
   const navigate = useNavigate()
-  const showDevAccess = import.meta.env.DEV
 
   function completeLogin(session) {
     saveSession(session)
@@ -41,51 +40,6 @@ export function Login() {
     setSubmitting(true)
     try {
       const session = await login(values)
-      completeLogin(session)
-    } catch (error) {
-      setErrors(error.errors || {})
-      setFormError(error.message)
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  async function quickAccess(role) {
-    const suffix = Date.now()
-    setErrors({})
-    setFormError('')
-    setSubmitting(true)
-
-    try {
-      const session = role === 'professional'
-        ? await createProfessionalSignup({
-            fullName: 'Profissional Teste',
-            birthDate: '1990-01-01',
-            specialty: 'Servicos gerais',
-            email: `pro.teste.${suffix}@ello.dev`,
-            password: '12345678',
-            confirmPassword: '12345678',
-            experience: '5 anos',
-            city: 'Brasil',
-            coverage: 'Nacional',
-            document: '12345678900',
-            phone: '11999999999',
-            fiscalCity: 'Brasil',
-            description: 'Perfil de teste para validar a experiencia profissional.',
-            basePrice: 'R$ 120',
-            chargeType: 'por atendimento'
-          })
-        : await createClientSignup({
-            fullName: 'Cliente Teste',
-            birthDate: '1995-01-01',
-            city: 'Brasil',
-            email: `cliente.teste.${suffix}@ello.dev`,
-            password: '12345678',
-            confirmPassword: '12345678',
-            region: 'Centro',
-            interests: 'casa, beleza, eventos'
-          })
-
       completeLogin(session)
     } catch (error) {
       setErrors(error.errors || {})
@@ -130,22 +84,6 @@ export function Login() {
             {done ? <CheckCircle2 size={18} /> : <LogIn size={18} />}
             {done ? 'Entrada confirmada' : submitting ? 'Entrando...' : 'Entrar'}
           </Button>
-          {showDevAccess ? (
-            <div className="grid gap-3 rounded-[1.5rem] border border-dashed border-brand/35 bg-brand/5 p-4">
-              <p className="inline-flex items-center gap-2 text-sm font-extrabold text-brand">
-                <Sparkles size={17} />
-                Acesso rapido para teste local
-              </p>
-              <div className="grid gap-2 sm:grid-cols-2">
-                <Button disabled={submitting} onClick={() => quickAccess('client')} type="button" variant="secondary">
-                  Cliente teste
-                </Button>
-                <Button disabled={submitting} onClick={() => quickAccess('professional')} type="button" variant="secondary">
-                  Profissional teste
-                </Button>
-              </div>
-            </div>
-          ) : null}
           {formError ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{formError}</p> : null}
         </section>
       </form>

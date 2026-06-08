@@ -2,16 +2,15 @@ import { AlertTriangle, BadgeCheck, ClipboardList, UsersRound } from 'lucide-rea
 import { Link } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
 import { StatusPill } from '../../components/ui/StatusPill'
-import { professionals, requests } from '../../data/elloData'
 import { getTrustReports } from '../../services/localExperience'
 
 export function AdminConsole() {
   const reports = getTrustReports()
   const metrics = [
-    { icon: UsersRound, label: 'Profissionais em revisao', value: professionals.length },
-    { icon: ClipboardList, label: 'Pedidos monitorados', value: requests.length },
+    { icon: UsersRound, label: 'Profissionais em revisao', value: 0 },
+    { icon: ClipboardList, label: 'Pedidos monitorados', value: 0 },
     { icon: AlertTriangle, label: 'Denuncias locais', value: reports.length },
-    { icon: BadgeCheck, label: 'Perfis verificados', value: professionals.filter((item) => item.verified).length }
+    { icon: BadgeCheck, label: 'Perfis verificados', value: 0 }
   ]
 
   return (
@@ -45,15 +44,7 @@ export function AdminConsole() {
           <section className="premium-surface rounded-[1.7rem] p-5">
             <h2 className="text-2xl font-extrabold tracking-[-0.04em]">Fila de profissionais</h2>
             <div className="mt-4 grid gap-3">
-              {professionals.map((professional) => (
-                <div className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-card p-4" key={professional.id}>
-                  <div>
-                    <p className="font-extrabold">{professional.name}</p>
-                    <p className="text-sm font-bold text-muted">{professional.category} - {professional.city}</p>
-                  </div>
-                  <StatusPill tone={professional.verified ? 'success' : 'warning'}>{professional.verified ? 'Verificado' : 'Analisar'}</StatusPill>
-                </div>
-              ))}
+              <p className="rounded-2xl border border-line bg-card p-4 text-sm font-bold text-muted">Nenhum profissional em revisao agora.</p>
             </div>
           </section>
 

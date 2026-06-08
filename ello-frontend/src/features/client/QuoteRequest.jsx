@@ -19,13 +19,14 @@ export function QuoteRequest() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [professional, setProfessional] = useState(null)
+  const [loadError, setLoadError] = useState('')
   const [sent, setSent] = useState(false)
   const [errors, setErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    getProfessionalById(id).then(setProfessional)
+    getProfessionalById(id).then(setProfessional).catch((error) => setLoadError(error.message))
   }, [id])
 
   async function submit(event) {
@@ -39,9 +40,9 @@ export function QuoteRequest() {
 
     setSubmitting(true)
     try {
-      await createQuoteRequest({ ...values, professionalId: id })
+      const quote = await createQuoteRequest({ ...values, professionalId: id })
       setSent(true)
-      window.setTimeout(() => navigate('/cliente/pedidos'), 700)
+      window.setTimeout(() => navigate(`/pedidos/${quote.id}/chat`), 700)
     } catch (error) {
       setErrors(error.errors || {})
       setFormError(error.message)
@@ -57,9 +58,10 @@ export function QuoteRequest() {
           <div className="grid gap-2">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand">Solicitar orcamento</p>
             <h1 className="text-3xl font-extrabold md:text-5xl">
-              {professional ? `Conte para ${professional.name} o que voce precisa.` : 'Conte o que voce precisa.'}
+              {professional ? `Conte para ${professional.name} o que voce precisa.` : loadError ? 'Profissional nao encontrado.' : 'Conte o que voce precisa.'}
             </h1>
             <p className="text-sm font-medium leading-6 text-muted">Quanto mais claro o pedido, melhor o profissional consegue responder.</p>
+            {loadError ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{loadError}</p> : null}
           </div>
           <BackButton fallback="/cliente/feed" />
         </div>
@@ -104,11 +106,11 @@ export function QuoteRequest() {
           </span>
           <span>
             <strong className="block text-sm">Fotos ajudam no orcamento</strong>
-            <span className="text-sm font-medium text-muted">Nesta primeira versao, esse anexo fica representado na interface.</span>
+            <span className="text-sm font-medium text-muted">Descreva as fotos no pedido para o profissional estimar melhor.</span>
           </span>
         </button>
 
-        <Button disabled={submitting} type="submit" className="w-full sm:w-auto">
+        <Button disabled={submitting || Boolean(loadError)} type="submit" className="w-full sm:w-auto">
           {sent ? <CheckCircle2 size={18} /> : null}
           {sent ? 'Pedido enviado' : submitting ? 'Enviando pedido...' : 'Enviar pedido'}
         </Button>
