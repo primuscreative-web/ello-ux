@@ -1,192 +1,178 @@
-import { ArrowRight, BriefcaseBusiness, CheckCircle2, MapPin, ShieldCheck, Sparkles, Star } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { ArrowRight, BriefcaseBusiness, CheckCircle2, MapPin, MessageCircle, ShieldCheck, Sparkles, Star, Wallet } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 import { onboardingSlides } from '../../data/elloData'
 
-const iconMap = {
-  client: MapPin,
-  professional: BriefcaseBusiness,
-  trust: CheckCircle2
+const visualByType = {
+  client: {
+    Icon: MapPin,
+    eyebrow: 'Para clientes',
+    color: 'from-[#e9f9e7] via-white to-[#dff4dd]',
+    rows: [
+      { icon: Sparkles, label: 'Servico encontrado', value: 'Agora' },
+      { icon: Star, label: 'Perfil confiavel', value: 'Novo' },
+      { icon: MessageCircle, label: 'Pedido enviado', value: '1 min' }
+    ]
+  },
+  professional: {
+    Icon: BriefcaseBusiness,
+    eyebrow: 'Para profissionais',
+    color: 'from-[#fff0dc] via-white to-[#ffe4c2]',
+    rows: [
+      { icon: BriefcaseBusiness, label: 'Vitrine ativa', value: 'Brasil' },
+      { icon: MessageCircle, label: 'Novos pedidos', value: 'Hoje' },
+      { icon: Wallet, label: 'Carteira ELLO', value: 'Pro' }
+    ]
+  },
+  trust: {
+    Icon: ShieldCheck,
+    eyebrow: 'Combinado claro',
+    color: 'from-[#eaf8ee] via-white to-[#fff6e9]',
+    rows: [
+      { icon: MessageCircle, label: 'Chat do pedido', value: 'Seguro' },
+      { icon: Wallet, label: 'Pagamento', value: 'App' },
+      { icon: CheckCircle2, label: 'Avaliacao final', value: 'Feito' }
+    ]
+  }
 }
 
-const visualCards = {
-  client: [
-    ['Manicure em gel', '4.9', 'Hoje'],
-    ['Pintura residencial', '4.8', 'Amanha'],
-    ['Limpeza detalhada', '5.0', 'Esta semana']
-  ],
-  professional: [
-    ['Perfil completo', '92%', 'vitrine'],
-    ['Pedidos novos', '8', 'hoje'],
-    ['Resposta media', '20 min', 'rapido']
-  ],
-  trust: [
-    ['Pedido enviado', '1', 'cliente'],
-    ['Orcamento recebido', '2', 'profissional'],
-    ['Conversa alinhada', '3', 'chat']
-  ]
-}
-
-function SlideVisual({ type }) {
-  const cards = visualCards[type] || visualCards.client
+function OnboardingImage({ slide }) {
+  const visual = visualByType[slide.image] || visualByType.client
+  const Icon = visual.Icon
 
   return (
-    <div className="pointer-events-none absolute bottom-6 right-5 z-10 hidden w-72 rounded-[2rem] border border-white/14 bg-white/12 p-3 shadow-[0_30px_90px_rgba(0,0,0,0.28)] backdrop-blur-2xl md:grid">
-      <div className="rounded-[1.55rem] bg-white p-4 text-ink shadow-soft">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">ELLO</p>
-            <p className="mt-1 text-xl font-extrabold tracking-[-0.04em]">Agora no app</p>
-          </div>
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand text-white">
-            <Sparkles size={18} />
-          </span>
-        </div>
-        <div className="mt-4 grid gap-2">
-          {cards.map(([label, value, meta], index) => (
+    <motion.div
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      className={`relative mx-auto aspect-[0.76] w-full max-w-[19.5rem] overflow-hidden rounded-[2rem] border border-line bg-gradient-to-br ${visual.color} p-5 shadow-premium sm:max-w-[21rem]`}
+      exit={{ opacity: 0, scale: 0.98, y: -16 }}
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div className="absolute inset-x-5 top-5 flex items-center justify-between">
+        <span className="text-2xl font-black tracking-[-0.05em] text-ink">ELLO</span>
+        <span className="rounded-full bg-white/90 px-3 py-1.5 text-xs font-extrabold text-brandDark shadow-soft">
+          {visual.eyebrow}
+        </span>
+      </div>
+
+      <div className="absolute left-5 right-5 top-18 rounded-[1.65rem] bg-white p-4 shadow-soft">
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/12 text-brandDark">
+          <Icon size={28} />
+        </span>
+        <h2 className="mt-4 text-xl font-black leading-[1] tracking-[-0.05em] text-ink">{slide.title}</h2>
+      </div>
+
+      <div className="absolute bottom-5 left-5 right-5 grid gap-2">
+        {visual.rows.map((item, index) => {
+          const RowIcon = item.icon
+          return (
             <motion.div
               animate={{ opacity: 1, x: 0 }}
-              className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-[1.15rem] border border-line bg-cloud/70 p-3"
-              initial={{ opacity: 0, x: 18 }}
-              key={label}
-              transition={{ delay: 0.08 * index, duration: 0.28 }}
+              className="flex items-center gap-3 rounded-[1.15rem] border border-line bg-white/90 p-3 shadow-[0_10px_28px_rgba(37,49,43,0.07)]"
+              initial={{ opacity: 0, x: 16 }}
+              key={item.label}
+              transition={{ delay: 0.12 + index * 0.05, duration: 0.28 }}
             >
-              <div>
-                <p className="text-sm font-extrabold">{label}</p>
-                <p className="mt-0.5 text-xs font-bold text-muted">{meta}</p>
-              </div>
-              <span className="rounded-xl bg-brand/10 px-3 py-2 text-sm font-extrabold text-brand">{value}</span>
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                <RowIcon size={18} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-extrabold text-ink">{item.label}</span>
+              </span>
+              <span className="rounded-full bg-cloud px-3 py-1.5 text-xs font-extrabold text-brandDark">{item.value}</span>
             </motion.div>
-          ))}
-        </div>
+          )
+        })}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
 export function Onboarding() {
   const [active, setActive] = useState(0)
+  const [touchStart, setTouchStart] = useState(null)
   const navigate = useNavigate()
   const slide = onboardingSlides[active]
-  const Icon = iconMap[slide.image]
+  const isLast = active === onboardingSlides.length - 1
 
-  function next() {
-    if (active < onboardingSlides.length - 1) {
-      setActive((current) => current + 1)
+  function goNext() {
+    if (isLast) {
+      navigate('/comecar')
       return
     }
 
-    navigate('/comecar')
+    setActive((current) => current + 1)
+  }
+
+  function goPrevious() {
+    setActive((current) => Math.max(0, current - 1))
+  }
+
+  function handleTouchEnd(event) {
+    if (touchStart === null) return
+    const delta = touchStart - event.changedTouches[0].clientX
+
+    if (delta > 42) goNext()
+    if (delta < -42) goPrevious()
+    setTouchStart(null)
   }
 
   return (
-    <main className="min-h-screen overflow-hidden p-4 text-ink sm:p-6">
-      <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-7xl overflow-hidden rounded-[2.25rem] border border-white/70 bg-white/70 shadow-premium backdrop-blur-2xl lg:grid-cols-[1.08fr_0.92fr]">
-        <section className="relative isolate min-h-[23rem] overflow-hidden bg-ink p-5 text-white sm:min-h-[31rem] sm:p-8 lg:min-h-full lg:p-10">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(0,127,120,0.58),transparent_25rem),radial-gradient(circle_at_80%_18%,rgba(255,114,94,0.24),transparent_20rem),linear-gradient(140deg,#101a33_0%,#075e59_58%,#071224_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,rgba(255,255,255,0.12))]" />
-          <div className="absolute bottom-8 left-8 right-8 hidden h-28 rounded-[2rem] border border-white/10 bg-white/8 backdrop-blur md:block" />
-          <SlideVisual type={slide.image} />
+    <main className="onboarding-light min-h-screen overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f4fbf1_58%,#eef8ea_100%)] px-4 py-5 text-ink sm:px-6">
+      <section className="mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-md flex-col justify-between gap-4">
+        <header className="flex items-center justify-between text-[#071319]">
+          <span className="text-3xl font-black tracking-[-0.055em] text-brandDark">ELLO</span>
+          <span className="rounded-full border border-line bg-white px-3 py-2 text-xs font-extrabold text-muted shadow-soft">
+            Brasil
+          </span>
+        </header>
 
-          <div className="relative z-10 flex h-full min-h-[22rem] flex-col justify-between sm:min-h-[30rem]">
-            <div className="flex items-center justify-between">
-              <div className="text-3xl font-extrabold tracking-[-0.04em]">ELLO</div>
-              <div className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-white/80 backdrop-blur">
-                Brasil inteiro
-              </div>
-            </div>
+        <div
+          className="grid flex-1 content-center"
+          onTouchEnd={handleTouchEnd}
+          onTouchStart={(event) => setTouchStart(event.touches[0].clientX)}
+        >
+          <AnimatePresence mode="wait">
+            <OnboardingImage key={slide.title} slide={slide} />
+          </AnimatePresence>
+        </div>
 
-            <motion.div
-              key={slide.title}
-              initial={{ opacity: 0, y: 22, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.35 }}
-              className="grid gap-4 sm:gap-5"
-            >
-              <div className="grid max-w-lg gap-4">
-                <span className="flex h-14 w-14 items-center justify-center rounded-[1.15rem] border border-white/15 bg-white/12 text-white shadow-soft backdrop-blur sm:h-16 sm:w-16 sm:rounded-[1.35rem]">
-                  <Icon size={26} strokeWidth={1.8} />
-                </span>
-                <h1 className="text-balance text-4xl font-extrabold leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
-                  {slide.title}
-                </h1>
-              </div>
-
-              <div className="grid max-w-xl gap-3 rounded-[1.35rem] border border-white/12 bg-white/10 p-3 shadow-[0_24px_70px_rgba(0,0,0,0.2)] backdrop-blur-xl sm:grid-cols-[1fr_auto] sm:items-center sm:rounded-[1.75rem] sm:p-4">
-                <p className="text-sm font-medium leading-6 text-white/78">{slide.text}</p>
-                <div className="flex items-center gap-2 rounded-2xl bg-white px-3 py-2 text-sm font-extrabold text-ink">
-                  <Star size={16} className="fill-gold text-gold" />
-                  4.9
-                </div>
-              </div>
-            </motion.div>
-
-            <div className="hidden gap-3 sm:grid sm:grid-cols-3">
-              {[
-                ['Cliente', 'Encontra rapido'],
-                ['Profissional', 'Ganha vitrine'],
-                ['Brasil', 'Escala nacional']
-              ].map(([label, value]) => (
-                <div className="rounded-[1.25rem] border border-white/10 bg-white/10 p-4 backdrop-blur" key={label}>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/45">{label}</p>
-                  <p className="mt-2 text-lg font-extrabold">{value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="grid content-between gap-5 p-5 sm:gap-8 sm:p-8 lg:p-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 rounded-full bg-brand/10 px-3 py-2 text-xs font-extrabold text-brand">
-              <Sparkles size={15} />
-              Primeiro acesso
-            </div>
-            <div className="flex items-center gap-2 text-xs font-bold text-muted">
-              <ShieldCheck size={15} className="text-brand" />
-              Marketplace nacional
-            </div>
+        <footer className="grid gap-3 pb-2">
+          <div className="grid gap-3 text-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                initial={{ opacity: 0, y: 10 }}
+                key={slide.title}
+                transition={{ duration: 0.25 }}
+              >
+                <h1 className="text-balance text-3xl font-black leading-[0.98] tracking-[-0.055em] text-[#071319] sm:text-4xl">{slide.title}</h1>
+                <p className="mx-auto mt-2 max-w-xs text-sm font-semibold leading-6 text-[#667085] sm:text-base">{slide.text}</p>
+              </motion.div>
+            </AnimatePresence>
           </div>
 
-          <div className="grid gap-4 sm:gap-6">
-            <div className="grid gap-4">
-              <p className="text-sm font-extrabold uppercase tracking-[0.22em] text-brand">ELLO</p>
-              <h2 className="hidden text-balance text-4xl font-extrabold leading-[1.02] tracking-[-0.04em] sm:block sm:text-5xl">
-                Servicos do seu bairro com alcance de produto nacional.
-              </h2>
-              <p className="hidden max-w-xl text-base font-medium leading-7 text-muted sm:block">
-                Uma experiencia feita para quem contrata e para quem trabalha: descoberta, reputacao e pedidos em um fluxo simples para qualquer cidade.
-              </p>
-            </div>
-
-            <div className="grid gap-2 sm:gap-3">
-              {onboardingSlides.map((item, index) => (
-                <button
-                  aria-label={`Ir para ${item.title}`}
-                  className={`grid rounded-[1.1rem] border p-3 text-left transition sm:rounded-[1.35rem] sm:p-4 ${index === active ? 'border-brand bg-brand text-white shadow-[0_18px_44px_rgba(0,127,120,0.24)]' : 'border-line bg-white/80 text-ink hover:border-brand/40'}`}
-                  key={item.title}
-                  onClick={() => setActive(index)}
-                >
-                  <span className="text-sm font-extrabold">{item.title}</span>
-                  <span className={`mt-1 hidden text-xs font-semibold leading-5 sm:block ${index === active ? 'text-white/72' : 'text-muted'}`}>{item.text}</span>
-                </button>
-              ))}
-            </div>
+          <div className="flex items-center justify-center gap-2">
+            {onboardingSlides.map((item, index) => (
+              <button
+                aria-label={`Ir para slide ${index + 1}`}
+                className={`h-2.5 rounded-full transition-all ${index === active ? 'w-9 bg-brand' : 'w-2.5 bg-line'}`}
+                key={item.title}
+                onClick={() => setActive(index)}
+                type="button"
+              />
+            ))}
           </div>
 
-          <div className="grid gap-3">
-            <Button onClick={next} className="min-h-14">
-              {active === onboardingSlides.length - 1 ? 'Comecar' : 'Continuar'}
-              <ArrowRight size={18} />
-            </Button>
-            <Button variant="ghost" onClick={() => navigate('/comecar')}>
-              Ja tenho conta
-            </Button>
-          </div>
-        </section>
-      </div>
+          <Button className="min-h-14 rounded-[1.35rem]" onClick={goNext}>
+            {isLast ? 'Entrar ou cadastrar' : 'Continuar'}
+            <ArrowRight size={18} />
+          </Button>
+        </footer>
+      </section>
     </main>
   )
 }
