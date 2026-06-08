@@ -7,7 +7,8 @@ Use this checklist before any public test.
 - Supabase project created.
 - Supabase project is `ello-production` (`qqrkchlxztdxxxvetxau`).
 - `supabase db push --linked --yes` applied.
-- Render service deployed from `render.yaml`.
+- Production API deployed at `https://ello-api.vercel.app`.
+- Optional Render service deployed from `render.yaml` if using Render instead of Vercel API.
 - `ELLO_STORE_DRIVER=supabase`.
 - `ELLO_ALLOWED_ORIGINS` contains only real frontend domains.
 - `SUPABASE_SERVICE_ROLE_KEY` exists only in backend hosting.
@@ -19,7 +20,7 @@ Use this checklist before any public test.
 ## Frontend
 
 - Vercel project points to `ello-frontend`.
-- `VITE_ELLO_API_URL` points to the Render API URL.
+- `VITE_ELLO_API_URL` points to `https://ello-api.vercel.app`.
 - PWA manifest loads.
 - Service worker loads.
 - Mobile onboarding, signup, feed, orders and chat render on production URL.
