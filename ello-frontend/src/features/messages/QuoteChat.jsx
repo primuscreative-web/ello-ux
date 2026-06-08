@@ -1,4 +1,4 @@
-import { ImagePlus, LockKeyhole, SendHorizonal, Sparkles } from 'lucide-react'
+import { ImagePlus, LockKeyhole, RefreshCw, SendHorizonal, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { BottomNav } from '../../components/navigation/BottomNav'
@@ -13,6 +13,7 @@ export function QuoteChat() {
   const [messages, setMessages] = useState([])
   const [body, setBody] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const fallback = session?.user?.role === 'professional' ? '/profissional/pedidos' : '/cliente/pedidos'
   const quickReplies = session?.user?.role === 'professional'
@@ -23,7 +24,14 @@ export function QuoteChat() {
     let alive = true
 
     async function loadMessages({ silent = false } = {}) {
+      if (!session?.token) {
+        setLoading(false)
+        setError('Entre na sua conta para abrir esta conversa.')
+        return
+      }
+
       try {
+        if (!silent) setLoading(true)
         const nextMessages = await getQuoteMessages(id)
         if (!alive) return
         setMessages(nextMessages)
@@ -31,6 +39,8 @@ export function QuoteChat() {
       } catch (err) {
         if (!alive || silent) return
         setError(err.message)
+      } finally {
+        if (alive && !silent) setLoading(false)
       }
     }
 
@@ -41,7 +51,19 @@ export function QuoteChat() {
       alive = false
       window.clearInterval(interval)
     }
-  }, [id])
+  }, [id, session?.token])
+
+  async function refreshMessages() {
+    setLoading(true)
+    setError('')
+    try {
+      setMessages(await getQuoteMessages(id))
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function submit(event) {
     event.preventDefault()
@@ -54,6 +76,7 @@ export function QuoteChat() {
       const message = await sendQuoteMessage(id, { body: text })
       setMessages((current) => [...current, message])
       setBody('')
+      window.setTimeout(refreshMessages, 250)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -73,7 +96,17 @@ export function QuoteChat() {
                 Use esta conversa para combinar detalhes, tirar duvidas e alinhar o proximo passo.
               </p>
             </div>
-            <BackButton fallback={fallback} className="border-white/10 bg-white/10 text-white hover:bg-white hover:text-ink" />
+            <div className="flex gap-2">
+              <button
+                className="flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm font-extrabold text-white transition hover:bg-white hover:text-ink"
+                onClick={refreshMessages}
+                type="button"
+              >
+                <RefreshCw size={17} className={loading ? 'animate-spin' : ''} />
+                Atualizar
+              </button>
+              <BackButton fallback={fallback} className="border-white/10 bg-white/10 text-white hover:bg-white hover:text-ink" />
+            </div>
           </div>
         </header>
 
@@ -85,7 +118,14 @@ export function QuoteChat() {
             <p className="mt-1 text-sm font-medium leading-6 text-muted">Mantenha combinados, valores e prazos por escrito para facilitar suporte e avaliacao depois.</p>
           </div>
 
-          {messages.length === 0 ? (
+          {loading ? (
+            <div className="mx-auto max-w-sm rounded-[1.5rem] bg-brand/8 p-5 text-center">
+              <p className="text-lg font-extrabold">Carregando conversa...</p>
+              <p className="mt-2 text-sm font-medium leading-6 text-muted">Buscando mensagens mais recentes do pedido.</p>
+            </div>
+          ) : null}
+
+          {!loading && messages.length === 0 ? (
             <div className="mx-auto max-w-sm rounded-[1.5rem] bg-brand/8 p-5 text-center">
               <p className="text-lg font-extrabold">Nenhuma mensagem ainda.</p>
               <p className="mt-2 text-sm font-medium leading-6 text-muted">Comece com uma pergunta simples sobre prazo, endereco ou material.</p>
@@ -138,7 +178,7 @@ export function QuoteChat() {
             <SendHorizonal size={18} />
             {sending ? 'Enviando...' : 'Enviar'}
           </Button>
-          {error ? <p className="text-sm font-bold text-rose-600 md:col-span-2">{error}</p> : null}
+          {error ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700 md:col-span-2">{error}</p> : null}
         </form>
       </section>
       <BottomNav mode={session?.user?.role === 'professional' ? 'professional' : 'client'} />

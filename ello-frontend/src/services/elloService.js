@@ -7,7 +7,7 @@ import { getSessionToken } from './session'
 const wait = (ms = 180) => new Promise((resolve) => window.setTimeout(resolve, ms))
 const API_URL = import.meta.env.VITE_ELLO_API_URL || ''
 
-async function postJson(path, payload, method = 'POST') {
+async function postJson(path, payload, method = 'POST', tokenOverride = '') {
   if (!API_URL) {
     throw new Error('API nao configurada para este ambiente.')
   }
@@ -19,7 +19,7 @@ async function postJson(path, payload, method = 'POST') {
       method,
       headers: {
         'Content-Type': 'application/json',
-        ...(getSessionToken() ? { Authorization: `Bearer ${getSessionToken()}` } : {})
+        ...((tokenOverride || getSessionToken()) ? { Authorization: `Bearer ${tokenOverride || getSessionToken()}` } : {})
       },
       body: JSON.stringify(payload)
     })
@@ -38,14 +38,14 @@ async function postJson(path, payload, method = 'POST') {
   return body.data
 }
 
-async function getJson(path) {
+async function getJson(path, tokenOverride = '') {
   if (!API_URL) {
     throw new Error('API nao configurada para este ambiente.')
   }
 
   const response = await fetch(`${API_URL}${path}`, {
     headers: {
-      ...(getSessionToken() ? { Authorization: `Bearer ${getSessionToken()}` } : {})
+      ...((tokenOverride || getSessionToken()) ? { Authorization: `Bearer ${tokenOverride || getSessionToken()}` } : {})
     }
   })
   const body = await response.json().catch(() => ({}))
@@ -142,4 +142,13 @@ export function login(payload) {
 
 export function getCurrentUser() {
   return getJson('/auth/me')
+}
+
+export function getCurrentUserWithToken(token) {
+  return getJson('/auth/me', token)
+}
+
+export function getGoogleAuthUrl(redirectTo) {
+  const params = new URLSearchParams({ redirectTo })
+  return getJson(`/auth/google?${params.toString()}`)
 }

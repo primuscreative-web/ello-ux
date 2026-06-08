@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import { ClientSignup } from './features/auth/ClientSignup'
+import { AuthCallback } from './features/auth/AuthCallback'
 import { Login } from './features/auth/Login'
 import { ProfessionalSignup } from './features/auth/ProfessionalSignup'
 import { RoleChoice } from './features/auth/RoleChoice'
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/" element={<Onboarding />} />
           <Route path="/comecar" element={<RoleChoice />} />
           <Route path="/entrar" element={<Login />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/cadastro/cliente" element={<ClientSignup />} />
           <Route path="/cadastro/profissional" element={<ProfessionalSignup />} />
           <Route path="/cliente/feed" element={<ClientFeed />} />

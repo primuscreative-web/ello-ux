@@ -152,7 +152,7 @@ function mapProfessional(row) {
     category,
     city: row.city,
     neighborhood: row.coverage || row.city,
-    rating: Number(row.rating || 0) || 4.9,
+    rating: Number(row.rating || 0),
     jobs: Number(row.jobs || 0),
     responseTime: row.response_time || 'responde em breve',
     price: row.base_price,

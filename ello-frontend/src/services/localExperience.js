@@ -1,4 +1,5 @@
 const FAVORITES_KEY = 'ello.favorite.professionals'
+const POST_LIKES_KEY = 'ello.feed.post.likes'
 const REVIEWS_KEY = 'ello.professional.reviews'
 const REPORTS_KEY = 'ello.trust.reports'
 
@@ -31,6 +32,25 @@ export function toggleFavoriteProfessional(id) {
   writeJson(FAVORITES_KEY, nextFavorites)
   window.dispatchEvent(new CustomEvent('ello:favorites-changed', { detail: nextFavorites }))
   return nextFavorites
+}
+
+export function getLikedPostIds() {
+  return readJson(POST_LIKES_KEY, [])
+}
+
+export function isPostLiked(id) {
+  return getLikedPostIds().includes(id)
+}
+
+export function togglePostLike(id) {
+  const likes = getLikedPostIds()
+  const nextLikes = likes.includes(id)
+    ? likes.filter((item) => item !== id)
+    : [id, ...likes]
+
+  writeJson(POST_LIKES_KEY, nextLikes)
+  window.dispatchEvent(new CustomEvent('ello:post-likes-changed', { detail: nextLikes }))
+  return nextLikes
 }
 
 export function getProfessionalReviews(id) {

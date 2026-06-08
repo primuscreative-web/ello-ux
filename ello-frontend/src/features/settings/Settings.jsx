@@ -87,7 +87,7 @@ export function Settings() {
 
   function handleLogout() {
     clearSession()
-    navigate('/entrar')
+    navigate('/comecar', { replace: true })
   }
 
   return (

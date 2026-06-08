@@ -1,4 +1,4 @@
-import { Bell, Heart, Search, ShieldCheck, SlidersHorizontal, Sparkles } from 'lucide-react'
+import { Bell, Heart, Search, ShieldCheck, SlidersHorizontal, Sparkles, TrendingUp } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { BottomNav } from '../../components/navigation/BottomNav'
@@ -7,18 +7,31 @@ import { ProfessionalCardSkeleton } from '../../components/ui/Skeleton'
 import { categories } from '../../data/elloData'
 import { getProfessionals } from '../../services/elloService'
 import { firstName, getCurrentProfile } from '../../services/currentProfile'
-import { getFavoriteIds } from '../../services/localExperience'
-import { ProfessionalCard } from './ProfessionalCard'
+import { getFavoriteIds, getLikedPostIds } from '../../services/localExperience'
+import { ProfessionalPost } from './ProfessionalPost'
 
 export function ClientFeed() {
   const [activeCategory, setActiveCategory] = useState('Todos')
   const [search, setSearch] = useState('')
   const [favoritesOnly, setFavoritesOnly] = useState(false)
+  const [feedMode, setFeedMode] = useState('forYou')
   const [results, setResults] = useState({ items: [], loading: true })
   const profile = getCurrentProfile()
   const { items, loading } = results
   const favoriteIds = getFavoriteIds()
-  const visibleItems = favoritesOnly ? items.filter((item) => favoriteIds.includes(item.id)) : items
+  const likedPostIds = getLikedPostIds()
+  const rankedItems = [...items].sort((a, b) => {
+    if (feedMode === 'liked') {
+      return Number(likedPostIds.includes(b.id)) - Number(likedPostIds.includes(a.id))
+    }
+    if (feedMode === 'near') {
+      return String(a.city || '').localeCompare(String(b.city || ''))
+    }
+    const scoreA = (favoriteIds.includes(a.id) ? 40 : 0) + (likedPostIds.includes(a.id) ? 28 : 0) + Number(a.profileHealth || 0)
+    const scoreB = (favoriteIds.includes(b.id) ? 40 : 0) + (likedPostIds.includes(b.id) ? 28 : 0) + Number(b.profileHealth || 0)
+    return scoreB - scoreA
+  })
+  const visibleItems = favoritesOnly ? rankedItems.filter((item) => favoriteIds.includes(item.id)) : rankedItems
 
   function selectCategory(category) {
     setResults((current) => ({ ...current, loading: true }))
@@ -43,17 +56,21 @@ export function ClientFeed() {
   }, [activeCategory, search])
 
   useEffect(() => {
-    function syncFavorites() {
+    function syncSocialState() {
       setResults((current) => ({ ...current }))
     }
 
-    window.addEventListener('ello:favorites-changed', syncFavorites)
-    return () => window.removeEventListener('ello:favorites-changed', syncFavorites)
+    window.addEventListener('ello:favorites-changed', syncSocialState)
+    window.addEventListener('ello:post-likes-changed', syncSocialState)
+    return () => {
+      window.removeEventListener('ello:favorites-changed', syncSocialState)
+      window.removeEventListener('ello:post-likes-changed', syncSocialState)
+    }
   }, [])
 
   return (
     <main className="min-h-screen px-4 pb-28 pt-4 text-ink md:px-8 md:pb-10 md:pt-8">
-      <div className="mx-auto grid w-full max-w-[88rem] gap-6 xl:grid-cols-[17rem_minmax(0,1fr)_20rem]">
+      <div className="mx-auto grid w-full max-w-[82rem] gap-6 xl:grid-cols-[16rem_minmax(0,43rem)_20rem] xl:justify-center">
         <motion.aside
           animate={{ opacity: 1, x: 0 }}
           className="hidden rounded-[2rem] border border-line bg-white p-5 shadow-soft xl:block"
@@ -61,7 +78,7 @@ export function ClientFeed() {
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="text-3xl font-extrabold tracking-[-0.04em] text-brandDark">ELLO</div>
-          <p className="mt-3 text-sm font-medium leading-6 text-muted">Descubra profissionais no Brasil com sinais de confianca antes do primeiro contato.</p>
+          <p className="mt-3 text-sm font-medium leading-6 text-muted">Descubra profissionais no Brasil em um feed simples, social e facil de entender.</p>
           <div className="mt-8 grid gap-2">
             {categories.map((category) => (
               <button
@@ -105,9 +122,9 @@ export function ClientFeed() {
 
             <div className="grid gap-3 rounded-[1.35rem] border border-line bg-brand/5 p-3 md:grid-cols-3">
               {[
-                { icon: ShieldCheck, label: 'Profissionais com sinais de confianca' },
-                { icon: Sparkles, label: 'Orcamento mais claro em poucos passos' },
-                { icon: Heart, label: `${favoriteIds.length} favoritos salvos` }
+                { icon: ShieldCheck, label: 'Perfis organizados por confianca' },
+                { icon: Sparkles, label: 'Publicacoes de profissionais reais' },
+                { icon: Heart, label: `${likedPostIds.length} publicacoes curtidas` }
               ].map((item) => {
                 const Icon = item.icon
                 return (
@@ -119,7 +136,21 @@ export function ClientFeed() {
               })}
             </div>
 
-            <div className="flex gap-2 overflow-x-auto pb-1">
+            <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+              {[
+                { id: 'forYou', label: 'Para voce' },
+                { id: 'liked', label: 'Curtidos' },
+                { id: 'near', label: 'Brasil' }
+              ].map((mode) => (
+                <button
+                  className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-extrabold transition ${feedMode === mode.id ? 'bg-ink text-white shadow-soft' : 'bg-cloud text-muted hover:bg-brand/10 hover:text-brandDark'}`}
+                  key={mode.id}
+                  onClick={() => setFeedMode(mode.id)}
+                  type="button"
+                >
+                  {mode.label}
+                </button>
+              ))}
               {categories.map((category) => (
                 <button
                   className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-extrabold transition ${activeCategory === category ? 'bg-brand text-white shadow-soft' : 'bg-cloud text-muted hover:bg-brand/10 hover:text-brandDark'}`}
@@ -142,14 +173,19 @@ export function ClientFeed() {
 
           <motion.div
             animate="show"
-            className="grid gap-4 lg:grid-cols-2"
+            className="grid gap-5"
             initial="hidden"
             variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
           >
             {loading ? [0, 1, 2, 3].map((item) => (
               <ProfessionalCardSkeleton key={item} />
             )) : visibleItems.map((professional) => (
-              <ProfessionalCard key={professional.id} professional={professional} />
+              <ProfessionalPost
+                key={professional.id}
+                liked={likedPostIds.includes(professional.id)}
+                onLike={() => setResults((current) => ({ ...current }))}
+                professional={professional}
+              />
             ))}
           </motion.div>
 
@@ -183,9 +219,11 @@ export function ClientFeed() {
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
         >
           <div className="premium-surface rounded-[2rem] p-5">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">Brasil hoje</p>
-            <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.035em]">Pedidos bem descritos recebem resposta mais rapida.</h2>
-            <p className="mt-3 text-sm font-medium leading-6 text-muted">Inclua fotos, cidade, regiao e prazo para receber orcamentos mais precisos.</p>
+            <p className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.18em] text-brand">
+              <TrendingUp size={15} /> Como o feed ordena
+            </p>
+            <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.035em]">Sinais simples, sem complicar.</h2>
+            <p className="mt-3 text-sm font-medium leading-6 text-muted">A ELLO prioriza perfis curtidos, favoritos e mais completos para voce decidir mais rapido.</p>
           </div>
           <div className="rounded-[2rem] bg-brand p-5 text-white shadow-premium">
             <p className="text-sm font-bold text-white/65">ELLO protege</p>

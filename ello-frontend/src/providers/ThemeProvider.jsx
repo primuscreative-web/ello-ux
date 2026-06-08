@@ -9,7 +9,7 @@ function getInitialTheme() {
   const savedTheme = window.localStorage.getItem(STORAGE_KEY)
   if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme
 
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return 'light'
 }
 
 export function ThemeProvider({ children }) {
