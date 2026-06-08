@@ -1,6 +1,5 @@
 import { ArrowRight, BriefcaseBusiness, Search, ShieldCheck, UserRoundCheck } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { BackButton } from '../../components/ui/BackButton'
 
 export function RoleChoice() {
   const navigate = useNavigate()
@@ -13,7 +12,6 @@ export function RoleChoice() {
           <div className="relative z-10 flex h-full min-h-[24rem] flex-col justify-between">
             <div className="flex items-center justify-between gap-3">
               <div className="text-3xl font-extrabold tracking-[-0.04em]">ELLO</div>
-              <BackButton fallback="/" className="border-white/10 bg-white/10 text-white hover:bg-white hover:text-ink" />
             </div>
             <div className="grid gap-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-[1.35rem] border border-white/15 bg-white/10 backdrop-blur">

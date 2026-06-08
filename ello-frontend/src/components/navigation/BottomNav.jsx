@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, Home, MessageCircle, Plus, Settings, Store, UserRound } from 'lucide-react'
+import { BriefcaseBusiness, Home, MessageCircle, Plus, Settings, Store, UserRound, Wallet } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 
 const navByMode = {
@@ -12,8 +12,8 @@ const navByMode = {
   professional: [
     { label: 'Central', href: '/profissional/central', icon: Store },
     { label: 'Pedidos', href: '/profissional/pedidos', icon: BriefcaseBusiness },
-    { label: 'Perfil', href: '/profissional/perfil', icon: UserRound, featured: true },
-    { label: 'Chat', href: '/profissional/pedidos', icon: MessageCircle },
+    { label: 'Carteira', href: '/profissional/carteira', icon: Wallet, featured: true },
+    { label: 'Perfil', href: '/profissional/perfil', icon: UserRound },
     { label: 'Ajustes', href: '/profissional/configuracoes', icon: Settings }
   ]
 }

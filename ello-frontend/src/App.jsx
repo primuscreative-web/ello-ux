@@ -15,6 +15,7 @@ import { QuoteChat } from './features/messages/QuoteChat'
 import { AdminConsole } from './features/admin/AdminConsole'
 import { ProfessionalCentral } from './features/professional/ProfessionalCentral'
 import { ProfessionalProfileEditor } from './features/professional/ProfessionalProfileEditor'
+import { ProfessionalWallet } from './features/professional/ProfessionalWallet'
 import { RequestsBoard } from './features/professional/RequestsBoard'
 import { Settings } from './features/settings/Settings'
 import { TrustSupport } from './features/settings/TrustSupport'
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/cliente/profissionais/:id" element={<ProfessionalProfile />} />
           <Route path="/cliente/orcamento/:id" element={<QuoteRequest />} />
           <Route path="/profissional/central" element={<ProfessionalCentral />} />
+          <Route path="/profissional/carteira" element={<ProfessionalWallet />} />
           <Route path="/profissional/perfil" element={<ProfessionalProfileEditor />} />
           <Route path="/profissional/pedidos" element={<RequestsBoard />} />
           <Route path="/configuracoes" element={<Settings />} />

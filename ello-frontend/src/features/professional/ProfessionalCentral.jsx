@@ -1,9 +1,8 @@
-import { BriefcaseBusiness, CalendarDays, CheckCircle2, ChevronRight, ImagePlus, MessageCircle, Settings, ShieldCheck, TrendingUp, Wallet } from 'lucide-react'
+import { BriefcaseBusiness, CalendarDays, CheckCircle2, ChevronRight, ImagePlus, MessageCircle, Settings, ShieldCheck, TrendingUp } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BottomNav } from '../../components/navigation/BottomNav'
-import { Button } from '../../components/ui/Button'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { trustChecklist } from '../../data/elloData'
 import { getRequests } from '../../services/elloService'
@@ -45,7 +44,7 @@ export function ProfessionalCentral() {
             <Link className="rounded-2xl bg-brand px-4 py-3 text-white shadow-[0_14px_34px_rgba(16,184,170,0.25)]" to="/profissional/central">Central</Link>
             <Link className="rounded-2xl px-4 py-3 text-white/70 hover:bg-white/10" to="/profissional/pedidos">Pedidos</Link>
             <span className="rounded-2xl px-4 py-3 text-white/45">Chat</span>
-            <span className="rounded-2xl px-4 py-3 text-white/45">Carteira</span>
+            <Link className="rounded-2xl px-4 py-3 text-white/70 hover:bg-white/10" to="/profissional/carteira">Carteira</Link>
             <Link className="rounded-2xl px-4 py-3 text-white/70 hover:bg-white/10" to="/profissional/perfil">Perfil</Link>
             <Link className="rounded-2xl px-4 py-3 text-white/70 hover:bg-white/10" to="/profissional/configuracoes">Configuracoes</Link>
           </nav>
@@ -85,9 +84,6 @@ export function ProfessionalCentral() {
                 Acompanhe demanda, reputacao e a saude do perfil em uma central pronta para crescer.
               </p>
             </div>
-            <Button variant="secondary">
-              <Wallet size={18} /> Carteira em breve
-            </Button>
           </motion.div>
 
           <motion.div
