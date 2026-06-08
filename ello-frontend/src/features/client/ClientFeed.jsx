@@ -6,6 +6,7 @@ import { EmptyState } from '../../components/ui/EmptyState'
 import { ProfessionalCardSkeleton } from '../../components/ui/Skeleton'
 import { categories } from '../../data/elloData'
 import { getProfessionals } from '../../services/elloService'
+import { firstName, getCurrentProfile } from '../../services/currentProfile'
 import { getFavoriteIds } from '../../services/localExperience'
 import { ProfessionalCard } from './ProfessionalCard'
 
@@ -14,6 +15,7 @@ export function ClientFeed() {
   const [search, setSearch] = useState('')
   const [favoritesOnly, setFavoritesOnly] = useState(false)
   const [results, setResults] = useState({ items: [], loading: true })
+  const profile = getCurrentProfile()
   const { items, loading } = results
   const favoriteIds = getFavoriteIds()
   const visibleItems = favoritesOnly ? items.filter((item) => favoriteIds.includes(item.id)) : items
@@ -54,16 +56,16 @@ export function ClientFeed() {
       <div className="mx-auto grid w-full max-w-[88rem] gap-6 xl:grid-cols-[17rem_minmax(0,1fr)_20rem]">
         <motion.aside
           animate={{ opacity: 1, x: 0 }}
-          className="ios-dark-panel hidden rounded-[2rem] p-5 text-white xl:block"
+          className="hidden rounded-[2rem] border border-line bg-white p-5 shadow-soft xl:block"
           initial={{ opacity: 0, x: -24 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="text-3xl font-extrabold tracking-[-0.06em]">ELLO</div>
-          <p className="mt-3 text-sm font-medium leading-6 text-white/58">Descubra profissionais no Brasil com sinais de confianca antes do primeiro contato.</p>
+          <div className="text-3xl font-extrabold tracking-[-0.04em] text-brandDark">ELLO</div>
+          <p className="mt-3 text-sm font-medium leading-6 text-muted">Descubra profissionais no Brasil com sinais de confianca antes do primeiro contato.</p>
           <div className="mt-8 grid gap-2">
             {categories.map((category) => (
               <button
-                className={`rounded-2xl px-4 py-3 text-left text-sm font-extrabold transition ${activeCategory === category ? 'bg-brand text-white shadow-[0_14px_34px_rgba(16,184,170,0.25)]' : 'text-white/62 hover:bg-white/10 hover:text-white'}`}
+                className={`rounded-2xl px-4 py-3 text-left text-sm font-extrabold transition ${activeCategory === category ? 'bg-brand text-white shadow-soft' : 'text-muted hover:bg-cloud hover:text-ink'}`}
                 key={category}
                 onClick={() => selectCategory(category)}
                 type="button"
@@ -77,31 +79,31 @@ export function ClientFeed() {
         <section className="grid min-w-0 gap-5">
           <motion.div
             animate={{ opacity: 1, y: 0 }}
-            className="sticky top-0 z-10 -mx-4 grid gap-4 border-b border-white/10 bg-ink px-4 py-5 text-white shadow-premium md:static md:mx-0 md:rounded-[2.25rem] md:border md:p-6"
+            className="sticky top-0 z-10 -mx-4 grid gap-4 border-b border-line bg-white px-4 py-5 text-ink shadow-soft md:static md:mx-0 md:rounded-[2.25rem] md:border md:p-6"
             initial={{ opacity: 0, y: -18 }}
             transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold text-white/62">Ola, Ana</p>
+                <p className="text-sm font-semibold text-muted">Ola, {firstName(profile.fullName)}</p>
                 <h1 className="mt-1 text-balance text-3xl font-extrabold leading-[1.02] tracking-[-0.05em] md:text-5xl">O que voce precisa hoje?</h1>
               </div>
-              <button className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/8 text-white shadow-soft" type="button">
+              <button className="flex h-12 w-12 items-center justify-center rounded-2xl border border-line bg-cloud text-brand shadow-soft" type="button">
                 <Bell size={20} />
               </button>
             </div>
 
-            <label className="flex min-h-14 items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 shadow-soft backdrop-blur">
+            <label className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-cloud px-4 shadow-soft">
               <Search size={20} className="text-brand" />
               <input
-                className="w-full bg-transparent text-sm font-bold text-white outline-none placeholder:font-semibold placeholder:text-white/45"
+                className="w-full bg-transparent text-sm font-bold text-ink outline-none placeholder:font-semibold placeholder:text-muted/60"
                 onChange={(event) => updateSearch(event.target.value)}
                 placeholder="Buscar servico, profissional, cidade ou bairro..."
                 value={search}
               />
             </label>
 
-            <div className="grid gap-3 rounded-[1.35rem] border border-white/10 bg-white/8 p-3 md:grid-cols-3">
+            <div className="grid gap-3 rounded-[1.35rem] border border-line bg-brand/5 p-3 md:grid-cols-3">
               {[
                 { icon: ShieldCheck, label: 'Profissionais com sinais de confianca' },
                 { icon: Sparkles, label: 'Orcamento mais claro em poucos passos' },
@@ -109,7 +111,7 @@ export function ClientFeed() {
               ].map((item) => {
                 const Icon = item.icon
                 return (
-                  <span className="flex items-center gap-2 text-xs font-extrabold text-white/70" key={item.label}>
+                  <span className="flex items-center gap-2 text-xs font-extrabold text-muted" key={item.label}>
                     <Icon size={16} className="text-brand" />
                     {item.label}
                   </span>
@@ -120,7 +122,7 @@ export function ClientFeed() {
             <div className="flex gap-2 overflow-x-auto pb-1">
               {categories.map((category) => (
                 <button
-                  className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-extrabold transition ${activeCategory === category ? 'bg-brand text-white shadow-[0_12px_28px_rgba(16,184,170,0.28)]' : 'bg-white/8 text-white/62 hover:bg-white/14 hover:text-white'}`}
+                  className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-extrabold transition ${activeCategory === category ? 'bg-brand text-white shadow-soft' : 'bg-cloud text-muted hover:bg-brand/10 hover:text-brandDark'}`}
                   key={category}
                   onClick={() => selectCategory(category)}
                   type="button"
@@ -129,7 +131,7 @@ export function ClientFeed() {
                 </button>
               ))}
               <button
-                className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-extrabold transition ${favoritesOnly ? 'bg-coral text-white shadow-[0_12px_28px_rgba(255,114,94,0.22)]' : 'bg-white/8 text-white/62 hover:bg-white/14 hover:text-white'}`}
+                className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-extrabold transition ${favoritesOnly ? 'bg-coral text-white shadow-soft' : 'bg-cloud text-muted hover:bg-brand/10 hover:text-brandDark'}`}
                 onClick={() => setFavoritesOnly((current) => !current)}
                 type="button"
               >
@@ -185,7 +187,7 @@ export function ClientFeed() {
             <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.035em]">Pedidos bem descritos recebem resposta mais rapida.</h2>
             <p className="mt-3 text-sm font-medium leading-6 text-muted">Inclua fotos, cidade, regiao e prazo para receber orcamentos mais precisos.</p>
           </div>
-          <div className="animated-glow rounded-[2rem] bg-gradient-to-br from-brand to-ink p-5 text-white shadow-premium">
+          <div className="rounded-[2rem] bg-brand p-5 text-white shadow-premium">
             <p className="text-sm font-bold text-white/65">ELLO protege</p>
             <p className="mt-2 text-3xl font-extrabold tracking-[-0.04em]">Confianca em cada etapa.</p>
           </div>

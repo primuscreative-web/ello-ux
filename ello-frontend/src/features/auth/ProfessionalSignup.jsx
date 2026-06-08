@@ -79,7 +79,7 @@ export function ProfessionalSignup() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-5 text-ink sm:px-6 md:py-8">
+    <main className="theme-professional min-h-screen px-4 py-5 text-ink sm:px-6 md:py-8">
       <form noValidate onChange={updateDraft} onSubmit={submit} className="mx-auto grid max-w-6xl gap-0 overflow-hidden rounded-[2.25rem] border border-white/70 bg-white/82 shadow-premium backdrop-blur-2xl lg:grid-cols-[19rem_minmax(0,1fr)]">
         <aside className="grid gap-6 bg-ink p-6 text-white sm:p-8">
           <div className="flex items-center justify-between gap-3">

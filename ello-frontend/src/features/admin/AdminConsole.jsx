@@ -8,8 +8,8 @@ import { getTrustReports } from '../../services/localExperience'
 export function AdminConsole() {
   const reports = getTrustReports()
   const metrics = [
-    { icon: UsersRound, label: 'Profissionais demo', value: professionals.length },
-    { icon: ClipboardList, label: 'Pedidos demo', value: requests.length },
+    { icon: UsersRound, label: 'Profissionais em revisao', value: professionals.length },
+    { icon: ClipboardList, label: 'Pedidos monitorados', value: requests.length },
     { icon: AlertTriangle, label: 'Denuncias locais', value: reports.length },
     { icon: BadgeCheck, label: 'Perfis verificados', value: professionals.filter((item) => item.verified).length }
   ]

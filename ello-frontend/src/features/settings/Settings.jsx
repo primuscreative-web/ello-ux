@@ -25,6 +25,7 @@ import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { useTheme } from '../../providers/useTheme'
 import { clearSession, getSession } from '../../services/session'
+import { getCurrentProfile } from '../../services/currentProfile'
 
 const PREFERENCES_KEY = 'ello.settings.preferences'
 
@@ -38,8 +39,8 @@ const defaultPreferences = {
 
 const accountRows = [
   { icon: UserRound, label: 'Conta', text: 'Nome, email e tipo de perfil.', status: 'Ativa' },
-  { icon: LockKeyhole, label: 'Sessao segura', text: 'Token local protegido neste dispositivo.', status: 'OK' },
-  { icon: ShieldCheck, label: 'Verificacao', text: 'Documentos e selos preparados para producao.', status: 'Pendente' }
+  { icon: LockKeyhole, label: 'Sessao segura', text: 'Acesso protegido neste dispositivo.', status: 'OK' },
+  { icon: ShieldCheck, label: 'Verificacao', text: 'Documentos e selos de confianca.', status: 'Pendente' }
 ]
 
 const preferenceRows = [
@@ -69,11 +70,12 @@ export function Settings() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const session = getSession()
+  const profile = getCurrentProfile()
   const mode = pathname.startsWith('/cliente') || session?.user?.role === 'client' ? 'client' : 'professional'
   const fallback = mode === 'client' ? '/cliente/feed' : '/profissional/central'
   const [preferences, setPreferences] = useState(readPreferences)
   const enabledCount = useMemo(() => Object.values(preferences).filter(Boolean).length, [preferences])
-  const accountLabel = session?.user?.email || (mode === 'client' ? 'Cliente ELLO' : 'Profissional ELLO')
+  const accountLabel = `${profile.fullName || (mode === 'client' ? 'Cliente ELLO' : 'Profissional ELLO')}${profile.email ? ` - ${profile.email}` : ''}`
 
   useEffect(() => {
     window.localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences))
@@ -89,7 +91,7 @@ export function Settings() {
   }
 
   return (
-    <main className="min-h-screen px-4 pb-28 pt-5 text-ink sm:px-6 md:py-8">
+    <main className={`${mode === 'professional' ? 'theme-professional' : ''} min-h-screen px-4 pb-28 pt-5 text-ink sm:px-6 md:py-8`}>
       <section className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[0.84fr_1.16fr]">
         <motion.aside
           animate={{ opacity: 1, x: 0 }}
@@ -127,7 +129,7 @@ export function Settings() {
               </div>
               <div className="ios-surface-dark rounded-[1.25rem] p-4">
                 <p className="text-2xl font-extrabold">ID</p>
-                <p className="mt-1 truncate text-xs font-bold text-white/52">{session?.user?.id || 'Sessao local'}</p>
+                <p className="mt-1 truncate text-xs font-bold text-white/52">{profile.role === 'professional' ? 'Profissional' : 'Cliente'}</p>
               </div>
             </div>
           </div>

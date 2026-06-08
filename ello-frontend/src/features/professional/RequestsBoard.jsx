@@ -68,7 +68,7 @@ export function RequestsBoard() {
   }
 
   return (
-    <main className="min-h-screen px-5 pb-28 pt-6 text-ink md:py-6">
+    <main className="theme-professional min-h-screen px-5 pb-28 pt-6 text-ink md:py-6">
       <section className="mx-auto grid max-w-6xl gap-6">
         <div className="flex flex-col gap-4 rounded-[2rem] bg-white p-5 shadow-premium md:flex-row md:items-start md:justify-between md:p-8">
           <div>

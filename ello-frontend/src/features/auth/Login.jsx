@@ -109,8 +109,8 @@ export function Login() {
             <h1 className="text-balance text-4xl font-extrabold leading-[1] tracking-[-0.045em] sm:text-5xl">Continue de onde parou.</h1>
             <p className="max-w-md text-sm font-medium leading-6 text-white/68">Acesse sua conta para acompanhar pedidos, perfil, orcamentos e oportunidades.</p>
           </div>
-          <div className="relative z-10 rounded-[1.35rem] bg-white/10 p-4 text-sm font-semibold leading-6 text-white/65 backdrop-blur">
-            A sessao local usa token de desenvolvimento. A proxima etapa sera trocar isso por auth de producao.
+          <div className="relative z-10 rounded-[1.35rem] bg-white/10 p-4 text-sm font-semibold leading-6 text-white/75 backdrop-blur">
+            Sua conta acompanha pedidos, conversas e perfil em um so lugar.
           </div>
         </section>
 

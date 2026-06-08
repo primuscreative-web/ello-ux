@@ -60,7 +60,7 @@ export function TrustSupport() {
           <p className="text-sm font-extrabold text-ink">Proximo passo juridico</p>
           <p className="mt-2 text-sm font-medium leading-6 text-muted">No deploy oficial, substituir este conteudo por termos, politica de privacidade, politica de cancelamento e regras de uso dos profissionais.</p>
           <Link className="mt-4 inline-flex min-h-12 items-center rounded-2xl bg-brand px-5 text-sm font-extrabold text-white" to="/admin">
-            Abrir painel admin demo
+            Abrir painel administrativo
           </Link>
         </div>
       </section>

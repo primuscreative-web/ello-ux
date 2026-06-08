@@ -27,7 +27,7 @@ export function RoleChoice() {
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-[1.25rem] bg-white/10 p-4 backdrop-blur">
                 <p className="text-2xl font-extrabold">4.9</p>
-                <p className="text-xs font-bold text-white/55">media simulada</p>
+                <p className="text-xs font-bold text-white/55">padrao de escolha</p>
               </div>
               <div className="rounded-[1.25rem] bg-white/10 p-4 backdrop-blur">
                 <p className="text-2xl font-extrabold">Brasil</p>
@@ -61,17 +61,17 @@ export function RoleChoice() {
             </button>
 
             <button
-              className="group grid min-h-72 gap-5 rounded-[2rem] bg-gradient-to-br from-brand to-ink p-6 text-left text-white shadow-premium transition duration-300 hover:-translate-y-1"
+              className="theme-professional group grid min-h-72 gap-5 rounded-[2rem] bg-brand p-6 text-left text-white shadow-premium transition duration-300 hover:-translate-y-1"
               onClick={() => navigate('/cadastro/profissional')}
             >
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/14 text-gold">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/18 text-white">
                 <UserRoundCheck size={28} />
               </div>
               <div>
                 <h3 className="text-3xl font-extrabold tracking-[-0.04em]">Sou profissional</h3>
                 <p className="mt-3 text-sm font-medium leading-6 text-white/70">Divulgar meu trabalho, receber pedidos e construir reputacao em escala nacional.</p>
               </div>
-              <span className="mt-auto inline-flex items-center gap-2 text-sm font-extrabold text-gold">
+              <span className="mt-auto inline-flex items-center gap-2 text-sm font-extrabold text-white">
                 Entrar como profissional <ArrowRight size={16} className="transition group-hover:translate-x-1" />
               </span>
             </button>

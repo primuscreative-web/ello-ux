@@ -7,6 +7,7 @@ import { Button } from '../../components/ui/Button'
 import { StatusPill } from '../../components/ui/StatusPill'
 import { trustChecklist } from '../../data/elloData'
 import { getProfessionalStats, getRequests } from '../../services/elloService'
+import { firstName, getCurrentProfile } from '../../services/currentProfile'
 
 const actions = [
   { label: 'Editar perfil', text: 'Atualize sua vitrine publica.', href: '/profissional/perfil', icon: BriefcaseBusiness },
@@ -18,6 +19,7 @@ const actions = [
 export function ProfessionalCentral() {
   const [stats, setStats] = useState([])
   const [requests, setRequests] = useState([])
+  const profile = getCurrentProfile()
 
   useEffect(() => {
     getProfessionalStats().then(setStats)
@@ -25,7 +27,7 @@ export function ProfessionalCentral() {
   }, [])
 
   return (
-    <main className="min-h-screen px-4 pb-28 pt-4 text-ink md:p-8">
+    <main className="theme-professional min-h-screen px-4 pb-28 pt-4 text-ink md:p-8">
       <div className="mx-auto grid w-full max-w-[88rem] gap-6 xl:grid-cols-[17rem_minmax(0,1fr)]">
         <motion.aside
           animate={{ opacity: 1, x: 0 }}
@@ -72,9 +74,12 @@ export function ProfessionalCentral() {
             transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
           >
             <div>
-              <p className="text-sm font-semibold text-white/60">Ola, Juliana</p>
+              <p className="text-sm font-semibold text-white/75">Ola, {firstName(profile.publicName || profile.fullName)}</p>
               <h1 className="mt-1 text-balance text-4xl font-extrabold leading-[1.02] tracking-[-0.05em] md:text-6xl">Seu negocio hoje.</h1>
-              <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-white/62">Acompanhe demanda, reputacao e a saude do perfil em uma central pronta para crescer.</p>
+              <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-white/72">
+                {profile.specialty ? `${profile.specialty} em ${profile.city || 'sua regiao'}. ` : ''}
+                Acompanhe demanda, reputacao e a saude do perfil em uma central pronta para crescer.
+              </p>
             </div>
             <Button variant="secondary">
               <Wallet size={18} /> Carteira em breve
@@ -135,7 +140,7 @@ export function ProfessionalCentral() {
                 })}
               </div>
 
-              <article className="animated-glow rounded-[1.8rem] bg-gradient-to-br from-brand to-ink p-6 text-white shadow-premium">
+              <article className="rounded-[1.8rem] bg-brand p-6 text-white shadow-premium">
                 <div className="flex items-center gap-3">
                   <Settings size={22} />
                   <h2 className="text-xl font-extrabold">Dica de visibilidade</h2>

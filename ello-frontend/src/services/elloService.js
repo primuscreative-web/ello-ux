@@ -6,7 +6,7 @@ import {
   requests
 } from '../data/elloData'
 import { createLocalQuote, getDemoMessages, getLocalQuotes, respondToLocalQuote, updateLocalQuoteStatus } from './localExperience'
-import { getSessionToken } from './session'
+import { getSession, getSessionToken } from './session'
 
 const wait = (ms = 180) => new Promise((resolve) => window.setTimeout(resolve, ms))
 const API_URL = import.meta.env.VITE_ELLO_API_URL || ''
@@ -78,9 +78,7 @@ export async function getProfessionals({ search = '', category = 'Todos' } = {})
     if (category && category !== 'Todos') params.set('category', category)
     const apiProfessionals = await getJson(`/professionals${params.toString() ? `?${params}` : ''}`)
 
-    if (apiProfessionals.length > 0) {
-      return apiProfessionals
-    }
+    return apiProfessionals
   } catch {
     await wait()
   }
@@ -125,20 +123,18 @@ export async function getRequests() {
   try {
     const apiQuotes = await getJson('/quotes')
 
-    if (apiQuotes.length > 0) {
-      return apiQuotes.map((quote) => ({
-        id: quote.id,
-        client: quote.location,
-        service: quote.description,
-        status: quote.status,
-        date: 'Agora',
-        value: quote.responsePrice || 'A definir',
-        responseEta: quote.responseEta,
-        responseMessage: quote.responseMessage,
-        professionalId: quote.professionalId,
-        professionalName: quote.professionalName
-      }))
-    }
+    return apiQuotes.map((quote) => ({
+      id: quote.id,
+      client: quote.location,
+      service: quote.description,
+      status: quote.status,
+      date: 'Agora',
+      value: quote.responsePrice || 'A definir',
+      responseEta: quote.responseEta,
+      responseMessage: quote.responseMessage,
+      professionalId: quote.professionalId,
+      professionalName: quote.professionalName
+    }))
   } catch {
     await wait()
   }
@@ -201,12 +197,13 @@ export async function sendQuoteMessage(id, payload) {
   try {
     return await postJson(`/quotes/${id}/messages`, payload)
   } catch {
+    const session = getSession()
     await wait(120)
     return {
       id: `msg-local-${Date.now()}`,
       quoteId: id,
-      senderUserId: 'local-user',
-      senderRole: 'client',
+      senderUserId: session?.user?.id || 'local-user',
+      senderRole: session?.user?.role || 'client',
       body: payload.body,
       createdAt: new Date().toISOString()
     }

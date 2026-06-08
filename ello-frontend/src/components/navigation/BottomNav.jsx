@@ -31,15 +31,15 @@ export function BottomNav({ mode = 'client' }) {
   const items = navByMode[mode] || navByMode.client
 
   return (
-    <nav className="ios-tabbar fixed inset-x-4 bottom-3 z-20 grid grid-cols-5 rounded-[1.55rem] p-1.5 text-[10px] font-extrabold text-white md:hidden">
+    <nav className="ios-tabbar fixed inset-x-4 bottom-3 z-20 grid grid-cols-5 rounded-[1.55rem] p-1.5 text-[10px] font-extrabold text-muted md:hidden">
       {items.map((item) => {
         const Icon = item.icon
         const active = isActive(pathname, item, mode)
 
         if (item.featured) {
           return (
-            <Link className="-mt-5 grid justify-items-center gap-0.5 text-white" key={item.label} to={item.href}>
-              <span className={`flex h-14 w-14 items-center justify-center rounded-full shadow-[0_18px_42px_rgba(16,184,170,0.38)] transition ${active ? 'bg-white text-brand' : 'bg-gradient-to-br from-brand to-sky text-ink'}`}>
+            <Link className="-mt-5 grid justify-items-center gap-0.5 text-brand" key={item.label} to={item.href}>
+              <span className={`flex h-14 w-14 items-center justify-center rounded-full shadow-[0_14px_30px_color-mix(in_srgb,var(--ello-brand)_28%,transparent)] transition ${active ? 'bg-brand text-white' : 'bg-brand text-white'}`}>
                 <Icon size={28} />
               </span>
               <span className="sr-only">{item.label}</span>
@@ -49,7 +49,7 @@ export function BottomNav({ mode = 'client' }) {
 
         return (
           <Link
-            className={`grid justify-items-center gap-0.5 rounded-2xl px-2 py-1.5 transition ${active ? 'bg-brand text-white' : 'text-white/58 hover:bg-white/8 hover:text-white'}`}
+            className={`grid justify-items-center gap-0.5 rounded-2xl px-2 py-1.5 transition ${active ? 'bg-brand text-white' : 'text-muted hover:bg-cloud hover:text-ink'}`}
             key={item.label}
             to={item.href}
           >

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 
 const variants = {
-  primary: 'bg-gradient-to-r from-brand to-brandDark text-white shadow-[0_18px_44px_rgba(16,184,170,0.3)] hover:shadow-[0_20px_54px_rgba(16,184,170,0.38)]',
+  primary: 'bg-brand text-white shadow-[0_14px_32px_color-mix(in_srgb,var(--ello-brand)_28%,transparent)] hover:bg-brandDark',
   secondary: 'bg-white/90 text-ink border border-line hover:border-brand/50 hover:bg-white shadow-[0_10px_28px_rgba(7,19,25,0.08)]',
   dark: 'bg-ink text-white shadow-soft hover:bg-[#0b1429]',
   ghost: 'bg-transparent text-muted hover:text-ink hover:bg-white/70'

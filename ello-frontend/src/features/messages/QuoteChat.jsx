@@ -42,7 +42,7 @@ export function QuoteChat() {
   }
 
   return (
-    <main className="min-h-screen px-4 pb-28 pt-5 text-ink sm:px-6 md:py-8">
+    <main className={`${session?.user?.role === 'professional' ? 'theme-professional' : ''} min-h-screen px-4 pb-28 pt-5 text-ink sm:px-6 md:py-8`}>
       <section className="mx-auto grid max-w-4xl overflow-hidden rounded-[2.25rem] border border-white/70 bg-white/80 shadow-premium backdrop-blur-2xl">
         <header className="ios-dark-panel p-5 text-white md:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

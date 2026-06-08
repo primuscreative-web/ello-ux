@@ -8,13 +8,13 @@
   --color-line: var(--ello-line);
   --color-cloud: var(--ello-cloud);
   --color-card: var(--ello-card);
-  --color-brand: #10b8aa;
-  --color-brandDark: #006d66;
-  --color-coral: #ff725e;
+  --color-brand: var(--ello-brand);
+  --color-brandDark: var(--ello-brand-dark);
+  --color-coral: #f97316;
   --color-gold: #e9ad35;
-  --color-sky: #d9f4f4;
-  --shadow-premium: 0 28px 90px rgba(7, 19, 25, 0.18);
-  --shadow-soft: 0 14px 40px rgba(7, 19, 25, 0.1);
+  --color-sky: #e8f7e8;
+  --shadow-premium: 0 18px 58px rgba(37, 49, 43, 0.12);
+  --shadow-soft: 0 10px 28px rgba(37, 49, 43, 0.09);
   --radius-shell: 28px;
   --radius-panel: 20px;
   --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
@@ -24,12 +24,15 @@
   --ello-ink: #071319;
   --ello-graphite: #243241;
   --ello-muted: #6c7a86;
-  --ello-line: #dfe7ee;
-  --ello-cloud: #f4f8fa;
+  --ello-line: #e1e8df;
+  --ello-cloud: #f6faf5;
   --ello-card: #ffffff;
-  --ello-page-a: #fbfefe;
-  --ello-page-b: #eef7f6;
-  --ello-page-c: #e6f0f1;
+  --ello-page-a: #ffffff;
+  --ello-page-b: #f3faf1;
+  --ello-page-c: #edf5ea;
+  --ello-brand: #5abf73;
+  --ello-brand-dark: #2f7d46;
+  --ello-brand-soft: #e3f7e7;
   --ello-page-overlay: rgba(255, 255, 255, 0.9);
   --ello-page-overlay-soft: rgba(255, 255, 255, 0.42);
   --ello-surface: rgba(255, 255, 255, 0.76);
@@ -41,6 +44,15 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.theme-professional {
+  --ello-brand: #f28c28;
+  --ello-brand-dark: #b85212;
+  --ello-brand-soft: #fff0dd;
+  --ello-page-b: #fff7ec;
+  --ello-page-c: #f8eee2;
+  --ello-line: #ecdcc9;
 }
 
 :root[data-theme='dark'] {
@@ -77,9 +89,6 @@ body {
   overflow-x: hidden;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   background:
-    radial-gradient(circle at 8% 6%, rgba(16, 184, 170, 0.24), transparent 26rem),
-    radial-gradient(circle at 92% 4%, rgba(217, 244, 244, 0.92), transparent 28rem),
-    radial-gradient(circle at 50% 100%, rgba(7, 19, 25, 0.09), transparent 34rem),
     linear-gradient(180deg, var(--ello-page-a) 0%, var(--ello-page-b) 48%, var(--ello-page-c) 100%);
 }
 
@@ -89,9 +98,7 @@ body::before {
   z-index: -1;
   pointer-events: none;
   content: '';
-  background:
-    linear-gradient(90deg, var(--ello-page-overlay), var(--ello-page-overlay-soft) 45%, var(--ello-page-overlay)),
-    linear-gradient(120deg, rgba(16, 184, 170, 0.08) 0 1px, transparent 1px 100%) 0 0 / 38px 38px;
+  background: linear-gradient(90deg, var(--ello-page-overlay), var(--ello-page-overlay-soft) 45%, var(--ello-page-overlay));
 }
 
 button,
@@ -111,18 +118,18 @@ select:focus-visible {
 }
 
 .glass-panel {
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  background: var(--ello-surface);
-  box-shadow: 0 28px 90px rgba(7, 19, 25, 0.16);
-  backdrop-filter: blur(28px) saturate(1.2);
+  border: 1px solid rgba(225, 232, 223, 0.9);
+  background: var(--ello-surface-strong);
+  box-shadow: 0 18px 58px rgba(37, 49, 43, 0.1);
+  backdrop-filter: blur(16px);
 }
 
 .premium-surface {
   border: 1px solid rgba(223, 231, 238, 0.85);
   background:
     linear-gradient(180deg, var(--ello-surface-strong), var(--ello-surface-soft)),
-    radial-gradient(circle at top right, rgba(16, 184, 170, 0.11), transparent 18rem);
-  box-shadow: 0 18px 55px rgba(7, 19, 25, 0.1);
+    linear-gradient(135deg, color-mix(in srgb, var(--ello-brand) 9%, transparent), transparent 50%);
+  box-shadow: 0 14px 42px rgba(37, 49, 43, 0.09);
 }
 
 :root[data-theme='dark'] .premium-surface {
@@ -159,25 +166,24 @@ select:focus-visible {
 }
 
 .ios-dark-panel {
-  border: 1px solid rgba(80, 255, 236, 0.16);
+  border: 1px solid color-mix(in srgb, var(--ello-brand) 22%, transparent);
   background:
-    radial-gradient(circle at 18% 0%, rgba(16, 184, 170, 0.34), transparent 19rem),
-    linear-gradient(145deg, rgba(7, 19, 25, 0.98), rgba(4, 43, 43, 0.96) 58%, rgba(5, 12, 19, 0.98));
-  box-shadow: 0 30px 100px rgba(1, 12, 16, 0.34);
+    linear-gradient(145deg, color-mix(in srgb, var(--ello-brand-dark) 92%, #1f2c23), color-mix(in srgb, var(--ello-brand) 72%, #20372a));
+  box-shadow: 0 18px 52px color-mix(in srgb, var(--ello-brand-dark) 18%, transparent);
 }
 
 .ios-surface-dark {
-  border: 1px solid rgba(131, 255, 243, 0.13);
-  background: rgba(255, 255, 255, 0.065);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 20px 60px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(22px) saturate(1.25);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 14px 34px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(16px);
 }
 
 .ios-tabbar {
-  border: 1px solid rgba(131, 255, 243, 0.18);
-  background: rgba(5, 18, 24, 0.88);
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(24px) saturate(1.25);
+  border: 1px solid rgba(225, 232, 223, 0.95);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 48px rgba(37, 49, 43, 0.14);
+  backdrop-filter: blur(18px);
 }
 
 .animated-glow {
@@ -186,12 +192,7 @@ select:focus-visible {
 }
 
 .animated-glow::after {
-  position: absolute;
-  inset: -40%;
-  content: '';
-  pointer-events: none;
-  background: conic-gradient(from 90deg, transparent, rgba(91, 255, 238, 0.2), transparent 34%);
-  animation: slow-spin 10s linear infinite;
+  display: none;
 }
 
 .animated-glow > * {
