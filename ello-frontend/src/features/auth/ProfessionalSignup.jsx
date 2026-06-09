@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
+import { chargeTypes, professionalAreas, serviceModels } from '../../data/elloData'
 import { createProfessionalSignup } from '../../services/elloService'
 import { saveSession } from '../../services/session'
 import { collectErrors, getFormValues, hasErrors, matchingPassword, required, validEmail, validPassword } from '../../utils/validation'
@@ -13,6 +14,7 @@ const stepRules = [
   {
     fullName: [(value) => required(value, 'Informe seu nome completo.')],
     birthDate: [(value) => required(value, 'Informe sua data de nascimento.')],
+    professionalArea: [(value) => required(value, 'Escolha uma area principal.')],
     specialty: [(value) => required(value, 'Informe sua area de atuacao.')],
     email: [validEmail],
     password: [validPassword],
@@ -43,6 +45,7 @@ export function ProfessionalSignup() {
   const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
   const isLast = step === steps.length - 1
+  const selectedArea = professionalAreas.find((item) => item.area === draft.professionalArea) || professionalAreas[professionalAreas.length - 1]
 
   function updateDraft(event) {
     const { name, value } = event.target
@@ -53,6 +56,9 @@ export function ProfessionalSignup() {
   async function submit(event) {
     event.preventDefault()
     const values = { ...draft, ...getFormValues(event.currentTarget) }
+    if (values.professionalArea && values.specialty && !String(values.specialty).includes(' - ')) {
+      values.specialty = `${values.specialty} - ${values.professionalArea}`.slice(0, 80)
+    }
     const nextErrors = collectErrors(stepRules[step], values)
 
     setFormError('')
@@ -122,10 +128,35 @@ export function ProfessionalSignup() {
           <div className="grid gap-4 rounded-[1.6rem] border border-line bg-white p-4 md:grid-cols-2">
             <Input error={errors.fullName} label="Nome completo" name="fullName" placeholder="Seu nome completo" defaultValue={draft.fullName || ''} />
             <Input error={errors.birthDate} label="Data de nascimento" name="birthDate" type="date" defaultValue={draft.birthDate || ''} />
-            <Input error={errors.specialty} label="Area de atuacao" name="specialty" placeholder="Ex: manicure, pintor, motorista" defaultValue={draft.specialty || ''} />
+            <label className="grid gap-2 text-sm font-bold text-ink">
+              Area principal
+              <select
+                className="min-h-12 rounded-2xl border border-line bg-white px-4 text-sm font-semibold text-ink outline-none transition focus:border-brand"
+                defaultValue={draft.professionalArea || ''}
+                name="professionalArea"
+              >
+                <option value="">Escolha uma area</option>
+                {professionalAreas.map((item) => (
+                  <option key={item.area} value={item.area}>{item.area}</option>
+                ))}
+              </select>
+              {errors.professionalArea ? <span className="text-xs font-bold text-rose-600">{errors.professionalArea}</span> : null}
+            </label>
+            <Input error={errors.specialty} label="Profissao ou segmento" name="specialty" placeholder="Ex: manicure, pintor, psicologo" defaultValue={draft.specialty || ''} />
             <Input error={errors.email} label="Email" name="email" type="email" placeholder="voce@email.com" defaultValue={draft.email || ''} />
             <Input error={errors.password} label="Senha" name="password" type="password" placeholder="Minimo 8 caracteres" defaultValue={draft.password || ''} />
             <Input error={errors.confirmPassword} label="Confirmar senha" name="confirmPassword" type="password" placeholder="Repita sua senha" defaultValue={draft.confirmPassword || ''} />
+            <div className="rounded-[1.35rem] bg-brand/8 p-4 md:col-span-2">
+              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">Ferramentas recomendadas</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {selectedArea.tools.map((tool) => (
+                  <span className="rounded-full bg-white px-3 py-2 text-xs font-extrabold text-muted shadow-soft" key={tool}>{tool}</span>
+                ))}
+              </div>
+              <p className="mt-3 text-xs font-semibold leading-5 text-muted">
+                Exemplos: {selectedArea.examples.join(', ')}.
+              </p>
+            </div>
           </div>
         ) : null}
 
@@ -134,6 +165,19 @@ export function ProfessionalSignup() {
             <Input error={errors.experience} label="Experiencia" name="experience" placeholder="Ex: 5 anos" defaultValue={draft.experience || ''} />
             <Input error={errors.city} label="Cidade principal" name="city" placeholder="Ex: Sao Paulo, Recife, Goiania" defaultValue={draft.city || ''} />
             <Input error={errors.coverage} label="Regioes atendidas" name="coverage" placeholder="Bairros, cidades proximas ou online" defaultValue={draft.coverage || ''} />
+            <label className="grid gap-2 text-sm font-bold text-ink">
+              Como atende
+              <select
+                className="min-h-12 rounded-2xl border border-line bg-white px-4 text-sm font-semibold text-ink outline-none transition focus:border-brand"
+                defaultValue={draft.serviceModel || ''}
+                name="serviceModel"
+              >
+                <option value="">Selecione o modelo</option>
+                {serviceModels.map((item) => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
+            </label>
             <Input label="Tem materiais proprios?" name="materials" placeholder="Sim, parcialmente ou nao" defaultValue={draft.materials || ''} />
             <Input label="Disponibilidade" name="availability" placeholder="Dias e horarios principais" defaultValue={draft.availability || ''} />
           </div>
@@ -164,7 +208,20 @@ export function ProfessionalSignup() {
             <div className="grid gap-4 rounded-[1.6rem] border border-line bg-white p-4 md:grid-cols-2">
               <Input error={errors.description} label="Descricao" name="description" placeholder="Conte o que voce faz melhor" defaultValue={draft.description || ''} />
               <Input error={errors.basePrice} label="Preco base" name="basePrice" placeholder="Ex: R$ 120" defaultValue={draft.basePrice || ''} />
-              <Input error={errors.chargeType} label="Tipo de cobranca" name="chargeType" placeholder="por hora, diaria, metro ou atendimento" defaultValue={draft.chargeType || ''} />
+              <label className="grid gap-2 text-sm font-bold text-ink">
+                Tipo de cobranca
+                <select
+                  className="min-h-12 rounded-2xl border border-line bg-white px-4 text-sm font-semibold text-ink outline-none transition focus:border-brand"
+                  defaultValue={draft.chargeType || ''}
+                  name="chargeType"
+                >
+                  <option value="">Escolha como cobra</option>
+                  {chargeTypes.map((item) => (
+                    <option key={item} value={item}>{item}</option>
+                  ))}
+                </select>
+                {errors.chargeType ? <span className="text-xs font-bold text-rose-600">{errors.chargeType}</span> : null}
+              </label>
               <Input label="Portfolio" name="portfolio" placeholder="Ex: antes e depois, obra finalizada" defaultValue={draft.portfolio || ''} />
             </div>
           </div>

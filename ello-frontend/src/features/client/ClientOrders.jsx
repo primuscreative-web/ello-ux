@@ -1,4 +1,4 @@
-import { MessageCircle, SearchCheck, SlidersHorizontal } from 'lucide-react'
+import { CreditCard, MessageCircle, QrCode, SearchCheck, ShieldCheck, SlidersHorizontal, Wallet } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BottomNav } from '../../components/navigation/BottomNav'
@@ -99,7 +99,7 @@ export function ClientOrders() {
                 {request.responseMessage ? (
                   <div className="mt-2 rounded-[1.25rem] bg-brand/8 p-4">
                     <p className="text-sm font-extrabold text-brand">{request.value} - {request.responseEta}</p>
-                    <p className="mt-1 text-sm font-medium leading-6 text-muted">{request.responseMessage}</p>
+                    <p className="mt-1 whitespace-pre-line text-sm font-medium leading-6 text-muted">{request.responseMessage}</p>
                   </div>
                 ) : (
                   <p className="mt-2 inline-flex items-center gap-2 text-sm font-bold text-muted">
@@ -111,12 +111,36 @@ export function ClientOrders() {
               </div>
               <div className="grid gap-2 sm:grid-cols-2 md:min-w-64 md:grid-cols-1">
                 {request.status === 'Orcamento enviado' ? (
-                  <Button
-                    disabled={busyAction === `${request.id}-Aceito`}
-                    onClick={() => changeStatus(request.id, 'Aceito')}
-                  >
-                    {busyAction === `${request.id}-Aceito` ? 'Aceitando...' : 'Aceitar'}
-                  </Button>
+                  <div className="grid gap-2 rounded-[1.35rem] border border-brand/20 bg-white p-3 shadow-soft">
+                    <p className="flex items-center gap-2 text-sm font-extrabold text-brandDark">
+                      <ShieldCheck size={17} className="text-brand" />
+                      Pagamento Seguro ELLO
+                    </p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { icon: QrCode, label: 'Pix' },
+                        { icon: CreditCard, label: 'Credito' },
+                        { icon: Wallet, label: 'Debito' }
+                      ].map((method) => {
+                        const Icon = method.icon
+                        return (
+                          <span className="grid justify-items-center gap-1 rounded-2xl bg-cloud px-2 py-3 text-[11px] font-extrabold text-muted" key={method.label}>
+                            <Icon size={17} className="text-brand" />
+                            {method.label}
+                          </span>
+                        )
+                      })}
+                    </div>
+                    <Button
+                      disabled={busyAction === `${request.id}-Aceito`}
+                      onClick={() => changeStatus(request.id, 'Aceito')}
+                    >
+                      {busyAction === `${request.id}-Aceito` ? 'Preparando...' : 'Aceitar e pagar'}
+                    </Button>
+                    <p className="text-xs font-semibold leading-5 text-muted">
+                      Tambem e possivel combinar por fora no chat, mas sem mediacao financeira da ELLO.
+                    </p>
+                  </div>
                 ) : null}
                 {request.status !== 'Cancelado' && request.status !== 'Aceito' ? (
                   <Button

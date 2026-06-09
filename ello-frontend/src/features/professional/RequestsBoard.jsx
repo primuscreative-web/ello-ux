@@ -7,6 +7,7 @@ import { Input } from '../../components/ui/Input'
 import { OrderTimeline } from '../../components/ui/OrderTimeline'
 import { OrderCardSkeleton } from '../../components/ui/Skeleton'
 import { StatusPill } from '../../components/ui/StatusPill'
+import { chargeTypes, paymentMethods } from '../../data/elloData'
 import { getRequests, respondToQuote } from '../../services/elloService'
 
 const filters = ['Todos', 'Novos', 'Orcados', 'Ativos']
@@ -43,11 +44,26 @@ export function RequestsBoard() {
     event.preventDefault()
     const form = new FormData(event.currentTarget)
     const payload = Object.fromEntries(form.entries())
+    const paymentLines = [
+      payload.paymentMode ? `Pagamento: ${payload.paymentMode}` : '',
+      payload.acceptedMethods ? `Metodos aceitos: ${payload.acceptedMethods}` : '',
+      payload.depositAmount ? `Sinal/reserva: ${payload.depositAmount}` : '',
+      payload.billingModel ? `Cobranca: ${payload.billingModel}` : '',
+      payload.releaseRule ? `Repasse: ${payload.releaseRule}` : ''
+    ].filter(Boolean)
+    const paymentNotice = payload.paymentMode === 'Pagamento por fora'
+      ? 'Observacao: pagamento por fora fica registrado no pedido, mas nao conta com protecao financeira ELLO.'
+      : 'Pagamento Seguro ELLO: cliente paga no app e o valor fica vinculado ao pedido ate a conclusao.'
+    const responseMessage = [
+      payload.responseMessage,
+      paymentLines.length ? `\nCondicoes de pagamento:\n${paymentLines.join('\n')}` : '',
+      `\n${paymentNotice}`
+    ].filter(Boolean).join('\n')
 
     setFormError('')
     setSubmitting(true)
     try {
-      const quote = await respondToQuote(requestId, payload)
+      const quote = await respondToQuote(requestId, { ...payload, responseMessage })
       setItems((current) => current.map((item) => (
         item.id === requestId
           ? {
@@ -134,7 +150,47 @@ export function RequestsBoard() {
                 <form className="grid gap-4 rounded-[1.35rem] border border-line bg-cloud/70 p-4 md:grid-cols-3" onSubmit={(event) => submitResponse(event, request.id)}>
                   <Input label="Valor" name="responsePrice" placeholder="Ex: R$ 180" />
                   <Input label="Prazo" name="responseEta" placeholder="Ex: amanha as 14h" />
+                  <label className="grid gap-2 text-sm font-bold text-ink">
+                    Forma de cobranca
+                    <select className="min-h-12 rounded-2xl border border-line bg-white px-4 text-sm font-semibold text-ink outline-none transition focus:border-brand" name="billingModel" defaultValue="">
+                      <option value="">Selecione</option>
+                      {chargeTypes.map((item) => (
+                        <option key={item} value={item}>{item}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="grid gap-2 text-sm font-bold text-ink">
+                    Pagamento
+                    <select className="min-h-12 rounded-2xl border border-line bg-white px-4 text-sm font-semibold text-ink outline-none transition focus:border-brand" name="paymentMode" defaultValue="Pagamento pelo app">
+                      <option>Pagamento pelo app</option>
+                      <option>Pagamento por fora</option>
+                      <option>Pagamento por etapas</option>
+                      <option>Assinatura recorrente</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-2 text-sm font-bold text-ink">
+                    Metodos aceitos
+                    <select className="min-h-12 rounded-2xl border border-line bg-white px-4 text-sm font-semibold text-ink outline-none transition focus:border-brand" name="acceptedMethods" defaultValue="Pix, Cartao de credito, Cartao de debito">
+                      <option>Pix, Cartao de credito, Cartao de debito</option>
+                      {paymentMethods.map((item) => (
+                        <option key={item} value={item}>{item}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <Input label="Sinal ou reserva" name="depositAmount" placeholder="Ex: R$ 30 ou 20%" />
+                  <label className="grid gap-2 text-sm font-bold text-ink md:col-span-2">
+                    Regra de repasse
+                    <select className="min-h-12 rounded-2xl border border-line bg-white px-4 text-sm font-semibold text-ink outline-none transition focus:border-brand" name="releaseRule" defaultValue="Disponivel na carteira apos conclusao">
+                      <option>Disponivel na carteira apos conclusao</option>
+                      <option>Disponivel apos confirmacao do cliente</option>
+                      <option>Pagamento por etapa da obra/projeto</option>
+                      <option>Recorrencia semanal ou mensal</option>
+                    </select>
+                  </label>
                   <Input label="Mensagem" name="responseMessage" placeholder="Explique sua proposta" />
+                  <div className="rounded-[1.25rem] bg-white p-4 text-sm font-semibold leading-6 text-muted md:col-span-3">
+                    <strong className="text-ink">Sugestao ELLO:</strong> use pagamento pelo app para Pix, credito ou debito. Para psicologo, professor, personal e recorrentes, use assinatura recorrente com Pix automatico quando estiver ativo.
+                  </div>
                   <div className="md:col-span-3">
                     <Button disabled={submitting} type="submit" className="w-full md:w-auto">
                       {submitting ? 'Enviando...' : 'Enviar orcamento'}
