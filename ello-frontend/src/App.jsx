@@ -11,6 +11,7 @@ import { ClientOrders } from './features/client/ClientOrders'
 import { ProfessionalProfile } from './features/client/ProfessionalProfile'
 import { QuoteRequest } from './features/client/QuoteRequest'
 import { Onboarding } from './features/onboarding/Onboarding'
+import { PublicBio } from './features/public/PublicBio'
 import { QuoteChat } from './features/messages/QuoteChat'
 import { AdminConsole } from './features/admin/AdminConsole'
 import { ProfessionalCentral } from './features/professional/ProfessionalCentral'
@@ -34,6 +35,7 @@ export default function App() {
       >
         <Routes location={location}>
           <Route path="/" element={<Onboarding />} />
+          <Route path="/p/:slug" element={<PublicBio />} />
           <Route path="/comecar" element={<RoleChoice />} />
           <Route path="/entrar" element={<Login />} />
           <Route path="/auth/callback" element={<AuthCallback />} />

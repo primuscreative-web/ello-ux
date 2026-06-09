@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, CalendarDays, CheckCircle2, ChevronRight, ImagePlus, MessageCircle, Settings, ShieldCheck, TrendingUp } from 'lucide-react'
+import { BriefcaseBusiness, CalendarDays, CheckCircle2, ChevronRight, Copy, ExternalLink, ImagePlus, Link as LinkIcon, MessageCircle, Settings, ShieldCheck, TrendingUp } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -7,6 +7,7 @@ import { StatusPill } from '../../components/ui/StatusPill'
 import { trustChecklist } from '../../data/elloData'
 import { getRequests } from '../../services/elloService'
 import { firstName, getCurrentProfile } from '../../services/currentProfile'
+import { createPublicProfilePath, createPublicProfileUrl } from '../../utils/publicProfile'
 
 const actions = [
   { label: 'Editar perfil', text: 'Atualize sua vitrine publica.', href: '/profissional/perfil', icon: BriefcaseBusiness },
@@ -17,7 +18,10 @@ const actions = [
 
 export function ProfessionalCentral() {
   const [requests, setRequests] = useState([])
+  const [copied, setCopied] = useState(false)
   const profile = getCurrentProfile()
+  const publicUrl = createPublicProfileUrl(profile)
+  const publicPath = createPublicProfilePath(profile)
   const stats = [
     { label: 'Pedidos novos', value: String(requests.filter((item) => item.status === 'Novo pedido').length) },
     { label: 'Orcamentos enviados', value: String(requests.filter((item) => item.status === 'Orcamento enviado').length) },
@@ -28,6 +32,16 @@ export function ProfessionalCentral() {
   useEffect(() => {
     getRequests().then(setRequests)
   }, [])
+
+  async function copyPublicLink() {
+    try {
+      await navigator.clipboard.writeText(publicUrl)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1400)
+    } catch {
+      setCopied(false)
+    }
+  }
 
   return (
     <main className="theme-professional min-h-screen px-4 pb-28 pt-4 text-ink md:p-8">
@@ -142,10 +156,30 @@ export function ProfessionalCentral() {
 
               <article className="rounded-[1.8rem] bg-brand p-6 text-white shadow-premium">
                 <div className="flex items-center gap-3">
-                  <Settings size={22} />
+                  <LinkIcon size={22} />
+                  <h2 className="text-xl font-extrabold">Meu link na bio</h2>
+                </div>
+                <p className="mt-3 max-w-3xl break-all text-sm font-medium leading-6 text-white/75">{publicUrl}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <button
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-extrabold text-ink"
+                    onClick={copyPublicLink}
+                    type="button"
+                  >
+                    <Copy size={17} /> {copied ? 'Copiado' : 'Copiar'}
+                  </button>
+                  <Link className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-white/12 px-4 text-sm font-extrabold text-white" to={publicPath}>
+                    <ExternalLink size={17} /> Ver pagina
+                  </Link>
+                </div>
+              </article>
+
+              <article className="rounded-[1.8rem] bg-ink p-6 text-white shadow-premium">
+                <div className="flex items-center gap-3">
+                  <Settings size={22} className="text-brand" />
                   <h2 className="text-xl font-extrabold">Dica de visibilidade</h2>
                 </div>
-                <p className="mt-3 max-w-3xl text-sm font-medium leading-6 text-white/75">Perfis com pelo menos 3 fotos, preco claro e resposta rapida tendem a receber mais pedidos.</p>
+                <p className="mt-3 max-w-3xl text-sm font-medium leading-6 text-white/75">Use esse link no Instagram, WhatsApp e cartao digital. Depois trocamos automaticamente para o dominio oficial da ELLO.</p>
               </article>
 
               <section className="premium-surface rounded-[1.8rem] p-5">
