@@ -1,6 +1,6 @@
 import { CheckCircle2, LogIn } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
@@ -13,6 +13,11 @@ const loginRules = {
   password: [(value) => required(value, 'Informe sua senha.')]
 }
 
+function safeNextPath(value) {
+  if (!value || !String(value).startsWith('/') || String(value).startsWith('//')) return ''
+  return value
+}
+
 export function Login() {
   const [errors, setErrors] = useState({})
   const [formError, setFormError] = useState('')
@@ -20,12 +25,14 @@ export function Login() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const [done, setDone] = useState(false)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const nextPath = safeNextPath(searchParams.get('next'))
 
   function completeLogin(session) {
     saveSession(session)
     setDone(true)
     window.setTimeout(() => {
-      navigate(session.user.role === 'professional' ? '/profissional/central' : '/cliente/feed')
+      navigate(nextPath || (session.user.role === 'professional' ? '/profissional/central' : '/cliente/feed'))
     }, 350)
   }
 
@@ -55,7 +62,8 @@ export function Login() {
     setGoogleLoading(true)
 
     try {
-      const { url } = await getGoogleAuthUrl(`${window.location.origin}/auth/callback`)
+      const callback = `${window.location.origin}/auth/callback${nextPath ? `?next=${encodeURIComponent(nextPath)}` : ''}`
+      const { url } = await getGoogleAuthUrl(callback)
       window.location.assign(url)
     } catch (error) {
       setGoogleLoading(false)
@@ -86,7 +94,10 @@ export function Login() {
           <div className="grid gap-2">
             <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-brand">Acesso</p>
             <h2 className="text-3xl font-extrabold tracking-[-0.04em] md:text-5xl">Entre na ELLO.</h2>
-            <p className="text-sm font-medium leading-6 text-muted">Use o email e senha cadastrados como cliente ou profissional.</p>
+            <p className="text-sm font-medium leading-6 text-muted">
+              Use o email e senha cadastrados como cliente ou profissional.
+              {nextPath ? ' Depois voce volta automaticamente para concluir o agendamento.' : ''}
+            </p>
           </div>
 
           <button
@@ -114,6 +125,11 @@ export function Login() {
             {done ? <CheckCircle2 size={18} /> : <LogIn size={18} />}
             {done ? 'Entrada confirmada' : submitting ? 'Entrando...' : 'Entrar'}
           </Button>
+          {nextPath ? (
+            <Link className="text-center text-sm font-extrabold text-brandDark" to={`/cadastro/cliente?next=${encodeURIComponent(nextPath)}`}>
+              Criar conta cliente para continuar
+            </Link>
+          ) : null}
           {formError ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{formError}</p> : null}
         </section>
       </form>

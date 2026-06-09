@@ -1,6 +1,6 @@
 import { CheckCircle2, Loader2, UserPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 import { getCurrentUserWithToken } from '../../services/elloService'
 import { saveSession } from '../../services/session'
@@ -11,8 +11,15 @@ function readAccessToken() {
   return hash.get('access_token') || query.get('access_token') || ''
 }
 
+function safeNextPath(value) {
+  if (!value || !String(value).startsWith('/') || String(value).startsWith('//')) return ''
+  return value
+}
+
 export function AuthCallback() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const nextPath = safeNextPath(searchParams.get('next'))
   const [state, setState] = useState({ status: 'loading', message: 'Confirmando acesso com Google...' })
 
   useEffect(() => {
@@ -32,7 +39,7 @@ export function AuthCallback() {
         saveSession({ token, user })
         setState({ status: 'success', message: 'Entrada confirmada.' })
         window.setTimeout(() => {
-          navigate(user.role === 'professional' ? '/profissional/central' : '/cliente/feed', { replace: true })
+          navigate(nextPath || (user.role === 'professional' ? '/profissional/central' : '/cliente/feed'), { replace: true })
         }, 450)
       } catch {
         if (!alive) return
@@ -47,7 +54,7 @@ export function AuthCallback() {
     return () => {
       alive = false
     }
-  }, [navigate])
+  }, [navigate, nextPath])
 
   const Icon = state.status === 'loading' ? Loader2 : state.status === 'success' ? CheckCircle2 : UserPlus
 

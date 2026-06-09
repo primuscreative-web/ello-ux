@@ -1,6 +1,6 @@
 import { Camera, CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { BackButton } from '../../components/ui/BackButton'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
@@ -17,12 +17,19 @@ const clientRules = {
   confirmPassword: [(_, values) => matchingPassword(values.password, values.confirmPassword)]
 }
 
+function safeNextPath(value) {
+  if (!value || !String(value).startsWith('/') || String(value).startsWith('//')) return ''
+  return value
+}
+
 export function ClientSignup() {
   const [done, setDone] = useState(false)
   const [errors, setErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const nextPath = safeNextPath(searchParams.get('next'))
 
   async function submit(event) {
     event.preventDefault()
@@ -38,7 +45,7 @@ export function ClientSignup() {
       const session = await createClientSignup(values)
       saveSession(session)
       setDone(true)
-      window.setTimeout(() => navigate('/cliente/feed'), 500)
+      window.setTimeout(() => navigate(nextPath || '/cliente/feed'), 500)
     } catch (error) {
       setErrors(error.errors || {})
       setFormError(error.message)
@@ -77,7 +84,10 @@ export function ClientSignup() {
           <div className="grid gap-2">
             <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-brand">Dados essenciais</p>
             <h2 className="text-2xl font-extrabold tracking-[-0.035em]">Vamos preparar seu acesso.</h2>
-            <p className="text-sm font-medium leading-6 text-muted">Campos separados por contexto para voce entender exatamente o que esta preenchendo.</p>
+            <p className="text-sm font-medium leading-6 text-muted">
+              Campos separados por contexto para voce entender exatamente o que esta preenchendo.
+              {nextPath ? ' Depois voce volta para concluir o agendamento escolhido.' : ''}
+            </p>
           </div>
 
           <button className="flex min-h-24 items-center gap-4 rounded-[1.5rem] border border-dashed border-brand/40 bg-brand/5 p-4 text-left transition hover:border-brand/70 hover:bg-brand/8" type="button">
@@ -112,6 +122,11 @@ export function ClientSignup() {
               {done ? 'Cadastro criado' : submitting ? 'Criando cadastro...' : 'Entrar no feed'}
             </Button>
           </div>
+          {nextPath ? (
+            <Link className="text-center text-sm font-extrabold text-brandDark" to={`/entrar?next=${encodeURIComponent(nextPath)}`}>
+              Ja tenho conta
+            </Link>
+          ) : null}
           {formError ? <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{formError}</p> : null}
         </section>
       </form>
